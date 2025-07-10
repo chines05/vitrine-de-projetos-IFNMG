@@ -1,19 +1,15 @@
-import { fastify, FastifyReply, FastifyRequest } from 'fastify'
+import { fastify } from 'fastify'
+import cors from '@fastify/cors'
+import { appRoutes } from './routes'
 
-const app = fastify({
-  logger: true,
+const app = fastify({ logger: true })
+
+await app.register(cors, {
+  origin: true,
 })
 
-app.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
-  return { hello: 'world' }
-})
+await app.register(appRoutes)
 
-app
-  .listen({ port: 8080 })
-  .then(() => {
-    console.log('Server started on port 8080')
-  })
-  .catch((err) => {
-    console.error(err)
-    process.exit(1)
-  })
+app.listen({ port: 8080 }).then(() => {
+  console.log('🚀 Server running on http://localhost:8080')
+})
