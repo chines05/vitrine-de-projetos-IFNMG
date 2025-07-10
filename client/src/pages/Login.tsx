@@ -41,7 +41,7 @@ const Login = () => {
   }
 
   return (
-    <section className="relative min-h-screen w-full flex flex-col items-center justify-center">
+    <main className="min-h-screen w-full flex flex-col items-center justify-center">
       <div className="absolute inset-0 z-0">
         <img
           src={background}
@@ -52,9 +52,17 @@ const Login = () => {
       </div>
 
       <Card className="z-10 w-[350px] flex flex-col items-center justify-center p-7">
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
-          <img src={logoIFNMG} alt="Logo IFNMG" />
-          <h1 className="text-2xl text-center">Vitrine de Projetos</h1>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-5 w-full"
+        >
+          <div className="flex justify-center">
+            <img src={logoIFNMG} alt="Logo IFNMG" className="w-50 h-auto" />
+          </div>
+
+          <h1 className="text-2xl font-semibold text-center">
+            Vitrine de Projetos
+          </h1>
 
           <div className="w-full">
             <Label className="mb-2">E-mail</Label>
@@ -83,7 +91,7 @@ const Login = () => {
           <Button type="submit">Entrar</Button>
         </form>
       </Card>
-    </section>
+    </main>
   )
 }
 
