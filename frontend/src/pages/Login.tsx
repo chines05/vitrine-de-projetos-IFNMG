@@ -10,6 +10,7 @@ import { LoginSchema } from '@/schemas/loginSchema'
 import type { LoginSchemaType } from '@/schemas/loginSchema'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
+import api from '@/utils/api'
 
 const Login = () => {
   const router = useNavigate()
@@ -24,15 +25,13 @@ const Login = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { isSubmitting, errors },
   } = form
 
   const onSubmit = async (data: LoginSchemaType) => {
     try {
-      console.log(data)
-
+      await api.post('/login', data)
       toast.success('Login realizado com sucesso!')
-
       router('/dashboard')
     } catch (error) {
       toast.error('Erro ao realizar login.')
@@ -57,7 +56,7 @@ const Login = () => {
           className="flex flex-col gap-5 w-full"
         >
           <div className="flex justify-center">
-            <img src={logoIFNMG} alt="Logo IFNMG" className="w-50 h-auto" />
+            <img src={logoIFNMG} alt="Logo IFNMG" className="w-52 h-auto" />
           </div>
 
           <h1 className="text-2xl font-semibold text-center">
@@ -88,7 +87,9 @@ const Login = () => {
             )}
           </div>
 
-          <Button type="submit">Entrar</Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Carregando...' : 'Entrar'}
+          </Button>
         </form>
       </Card>
     </main>
