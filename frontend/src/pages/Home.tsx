@@ -1,44 +1,77 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import campusImage from '/background.jpg'
 import NavBar from '@/components/NavBar'
+import { Button } from '@/components/ui/button'
+
+const projetos = [
+  {
+    id: 'agricultura-sustentavel',
+    titulo: 'Agricultura Sustentável no Semiárido',
+    descricao: 'Técnicas inovadoras para cultivo em regiões de seca...',
+    imagem: campusImage,
+  },
+  {
+    id: 'energia-renovavel',
+    titulo: 'Energias Renováveis em Comunidades Rurais',
+    descricao: 'Implementação de sistemas fotovoltaicos em áreas remotas...',
+    imagem: campusImage,
+  },
+  {
+    id: 'educacao-digital',
+    titulo: 'Educação Digital para Terceira Idade',
+    descricao:
+      'Inclusão digital de idosos através de metodologias adaptadas...',
+    imagem: campusImage,
+  },
+]
 
 const Home = () => {
-  const projetos = [
-    {
-      id: 'agricultura-sustentavel',
-      titulo: 'Agricultura Sustentável no Semiárido',
-      descricao: 'Técnicas inovadoras para cultivo em regiões de seca...',
-      imagem: campusImage,
-    },
-    {
-      id: 'energia-renovavel',
-      titulo: 'Energias Renováveis em Comunidades Rurais',
-      descricao: 'Implementação de sistemas fotovoltaicos em áreas remotas...',
-      imagem: campusImage,
-    },
-    {
-      id: 'educacao-digital',
-      titulo: 'Educação Digital para Terceira Idade',
-      descricao:
-        'Inclusão digital de idosos através de metodologias adaptadas...',
-      imagem: campusImage,
-    },
-  ]
+  const navigate = useNavigate()
+  const handleScrollToProjetos = () => {
+    const target = document.getElementById('projetos')
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
 
   return (
     <div className="min-h-screen">
       <NavBar />
 
-      <div className="relative h-[50vh] w-full">
+      <div className="relative h-[80vh] w-full">
         <img
           src={campusImage}
           alt="Campus IFNMG"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-center"
         />
-        <div className="absolute inset-0  bg-opacity-30 flex items-center justify-center">
-          <h1 className="text-4xl font-bold text-white text-center">
-            Conheça nossos projetos de Ensino, Pesquisa e Extensão
-          </h1>
+
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/40 flex flex-col items-center justify-center px-4 text-center">
+          <div className="max-w-4xl space-y-6">
+            <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight animate-fade-in">
+              Inovação que transforma realidades
+            </h1>
+            <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto animate-fade-in delay-100">
+              Conheça os projetos do IFNMG de ensino, pesquisa e extensão que
+              estão moldando o futuro do Norte de Minas
+            </p>
+            <div className="flex flex-col md:flex-row gap-4 justify-center items-center mt-8 animate-fade-in delay-200">
+              <Button
+                onClick={handleScrollToProjetos}
+                className="max-w-max bg-white text-green-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-all transform hover:scale-105"
+                size="lg"
+              >
+                Explorar Projetos
+              </Button>
+
+              <Button
+                onClick={() => navigate('/login')}
+                className="max-w-max bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/10 transition-all transform hover:scale-105"
+                size="lg"
+              >
+                Área do Pesquisador
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
 

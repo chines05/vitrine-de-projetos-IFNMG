@@ -11,6 +11,7 @@ import type { LoginSchemaType } from '@/schemas/loginSchema'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import api from '@/utils/api'
+import { ArrowLeft } from 'lucide-react'
 
 const Login = () => {
   const router = useNavigate()
@@ -41,6 +42,12 @@ const Login = () => {
 
   return (
     <main className="min-h-screen w-full flex flex-col items-center justify-center">
+      <ArrowLeft
+        size={32}
+        className="z-10 absolute top-5 left-5 cursor-pointer"
+        color="#fff"
+        onClick={() => router('/')}
+      />
       <div className="absolute inset-0 z-0">
         <img
           src={background}
