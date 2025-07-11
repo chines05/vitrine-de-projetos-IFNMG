@@ -1,3 +1,4 @@
+import Footer from '@/components/Footer'
 import NavBar from '@/components/NavBar'
 import { Link, useParams } from 'react-router-dom'
 
@@ -83,6 +84,8 @@ const Projeto = () => {
           </Link>
         </div>
       </div>
+
+      <Footer />
     </div>
   )
 }

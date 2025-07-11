@@ -1,9 +1,9 @@
-const Dashboard = () => {
+import { DashboardSidebar } from '@/components/DashboardSidebar'
+
+export default function Dashboard() {
   return (
-    <div>
-      <h1>Dashboard</h1>
+    <div className="flex min-h-screen">
+      <DashboardSidebar />
     </div>
   )
 }
-
-export default Dashboard
