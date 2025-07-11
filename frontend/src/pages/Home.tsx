@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import campusImage from '/background.jpg'
 import NavBar from '@/components/NavBar'
 import { Button } from '@/components/ui/button'
+import Footer from '@/components/Footer'
 
 const projetos = [
   {
@@ -35,7 +36,7 @@ const Home = () => {
   }
 
   return (
-    <div className="min-h-screen">
+    <div id="home" className="min-h-screen">
       <NavBar />
 
       <div className="relative h-[80vh] w-full">
@@ -72,10 +73,11 @@ const Home = () => {
               </Button>
             </div>
           </div>
+          <div id="projetos" />
         </div>
       </div>
 
-      <section id="projetos" className="py-12 px-6 max-w-6xl mx-auto">
+      <section className="py-12 px-6 max-w-6xl mx-auto">
         <h2 className="text-3xl font-bold text-center mb-12 text-gray-800">
           Projetos em Destaque
         </h2>
@@ -107,6 +109,8 @@ const Home = () => {
           ))}
         </div>
       </section>
+
+      <Footer />
     </div>
   )
 }

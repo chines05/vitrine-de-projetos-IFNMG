@@ -23,6 +23,19 @@ const Navbar = () => {
     setMobileMenuOpen(false)
   }
 
+  const handleLogo = () => {
+    if (location.pathname.startsWith('/projeto/')) {
+      navigate('/')
+
+      return
+    }
+
+    const target = document.getElementById('home')
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   return (
     <>
       <header className="w-full bg-gradient-to-r from-[#2f9e41] to-[#1BA863] text-white shadow-lg fixed top-0 z-40 backdrop-blur-sm bg-opacity-90">
@@ -30,7 +43,7 @@ const Navbar = () => {
           <div className="flex items-center gap-2">
             <div
               className="flex items-center gap-2 cursor-pointer group"
-              onClick={() => navigate('/')}
+              onClick={handleLogo}
             >
               <School className="h-6 w-6 transition-transform group-hover:scale-110" />
               <h1 className="text-xl font-bold tracking-tight group-hover:text-white/90 transition-colors">
