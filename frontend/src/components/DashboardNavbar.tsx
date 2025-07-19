@@ -2,10 +2,18 @@ import { User, ChevronDown, Settings, LogOut } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from './ui/button'
+import { logout } from '@/api/apiAuth'
+import toast from 'react-hot-toast'
 
 export function DashboardNavbar() {
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+    toast.success('Logout realizado com sucesso!')
+  }
 
   return (
     <header className="w-full bg-gradient-to-r from-[#2f9e41] to-[#1BA863] shadow-sm fixed top-0 left-0 right-0 z-20 h-16 border-b border-white/10">
@@ -41,10 +49,7 @@ export function DashboardNavbar() {
                   <span>Configurações</span>
                 </Button>
                 <Button
-                  onClick={() => {
-                    navigate('/login')
-                    setIsProfileOpen(false)
-                  }}
+                  onClick={handleLogout}
                   className="flex gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                   variant="unstyled"
                 >

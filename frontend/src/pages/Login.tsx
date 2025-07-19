@@ -10,15 +10,15 @@ import { LoginSchema } from '@/schemas/loginSchema'
 import type { LoginSchemaType } from '@/schemas/loginSchema'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
-import api from '@/utils/api'
 import { ArrowLeft } from 'lucide-react'
+import { login } from '@/api/apiAuth'
 
 const Login = () => {
-  const router = useNavigate()
+  const navigate = useNavigate()
   const form = useForm<LoginSchemaType>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      email: 'chines@ifnmg.edu.br',
+      email: 'admin@ifnmg.edu.br',
       password: 'Chines05',
     },
   })
@@ -31,12 +31,11 @@ const Login = () => {
 
   const onSubmit = async (data: LoginSchemaType) => {
     try {
-      await api.post('/login', data)
+      await login(data.email, data.password)
       toast.success('Login realizado com sucesso!')
-      router('/dashboard')
-    } catch (error) {
-      toast.error('Erro ao realizar login.')
-      console.error(error)
+      navigate('/dashboard')
+    } catch (error: any) {
+      toast.error(error.response.data.error || 'Erro ao realizar login.')
     }
   }
 
@@ -46,7 +45,7 @@ const Login = () => {
         size={32}
         className="z-10 absolute top-5 left-5 cursor-pointer"
         color="#fff"
-        onClick={() => router('/')}
+        onClick={() => navigate('/')}
       />
       <div className="absolute inset-0 z-0">
         <img
