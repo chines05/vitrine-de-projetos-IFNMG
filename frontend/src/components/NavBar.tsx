@@ -1,12 +1,35 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Button } from './ui/button'
 import { ScrollText, LogIn, Home, School, Menu, X } from 'lucide-react'
+import { getCurrentUser } from '@/api/apiAuth'
+import type { User } from '@/utils/types'
 
 const Navbar = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  const [user, setUser] = useState<User>()
+
+  const checkAuth = useCallback(async () => {
+    const currentUser = await getCurrentUser()
+    setUser(currentUser)
+  }, [])
+
+  useEffect(() => {
+    checkAuth()
+  }, [checkAuth])
+
+  const handleLogin = () => {
+    if (user) {
+      navigate('/dashboard')
+
+      return
+    }
+
+    navigate('/login')
+  }
 
   const handleScrollToProjetos = () => {
     if (location.pathname.startsWith('/projeto/')) {
@@ -73,11 +96,11 @@ const Navbar = () => {
             </Button>
 
             <Button
-              onClick={() => navigate('/login')}
+              onClick={handleLogin}
               className="bg-white text-[#2f9e41] hover:bg-gray-50 gap-2 px-4 py-2 rounded-full transition-all shadow-md hover:shadow-lg"
             >
               <LogIn className="h-4 w-4" />
-              <span>Login</span>
+              <span>{user ? 'Dashboard' : 'Login'}</span>
             </Button>
           </nav>
           {mobileMenuOpen ? (
@@ -137,14 +160,11 @@ const Navbar = () => {
 
             <div className="mt-auto">
               <Button
-                onClick={() => {
-                  navigate('/login')
-                  setMobileMenuOpen(false)
-                }}
+                onClick={handleLogin}
                 className="w-full bg-white text-[#2f9e41] hover:bg-gray-50 gap-4 px-4 py-3 rounded-full transition-all shadow-md hover:shadow-lg text-lg"
               >
                 <LogIn className="h-5 w-5" />
-                Login
+                {user ? 'Dashboard' : 'Login'}
               </Button>
             </div>
           </nav>

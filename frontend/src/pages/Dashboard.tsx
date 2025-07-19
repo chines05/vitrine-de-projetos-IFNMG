@@ -1,12 +1,13 @@
 import { getCurrentUser } from '@/api/apiAuth'
 import { DashboardNavbar } from '@/components/DashboardNavbar'
 import { DashboardSidebar } from '@/components/DashboardSidebar'
+import type { User } from '@/utils/types'
 import { useCallback, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 
 export default function Dashboard() {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState<User>()
   const navigate = useNavigate()
 
   const checkAuth = useCallback(async () => {
@@ -29,7 +30,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex min-h-screen">
-      <DashboardNavbar />
+      <DashboardNavbar user={user} />
       <DashboardSidebar />
     </div>
   )

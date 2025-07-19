@@ -28,7 +28,6 @@ const projetos = [
 
 const Home = () => {
   const navigate = useNavigate()
-
   const handleScrollToProjetos = () => {
     const target = document.getElementById('projetos')
     if (target) {

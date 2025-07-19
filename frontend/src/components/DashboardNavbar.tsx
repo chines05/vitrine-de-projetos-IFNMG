@@ -1,11 +1,16 @@
-import { User, ChevronDown, Settings, LogOut } from 'lucide-react'
+import { User as UserIcon, ChevronDown, Settings, LogOut } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from './ui/button'
 import { logout } from '@/api/apiAuth'
 import toast from 'react-hot-toast'
+import type { User } from '@/utils/types'
 
-export function DashboardNavbar() {
+type Props = {
+  user: User
+}
+
+export function DashboardNavbar({ user }: Props) {
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const navigate = useNavigate()
 
@@ -26,9 +31,9 @@ export function DashboardNavbar() {
               variant="unstyled"
             >
               <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
-                <User className="h-4 w-4 text-white" />
+                <UserIcon className="h-4 w-4 text-white" />
               </div>
-              <span className="font-medium text-white">Chinês Porto</span>
+              <span className="font-medium text-white">{user.nome}</span>
               <ChevronDown
                 className={`h-4 w-4 text-white transition-transform ${
                   isProfileOpen ? 'rotate-180' : ''
