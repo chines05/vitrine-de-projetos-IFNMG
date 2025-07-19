@@ -6,6 +6,12 @@ import { authenticate } from './middleware/auth'
 
 const app = fastify({ logger: true })
 
+declare module 'fastify' {
+  interface FastifyInstance {
+    authenticate: typeof authenticate
+  }
+}
+
 await app.register(cors, {
   origin: ['http://localhost:5173'],
   credentials: true,

@@ -1,4 +1,3 @@
-// src/types.d.ts
 import '@fastify/jwt'
 
 declare module '@fastify/jwt' {
