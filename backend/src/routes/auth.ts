@@ -30,19 +30,11 @@ export async function authRoutes(app: FastifyInstance) {
         role: user.role,
       },
       {
-        expiresIn: '1h',
+        expiresIn: '30m',
       }
     )
 
-    return {
-      token,
-      user: {
-        id: user.id,
-        nome: user.nome,
-        email: user.email,
-        role: user.role,
-      },
-    }
+    return { token }
   })
 
   app.get('/api/me', { preHandler: [app.authenticate] }, async (request) => {
