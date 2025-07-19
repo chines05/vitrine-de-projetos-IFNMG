@@ -7,13 +7,9 @@ import { Button } from './ui/button'
 import VisaoGeral from '../components/dashboard/VisaoGeral'
 import Projetos from '../components/dashboard/Projetos'
 import Participantes from '../components/dashboard/Participantes'
-import Configuracoes from '../components/dashboard/Configuracoes'
+import Usuarios from '../components/dashboard/Usuarios'
 
-type ComponentKeys =
-  | 'visaoGeral'
-  | 'projetos'
-  | 'participantes'
-  | 'configuracoes'
+type ComponentKeys = 'visaoGeral' | 'projetos' | 'participantes' | 'usuarios'
 
 export function DashboardSidebar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -24,7 +20,7 @@ export function DashboardSidebar() {
     visaoGeral: <VisaoGeral />,
     projetos: <Projetos />,
     participantes: <Participantes />,
-    configuracoes: <Configuracoes />,
+    usuarios: <Usuarios />,
   }
 
   return (
@@ -77,15 +73,15 @@ export function DashboardSidebar() {
 
           <Button
             variant="unstyled"
-            onClick={() => setActiveComponent('configuracoes')}
+            onClick={() => setActiveComponent('usuarios')}
             className={`w-full justify-start gap-3 ${
-              activeComponent === 'configuracoes'
+              activeComponent === 'usuarios'
                 ? 'bg-white/20 hover:bg-white/20'
                 : 'hover:bg-white/10'
             }`}
           >
-            <Settings className="h-5 w-5" />
-            <span>Configurações</span>
+            <Users className="h-5 w-5" />
+            <span>Usuários</span>
           </Button>
         </nav>
       </div>
@@ -121,7 +117,7 @@ export function DashboardSidebar() {
               { id: 'visaoGeral', icon: Home, label: 'Visão Geral' },
               { id: 'projetos', icon: BookText, label: 'Projetos' },
               { id: 'participantes', icon: Users, label: 'Participantes' },
-              { id: 'configuracoes', icon: Settings, label: 'Configurações' },
+              { id: 'usuarios', icon: Settings, label: 'Configurações' },
             ].map((item) => (
               <Button
                 key={item.id}
