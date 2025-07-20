@@ -7,16 +7,16 @@ export async function authRoutes(app: FastifyInstance) {
   app.post('/api/login', async (request, reply) => {
     const loginSchema = z.object({
       email: z.string().email('E-mail inválido'),
-      password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
+      senha: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
     })
 
-    const { email, password } = loginSchema.parse(request.body)
+    const { email, senha } = loginSchema.parse(request.body)
 
     const user = await prisma.user.findUnique({
       where: { email },
     })
 
-    if (!user || !(await bcrypt.compare(password, user.senha))) {
+    if (!user || !(await bcrypt.compare(senha, user.senha))) {
       return reply.status(401).send({
         error: 'Credenciais inválidas',
       })
