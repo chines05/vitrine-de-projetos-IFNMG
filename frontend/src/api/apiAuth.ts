@@ -2,8 +2,8 @@ import api from '@/utils/api'
 import type { User } from '@/utils/types'
 import toast from 'react-hot-toast'
 
-const login = async (email: string, password: string) => {
-  const response = await api.post('/login', { email, password })
+const login = async (email: string, senha: string) => {
+  const response = await api.post('/login', { email, senha })
   localStorage.setItem('token', response.data.token)
 
   return response.data.user
