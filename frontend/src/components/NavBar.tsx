@@ -49,7 +49,13 @@ const Navbar = () => {
   const handleLogo = () => {
     if (location.pathname.startsWith('/projeto/')) {
       navigate('/')
-
+      setTimeout(() => {
+        const target = document.getElementById('home')
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' })
+        }
+      }, 100)
+      setMobileMenuOpen(false)
       return
     }
 
@@ -57,6 +63,7 @@ const Navbar = () => {
     if (target) {
       target.scrollIntoView({ behavior: 'smooth' })
     }
+    setMobileMenuOpen(false)
   }
 
   return (
@@ -79,7 +86,7 @@ const Navbar = () => {
           <nav className="hidden md:flex items-center gap-4">
             <Button
               variant="ghost"
-              onClick={() => navigate('/')}
+              onClick={handleLogo}
               className="text-white hover:bg-white/10 gap-2 px-3 py-2 rounded-md transition-all"
             >
               <Home className="h-4 w-4" />
