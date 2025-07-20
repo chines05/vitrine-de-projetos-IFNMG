@@ -3,23 +3,95 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql" 
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   nome      String
-  email     String   @unique
+  email     String    @unique
   senha     String
-  role      Role     @default(COORDENADOR)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      Role      @default(COORDENADOR)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  projetos  Projeto[] @relation("ProjetosDoCoordenador")
 
   @@map("users")
+}
+
+model Aluno {
+  id        String         @id @default(uuid())
+  matricula String         @unique
+  nome      String
+  email     String         @unique
+  curso     String
+  campus    String
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  projetos  ProjetoAluno[]
+
+  @@map("alunos")
+}
+
+model Projeto {
+  id            String          @id @default(uuid())
+  titulo        String
+  url           String          @unique 
+  descricao     String
+  resumo        String
+  dataInicio    DateTime
+  dataFim       DateTime?
+  tipo          TipoProjeto     
+  status        StatusProjeto   @default(ATIVO)
+  campus        String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  coordenador   User            @relation("ProjetosDoCoordenador", fields: [coordenadorId], references: [id])
+  coordenadorId String
+  participantes ProjetoAluno[]
+  imagens       ImagemProjeto[]
+
+  @@map("projetos")
+}
+
+model ProjetoAluno {
+  id        String   @id @default(uuid())
+  projeto   Projeto  @relation(fields: [projetoId], references: [id])
+  aluno     Aluno    @relation(fields: [alunoId], references: [id])
+  projetoId String
+  alunoId   String
+  funcao    String
+  createdAt DateTime @default(now())
+
+  @@unique([projetoId, alunoId])
+  @@map("projeto_aluno")
+}
+
+model ImagemProjeto {
+  id        String   @id @default(uuid())
+  url       String
+  projeto   Projeto  @relation(fields: [projetoId], references: [id])
+  projetoId String
+  createdAt DateTime @default(now())
+
+  @@map("imagens_projeto")
 }
 
 enum Role {
   ADMIN
   COORDENADOR
+}
+
+enum TipoProjeto {
+  PESQUISA
+  ENSINO
+  EXTENSAO
+}
+
+enum StatusProjeto {
+  ATIVO
+  CONCLUIDO
+  PAUSADO
+  CANCELADO
 }
