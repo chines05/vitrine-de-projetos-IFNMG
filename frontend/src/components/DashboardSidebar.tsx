@@ -85,7 +85,9 @@ export function DashboardSidebar() {
           </Button>
         </nav>
       </div>
-      <div className="ml-4 lg:ml-70 pt-20">{components[activeComponent]}</div>
+      <div className="ml-4 lg:ml-70 pt-20 pr-7 w-full">
+        {components[activeComponent]}
+      </div>
       <Button
         className="lg:hidden fixed top-4 left-4 z-40 bg-white/90 text-green-700 p-2 rounded-md shadow-lg"
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -117,7 +119,7 @@ export function DashboardSidebar() {
               { id: 'visaoGeral', icon: Home, label: 'Visão Geral' },
               { id: 'projetos', icon: BookText, label: 'Projetos' },
               { id: 'participantes', icon: Users, label: 'Participantes' },
-              { id: 'usuarios', icon: Settings, label: 'Configurações' },
+              { id: 'usuarios', icon: Settings, label: 'Usuários' },
             ].map((item) => (
               <Button
                 key={item.id}

@@ -3,6 +3,8 @@ export type User = {
   nome: string
   email: string
   role: 'ADMIN' | 'COORDENADOR'
-  iat: number
-  exp: number
+  createdAt?: string
+  updatedAt?: string
+  iat?: number
+  exp?: number
 }

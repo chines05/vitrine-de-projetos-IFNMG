@@ -19,7 +19,7 @@ const Login = () => {
     resolver: zodResolver(LoginSchema),
     defaultValues: {
       email: 'admin@ifnmg.edu.br',
-      password: 'Chines05',
+      senha: 'Chines05',
     },
   })
 
@@ -31,7 +31,7 @@ const Login = () => {
 
   const onSubmit = async (data: LoginSchemaType) => {
     try {
-      await login(data.email, data.password)
+      await login(data.email, data.senha)
       toast.success('Login realizado com sucesso!')
       navigate('/dashboard')
     } catch (error: any) {
@@ -81,14 +81,10 @@ const Login = () => {
 
           <div className="w-full">
             <Label className="mb-2">Senha</Label>
-            <Input
-              type="password"
-              placeholder="Senha"
-              {...register('password')}
-            />
-            {errors.password && (
+            <Input type="password" placeholder="Senha" {...register('senha')} />
+            {errors.senha && (
               <span className="text-red-500 text-xs mt-1 block">
-                {errors.password.message}
+                {errors.senha.message}
               </span>
             )}
           </div>

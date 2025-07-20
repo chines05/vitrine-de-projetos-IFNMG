@@ -14,7 +14,7 @@ export const LoginSchema = z.object({
       { message: 'Use seu e-mail institucional (@ifnmg.edu.br)' }
     ),
 
-  password: z
+  senha: z
     .string()
     .min(6, { message: 'A senha deve ter no mínimo 6 caracteres' })
     .max(50, { message: 'A senha deve ter no máximo 50 caracteres' }),
