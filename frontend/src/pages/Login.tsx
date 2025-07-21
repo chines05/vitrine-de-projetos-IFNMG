@@ -12,6 +12,7 @@ import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import { login } from '@/api/apiAuth'
+import { formatErrorMessage } from '@/utils/format'
 
 const Login = () => {
   const navigate = useNavigate()
@@ -34,8 +35,8 @@ const Login = () => {
       await login(data.email, data.senha)
       toast.success('Login realizado com sucesso!')
       navigate('/dashboard')
-    } catch (error: any) {
-      toast.error(error.response.data.error || 'Erro ao realizar login.')
+    } catch (error) {
+      toast.error(formatErrorMessage(error, 'Erro ao realizar login.'))
     }
   }
 

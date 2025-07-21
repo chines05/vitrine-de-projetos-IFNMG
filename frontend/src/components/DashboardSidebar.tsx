@@ -4,14 +4,19 @@ import { useState, type JSX } from 'react'
 import { Menu, X } from 'lucide-react'
 import { Button } from './ui/button'
 
-import VisaoGeral from '../components/dashboard/VisaoGeral'
-import Projetos from '../components/dashboard/Projetos'
-import Participantes from '../components/dashboard/Participantes'
-import Usuarios from '../components/dashboard/Usuarios'
+import VisaoGeral from './dashboard/VisaoGeral'
+import Projetos from './dashboard/Projetos'
+import Usuarios from './dashboard/Usuarios'
+import Alunos from './dashboard/Alunos'
+import type { User } from '@/utils/types'
 
-type ComponentKeys = 'visaoGeral' | 'projetos' | 'participantes' | 'usuarios'
+type ComponentKeys = 'visaoGeral' | 'projetos' | 'alunos' | 'usuarios'
 
-export function DashboardSidebar() {
+type Props = {
+  user: User
+}
+
+export function DashboardSidebar({ user }: Props) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeComponent, setActiveComponent] =
     useState<ComponentKeys>('visaoGeral')
@@ -19,7 +24,7 @@ export function DashboardSidebar() {
   const components: Record<ComponentKeys, JSX.Element> = {
     visaoGeral: <VisaoGeral />,
     projetos: <Projetos />,
-    participantes: <Participantes />,
+    alunos: <Alunos />,
     usuarios: <Usuarios />,
   }
 
@@ -60,29 +65,31 @@ export function DashboardSidebar() {
 
           <Button
             variant="unstyled"
-            onClick={() => setActiveComponent('participantes')}
+            onClick={() => setActiveComponent('alunos')}
             className={`w-full justify-start gap-3 ${
-              activeComponent === 'participantes'
+              activeComponent === 'alunos'
                 ? 'bg-white/20 hover:bg-white/20'
                 : 'hover:bg-white/10'
             }`}
           >
             <Users className="h-5 w-5" />
-            <span>Participantes</span>
+            <span>Alunos</span>
           </Button>
 
-          <Button
-            variant="unstyled"
-            onClick={() => setActiveComponent('usuarios')}
-            className={`w-full justify-start gap-3 ${
-              activeComponent === 'usuarios'
-                ? 'bg-white/20 hover:bg-white/20'
-                : 'hover:bg-white/10'
-            }`}
-          >
-            <Users className="h-5 w-5" />
-            <span>Usuários</span>
-          </Button>
+          {user.role === 'ADMIN' && (
+            <Button
+              variant="unstyled"
+              onClick={() => setActiveComponent('usuarios')}
+              className={`w-full justify-start gap-3 ${
+                activeComponent === 'usuarios'
+                  ? 'bg-white/20 hover:bg-white/20'
+                  : 'hover:bg-white/10'
+              }`}
+            >
+              <Users className="h-5 w-5" />
+              <span>Usuários</span>
+            </Button>
+          )}
         </nav>
       </div>
       <div className="ml-4 lg:ml-70 pt-20 pr-7 w-full">
@@ -118,8 +125,10 @@ export function DashboardSidebar() {
             {[
               { id: 'visaoGeral', icon: Home, label: 'Visão Geral' },
               { id: 'projetos', icon: BookText, label: 'Projetos' },
-              { id: 'participantes', icon: Users, label: 'Participantes' },
-              { id: 'usuarios', icon: Settings, label: 'Usuários' },
+              { id: 'alunos', icon: Users, label: 'Alunos' },
+              ...(user.role === 'ADMIN'
+                ? [{ id: 'usuarios', icon: Settings, label: 'Usuários' }]
+                : []),
             ].map((item) => (
               <Button
                 key={item.id}

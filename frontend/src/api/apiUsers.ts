@@ -1,3 +1,4 @@
+import type { UpdateSenhaSchemaType } from '@/schemas/updateSenhaSchema'
 import api from '@/utils/api'
 import type { User } from '@/utils/types'
 
@@ -32,10 +33,16 @@ const updateUser = async (
   return response.data
 }
 
+const updateSenhaUser = async (id: string, data: UpdateSenhaSchemaType) => {
+  const response = await api.patch(`/users/${id}/senha`, data)
+
+  return response.data
+}
+
 const deleteUser = async (id: string) => {
   await api.delete(`/users/${id}`)
 
   return id
 }
 
-export { postUser, getUsers, updateUser, deleteUser }
+export { postUser, getUsers, updateUser, updateSenhaUser, deleteUser }

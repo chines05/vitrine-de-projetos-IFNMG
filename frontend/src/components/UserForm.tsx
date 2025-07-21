@@ -1,7 +1,5 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { UserSchema } from '@/schemas/userSchema'
-import type { UserSchemaType } from '@/schemas/userSchema'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -15,6 +13,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import toast from 'react-hot-toast'
+import { UserSchema, type UserSchemaType } from '@/schemas/userSchema'
+import { formatErrorMessage } from '@/utils/format'
 
 interface UserFormProps {
   user?: User | null
@@ -25,6 +25,7 @@ export const UserForm = ({ user, onSuccess }: UserFormProps) => {
   const form = useForm<UserSchemaType>({
     resolver: zodResolver(UserSchema),
     defaultValues: {
+      id: user?.id,
       nome: user?.nome || '',
       email: user?.email || '',
       role: user?.role || 'COORDENADOR',
@@ -40,18 +41,23 @@ export const UserForm = ({ user, onSuccess }: UserFormProps) => {
     formState: { isSubmitting, errors },
   } = form
 
-  const onSubmit = async (values: UserSchemaType) => {
+  const onSubmit = async (data: UserSchemaType) => {
     try {
+      const payloadUpadate = {
+        ...data,
+        senha: data.senha ? data.senha : '',
+      }
+
       if (user) {
-        await updateUser(user.id, values)
+        await updateUser(user.id, payloadUpadate)
         toast.success('Usuário atualizado com sucesso!')
       } else {
-        await postUser({ ...values, senha: values.senha ?? '' })
+        await postUser({ ...data, senha: data.senha ?? '' })
         toast.success('Usuário cadastrado com sucesso!')
       }
       onSuccess()
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Erro ao salvar usuário')
+    } catch (error) {
+      toast.error(formatErrorMessage(error, 'Erro ao salvar usuário.'))
     }
   }
 

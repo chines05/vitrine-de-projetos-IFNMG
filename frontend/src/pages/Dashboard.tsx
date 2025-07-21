@@ -1,6 +1,7 @@
 import { getCurrentUser } from '@/api/apiAuth'
 import { DashboardNavbar } from '@/components/DashboardNavbar'
 import { DashboardSidebar } from '@/components/DashboardSidebar'
+import { formatErrorMessage } from '@/utils/format'
 import type { User } from '@/utils/types'
 import { useCallback, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
@@ -14,10 +15,8 @@ export default function Dashboard() {
     try {
       const currentUser = await getCurrentUser()
       setUser(currentUser)
-    } catch (error: any) {
-      toast.error(
-        error.response.data.error || 'Erro ao verificar autenticação.'
-      )
+    } catch (error) {
+      toast.error(formatErrorMessage(error, 'Erro ao verificar autenticação.'))
       navigate('/login')
     }
   }, [navigate])
@@ -31,7 +30,7 @@ export default function Dashboard() {
   return (
     <div className="flex min-h-screen">
       <DashboardNavbar user={user} />
-      <DashboardSidebar />
+      <DashboardSidebar user={user} />
     </div>
   )
 }

@@ -19,7 +19,8 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import toast from 'react-hot-toast'
-import { UserForm } from './UserForm'
+import { UserForm } from '../UserForm'
+import { formatErrorMessage } from '@/utils/format'
 
 const Usuarios = () => {
   const [users, setUsers] = useState<User[]>([])
@@ -33,8 +34,8 @@ const Usuarios = () => {
       const data = await getUsers()
       setUsers(data)
       setIsDialogOpen(false)
-    } catch (error: any) {
-      toast.error(error.response.data.error || 'Erro ao carregar usuários.')
+    } catch (error) {
+      toast.error(formatErrorMessage(error, 'Erro ao carregar usuários.'))
     } finally {
       setIsLoading(false)
     }
@@ -46,8 +47,8 @@ const Usuarios = () => {
       await deleteUser(userId)
       fetchUsers()
       toast.success('Usuário excluído com sucesso!')
-    } catch (error: any) {
-      toast.error(error.response.data.error || 'Erro ao excluir usuário.')
+    } catch (error) {
+      toast.error(formatErrorMessage(error, 'Erro ao excluir usuário.'))
     }
   }
 
