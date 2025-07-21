@@ -22,17 +22,16 @@ model User {
 
 model Aluno {
   id        String         @id @default(uuid())
-  matricula String         @unique
   nome      String
-  email     String         @unique
+  turma     String
   curso     String
-  campus    String
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
   projetos  ProjetoAluno[]
 
   @@map("alunos")
 }
+
 
 model Projeto {
   id            String          @id @default(uuid())

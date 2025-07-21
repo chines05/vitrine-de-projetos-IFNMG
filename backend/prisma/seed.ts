@@ -47,38 +47,30 @@ async function main() {
   const alunos = await Promise.all([
     prisma.aluno.create({
       data: {
-        matricula: '20230001',
         nome: 'João Pereira',
-        email: 'joao.pereira@ifnmg.edu.br',
-        curso: 'Análise e Desenvolvimento de Sistemas',
-        campus: 'Almenara',
+        turma: 'TLAS124NA',
+        curso: 'Tecnologia em Análise e Desenvolvimento de Sistemas',
       },
     }),
     prisma.aluno.create({
       data: {
-        matricula: '20230002',
         nome: 'Maria Souza',
-        email: 'maria.souza@ifnmg.edu.br',
+        turma: 'TENGA221JA',
         curso: 'Engenharia Agronômica',
-        campus: 'Januária',
       },
     }),
     prisma.aluno.create({
       data: {
-        matricula: '20230003',
         nome: 'Pedro Costa',
-        email: 'pedro.costa@ifnmg.edu.br',
+        turma: 'TLIC321MC',
         curso: 'Licenciatura em Computação',
-        campus: 'Montes Claros',
       },
     }),
     prisma.aluno.create({
       data: {
-        matricula: '20230004',
         nome: 'Ana Santos',
-        email: 'ana.santos@ifnmg.edu.br',
+        turma: 'TAGRO119JA',
         curso: 'Agronomia',
-        campus: 'Januária',
       },
     }),
   ])

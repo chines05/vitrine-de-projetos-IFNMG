@@ -3,6 +3,7 @@ import cors from '@fastify/cors'
 import jwt from '@fastify/jwt'
 import { appRoutes } from './routes'
 import { authenticate } from './middleware/auth'
+import fastifyMultipart from '@fastify/multipart'
 
 const app = fastify({ logger: true })
 
@@ -21,6 +22,8 @@ await app.register(cors, {
 await app.register(jwt, {
   secret: 'secret-key-vitrine-projects-ifnmg-chines05',
 })
+
+await app.register(fastifyMultipart)
 
 app.decorate('authenticate', authenticate)
 

@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { prisma } from '../lib/prisma'
 import { authenticate, adminOnly } from '../middleware/auth'
 import bcrypt from 'bcryptjs'
+import { Prisma } from '@prisma/client'
 
 export async function userRoutes(app: FastifyInstance) {
   app.post(
@@ -222,33 +223,36 @@ export async function userRoutes(app: FastifyInstance) {
     '/api/users/:id',
     { preHandler: [authenticate, adminOnly] },
     async (request, reply) => {
-      const deleteUserSchema = z.object({
-        id: z.string().uuid('ID inválido'),
-      })
-
+      const deleteUserSchema = z.object({ id: z.string().uuid('ID inválido') })
       const { id } = deleteUserSchema.parse(request.params)
 
-      const userExists = await prisma.user.findUnique({
-        where: { id },
-      })
+      const userExists = await prisma.user.findUnique({ where: { id } })
 
       if (!userExists) {
-        return reply.status(404).send({
-          error: 'Usuário não encontrado',
-        })
+        return reply.status(404).send({ error: 'Usuário não encontrado' })
       }
 
       if (request.user.id === id) {
-        return reply.status(400).send({
-          error: 'Você não pode deletar seu próprio usuário',
-        })
+        return reply
+          .status(400)
+          .send({ error: 'Você não pode deletar seu próprio usuário' })
       }
 
-      await prisma.user.delete({
-        where: { id },
-      })
-
-      return reply.status(204).send({ id })
+      try {
+        await prisma.user.delete({ where: { id } })
+        return reply.status(204).send({ id })
+      } catch (error) {
+        if (
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === 'P2003'
+        ) {
+          return reply.status(400).send({
+            error:
+              'Este usuário possui projetos vinculados e não pode ser deletado.',
+          })
+        }
+        throw error
+      }
     }
   )
 }
