@@ -20,24 +20,24 @@ async function main() {
   const coordenadores = await Promise.all([
     prisma.user.create({
       data: {
-        nome: 'Prof. Carlos Silva',
-        email: 'carlos.silva@ifnmg.edu.br',
+        nome: 'Prof. Alan Oliveira',
+        email: 'alan.oliveira@ifnmg.edu.br',
         senha: hashedPassword,
         role: 'COORDENADOR',
       },
     }),
     prisma.user.create({
       data: {
-        nome: 'Prof. Ana Oliveira',
-        email: 'ana.oliveira@ifnmg.edu.br',
+        nome: 'Prof. Marcos Montanari',
+        email: 'marcos.montanari@ifnmg.edu.br',
         senha: hashedPassword,
         role: 'COORDENADOR',
       },
     }),
     prisma.user.create({
       data: {
-        nome: 'Prof. Marcos Santos',
-        email: 'marcos.santos@ifnmg.edu.br',
+        nome: 'Prof. Marcos Aurélio',
+        email: 'marcos.aurelio@ifnmg.edu.br',
         senha: hashedPassword,
         role: 'COORDENADOR',
       },

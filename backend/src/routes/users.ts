@@ -142,6 +142,82 @@ export async function userRoutes(app: FastifyInstance) {
     }
   )
 
+  app.patch(
+    '/api/users/:id/senha',
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      const updatePasswordSchema = z.object({
+        params: z.object({
+          id: z.string().uuid('ID inválido'),
+        }),
+        body: z
+          .object({
+            senhaAtual: z
+              .string()
+              .min(6, 'Senha atual deve ter no mínimo 6 caracteres'),
+            novaSenha: z
+              .string()
+              .min(6, 'Nova senha deve ter no mínimo 6 caracteres'),
+            confirmarSenha: z
+              .string()
+              .min(6, 'Confirmação deve ter no mínimo 6 caracteres'),
+          })
+          .refine((data) => data.novaSenha === data.confirmarSenha, {
+            message: 'As senhas não coincidem',
+            path: ['confirmarSenha'],
+          }),
+      })
+
+      const {
+        params: { id },
+        body: { senhaAtual, novaSenha },
+      } = updatePasswordSchema.parse(request)
+
+      const user = await prisma.user.findUnique({
+        where: { id },
+      })
+
+      if (!user) {
+        return reply.status(404).send({
+          error: 'Usuário não encontrado',
+        })
+      }
+
+      const isPasswordValid = await bcrypt.compare(senhaAtual, user.senha)
+      if (!isPasswordValid) {
+        return reply.status(401).send({
+          error: 'Senha atual incorreta',
+        })
+      }
+
+      const isSamePassword = await bcrypt.compare(novaSenha, user.senha)
+      if (isSamePassword) {
+        return reply.status(400).send({
+          error: 'A nova senha deve ser diferente da senha atual',
+        })
+      }
+
+      const hashedPassword = await bcrypt.hash(novaSenha, 10)
+
+      const updatedUser = await prisma.user.update({
+        where: { id },
+        data: {
+          senha: hashedPassword,
+        },
+        select: {
+          id: true,
+          nome: true,
+          email: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      })
+
+      return reply.status(200).send(updatedUser)
+    }
+  )
+
   app.delete(
     '/api/users/:id',
     { preHandler: [authenticate, adminOnly] },
