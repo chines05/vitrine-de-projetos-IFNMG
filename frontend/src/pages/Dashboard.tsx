@@ -3,7 +3,7 @@ import { DashboardNavbar } from '@/components/DashboardNavbar'
 import { DashboardSidebar } from '@/components/DashboardSidebar'
 import { formatErrorMessage } from '@/utils/format'
 import type { User } from '@/utils/types'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, type JSX } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 
@@ -25,7 +25,7 @@ export default function Dashboard() {
     checkAuth()
   }, [navigate, checkAuth])
 
-  if (!user) return navigate('/login')
+  if (!user) return navigate('/login') as unknown as JSX.Element
 
   return (
     <div className="flex min-h-screen">

@@ -45,7 +45,7 @@ export const UserForm = ({ user, onSuccess }: UserFormProps) => {
     try {
       const payloadUpadate = {
         ...data,
-        senha: data.senha ? data.senha : '',
+        senha: data.senha ? data.senha : undefined,
       }
 
       if (user) {
@@ -117,7 +117,11 @@ export const UserForm = ({ user, onSuccess }: UserFormProps) => {
         <Label className="mb-2">Senha</Label>
         <Input
           type="password"
-          placeholder="Senha (mínimo 6 caracteres)"
+          placeholder={
+            user
+              ? 'Senha mínimo 6 caracteres (opcional para atualização)'
+              : 'Senha (mínimo 6 caracteres)'
+          }
           {...register('senha')}
         />
         {errors.senha && (

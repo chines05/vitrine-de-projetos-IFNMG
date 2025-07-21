@@ -11,11 +11,9 @@ export type User = {
 
 export type Aluno = {
   id: string
-  matricula: string
   nome: string
-  email: string
+  turma: string
   curso: string
-  campus: string
   createdAt?: Date
   updatedAt?: Date
 }

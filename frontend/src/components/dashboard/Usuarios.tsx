@@ -21,11 +21,14 @@ import {
 import toast from 'react-hot-toast'
 import { UserForm } from '../UserForm'
 import { formatErrorMessage } from '@/utils/format'
+import ExcluirUsuarioDialog from '../dialog/ExcluirUsuarioDialog'
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 
 const Usuarios = () => {
   const [users, setUsers] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
   const fetchUsers = async () => {
@@ -42,7 +45,6 @@ const Usuarios = () => {
   }
 
   const handleDelete = async (userId: string) => {
-    console.log('Excluindo usuário:', userId)
     try {
       await deleteUser(userId)
       fetchUsers()
@@ -119,23 +121,36 @@ const Usuarios = () => {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedUser(user)
-                          setIsDialogOpen(true)
-                        }}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDelete(user.id)}
-                      >
-                        <Trash2 className="h-4 w-4 text-red-500" />
-                      </Button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedUser(user)
+                              setIsDialogOpen(true)
+                            }}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Editar Usuário</TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedUser(user)
+                              setIsDialogDeleteOpen(true)
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4 text-red-600" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Excluir Usuário</TooltipContent>
+                      </Tooltip>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -144,6 +159,12 @@ const Usuarios = () => {
           </TableBody>
         </Table>
       </div>
+      <ExcluirUsuarioDialog
+        isOpen={isDialogDeleteOpen}
+        onClose={() => setIsDialogDeleteOpen(false)}
+        user={selectedUser}
+        onDelete={handleDelete}
+      />
     </main>
   )
 }

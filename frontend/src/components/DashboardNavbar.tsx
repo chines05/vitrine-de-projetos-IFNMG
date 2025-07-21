@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
+import { formatErrorMessage } from '@/utils/format'
 
 type Props = {
   user: User
@@ -58,8 +59,8 @@ export function DashboardNavbar({ user }: Props) {
       toast.success('Senha atualizada com sucesso!')
       setIsUpdateSenhaOpen(false)
       reset()
-    } catch (error: any) {
-      toast.error(error.response.data.error || 'Erro ao atualizar senha.')
+    } catch (error) {
+      toast.error(formatErrorMessage(error, 'Erro ao atualizar senha.'))
     }
   }
 
