@@ -1,9 +1,9 @@
 import fastify from 'fastify'
 import cors from '@fastify/cors'
 import jwt from '@fastify/jwt'
-import { appRoutes } from './routes'
 import { authenticate } from './middleware/auth'
 import fastifyMultipart from '@fastify/multipart'
+import { routes } from './routes'
 
 const app = fastify({ logger: true })
 
@@ -27,7 +27,7 @@ await app.register(fastifyMultipart)
 
 app.decorate('authenticate', authenticate)
 
-await app.register(appRoutes)
+await app.register(routes)
 
 app.listen({ port: 8080, host: '0.0.0.0' }).then(() => {
   console.log('🚀 Servidor rodando em http://localhost:8080')

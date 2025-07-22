@@ -1,9 +1,9 @@
 import { FastifyInstance } from 'fastify'
-import { authRoutes } from './auth.js'
-import { userRoutes } from './users.js'
-import { alunoRoutes } from './aluno.js'
+import { authRoutes } from './authRoute.js'
+import { userRoutes } from './userRoute.js'
+import { alunoRoutes } from './alunoRoute.js'
 
-export async function appRoutes(app: FastifyInstance) {
+export async function routes(app: FastifyInstance) {
   await app.register(authRoutes)
 
   await app.register(userRoutes)
