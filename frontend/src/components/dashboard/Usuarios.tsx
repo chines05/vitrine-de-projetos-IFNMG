@@ -19,7 +19,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import toast from 'react-hot-toast'
-import { UserForm } from '../UserForm'
+import { UserForm } from '../forms/UserForm'
 import { formatErrorMessage } from '@/utils/format'
 import ExcluirUsuarioDialog from '../dialog/ExcluirUsuarioDialog'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'

@@ -22,7 +22,7 @@ import { formatErrorMessage } from '@/utils/format'
 import ExcluirAlunoDialog from '../dialog/ExcluirAlunoDialog'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import { deleteAluno, getAlunos } from '@/api/apiAlunos'
-import { AlunoForm } from '../AlunoForm'
+import { AlunoForm } from '../forms/AlunoForm'
 import { Upload } from 'lucide-react'
 import { CadastroEmLoteAlunoDialog } from '../dialog/CadastroEmLoteAlunoDialog'
 
