@@ -2,9 +2,8 @@ import { z } from 'zod'
 
 export const createProjetoSchema = z.object({
   titulo: z.string().min(3).max(100),
-  url: z.string().url(),
+  url: z.string(),
   descricao: z.string().min(10),
-  resumo: z.string().min(10).max(200),
   dataInicio: z.string().datetime(),
   dataFim: z.string().datetime().optional(),
   tipo: z.enum(['PESQUISA', 'ENSINO', 'EXTENSAO']),
