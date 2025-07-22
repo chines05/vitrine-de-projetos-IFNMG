@@ -82,7 +82,6 @@ async function main() {
         url: 'agricultura-sustentavel',
         descricao:
           'Desenvolvimento de técnicas agrícolas adaptadas ao clima semiárido.',
-        resumo: 'Inovações para cultivo em regiões de seca prolongada.',
         dataInicio: new Date('2023-01-15'),
         tipo: 'PESQUISA',
         coordenador: { connect: { id: coordenadores[0].id } },
@@ -112,7 +111,6 @@ async function main() {
         url: 'energias-renovaveis',
         descricao:
           'Implementação de soluções energéticas sustentáveis em áreas remotas.',
-        resumo: 'Tecnologias acessíveis para geração de energia limpa.',
         dataInicio: new Date('2023-03-10'),
         tipo: 'PESQUISA',
         coordenador: { connect: { id: coordenadores[1].id } },
@@ -135,8 +133,6 @@ async function main() {
         url: 'metodologias-ativas',
         descricao:
           'Implementação de novas abordagens pedagógicas no ensino técnico.',
-        resumo:
-          'Estratégias para engajar estudantes no processo de aprendizagem.',
         dataInicio: new Date('2023-02-20'),
         tipo: 'ENSINO',
         coordenador: { connect: { id: coordenadores[2].id } },
@@ -153,7 +149,6 @@ async function main() {
         titulo: 'Educação Digital para Terceira Idade',
         url: 'educacao-digital',
         descricao: 'Oficinas de inclusão digital para idosos da comunidade.',
-        resumo: 'Redução do isolamento digital na terceira idade.',
         dataInicio: new Date('2023-04-05'),
         dataFim: new Date('2023-11-30'),
         tipo: 'EXTENSAO',
@@ -172,7 +167,6 @@ async function main() {
         titulo: 'Horta Comunitária Sustentável',
         url: 'horta-comunitaria',
         descricao: 'Implementação de hortas urbanas em áreas públicas.',
-        resumo: 'Agricultura urbana e segurança alimentar.',
         dataInicio: new Date('2023-05-15'),
         tipo: 'EXTENSAO',
         coordenador: { connect: { id: coordenadores[1].id } },
