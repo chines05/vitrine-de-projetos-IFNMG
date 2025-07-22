@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify'
 import {
   createUserHandler,
   deleteUserHandler,
+  getCoordenadoresHandler,
   getUsersHandler,
   importUsersHandler,
   updatePasswordHandler,
@@ -22,6 +23,11 @@ export async function userRoutes(app: FastifyInstance) {
   )
   app.get('/api/users', { preHandler: [authenticate, adminOnly] }, async () =>
     getUsersHandler()
+  )
+  app.get(
+    '/api/users/coordenadores',
+    { preHandler: [authenticate, adminOnly] },
+    getCoordenadoresHandler
   )
   app.put(
     '/api/users/:id',

@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify'
 import { authRoutes } from './authRoute.js'
 import { userRoutes } from './userRoute.js'
 import { alunoRoutes } from './alunoRoute.js'
+import { projetosRoutes } from './projetoRoute.js'
 
 export async function routes(app: FastifyInstance) {
   await app.register(authRoutes)
@@ -9,4 +10,6 @@ export async function routes(app: FastifyInstance) {
   await app.register(userRoutes)
 
   await app.register(alunoRoutes)
+
+  await app.register(projetosRoutes)
 }

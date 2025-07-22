@@ -11,10 +11,7 @@ import {
   deleteUserSchema,
 } from '../validators/userValidator'
 
-export async function createUserHandler(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {
+async function createUserHandler(request: FastifyRequest, reply: FastifyReply) {
   const { nome, email, senha, role } = createUserSchema.parse(request.body)
   const hashedPassword = await bcrypt.hash(senha, 10)
 
@@ -37,7 +34,7 @@ export async function createUserHandler(
   })
 }
 
-export async function importUsersHandler(
+async function importUsersHandler(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
@@ -96,7 +93,7 @@ export async function importUsersHandler(
   })
 }
 
-export async function getUsersHandler() {
+async function getUsersHandler() {
   return prisma.user.findMany({
     select: {
       id: true,
@@ -110,10 +107,22 @@ export async function getUsersHandler() {
   })
 }
 
-export async function updateUserHandler(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {
+async function getCoordenadoresHandler() {
+  return prisma.user.findMany({
+    where: { role: 'COORDENADOR' },
+    select: {
+      id: true,
+      nome: true,
+      email: true,
+      role: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+    orderBy: { createdAt: 'desc' },
+  })
+}
+
+async function updateUserHandler(request: FastifyRequest, reply: FastifyReply) {
   const { params, body } = updateUserSchema.parse({
     params: request.params,
     body: request.body,
@@ -154,7 +163,7 @@ export async function updateUserHandler(
   return updated
 }
 
-export async function updatePasswordHandler(
+async function updatePasswordHandler(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
@@ -192,10 +201,7 @@ export async function updatePasswordHandler(
   return reply.status(200).send(updated)
 }
 
-export async function deleteUserHandler(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {
+async function deleteUserHandler(request: FastifyRequest, reply: FastifyReply) {
   const { id } = deleteUserSchema.parse(request.params)
   const user = await prisma.user.findUnique({ where: { id } })
 
@@ -217,4 +223,14 @@ export async function deleteUserHandler(
     }
     throw error
   }
+}
+
+export {
+  createUserHandler,
+  importUsersHandler,
+  getUsersHandler,
+  getCoordenadoresHandler,
+  updateUserHandler,
+  updatePasswordHandler,
+  deleteUserHandler,
 }
