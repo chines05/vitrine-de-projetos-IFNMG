@@ -27,11 +27,31 @@ export type ProjetoType = {
   dataInicio: Date
   dataFim?: Date
   tipo: 'PESQUISA' | 'ENSINO' | 'EXTENSAO'
-  status: 'ATIVO' | 'CONCLUIDO'
+  status: 'ATIVO' | 'CONCLUIDO' | 'PAUSADO' | 'CANCELADO'
   campus: string
-  coordenadorId?: string
-  createdAt?: Date
-  updatedAt?: Date
+  createdAt: string
+  updatedAt: string
+  coordenador: User
+  coordenadorId: string
+  participantes: {
+    id: string
+    aluno: {
+      id: string
+      nome: string
+      turma: string
+      curso: string
+    }
+    alunoId: string
+    funcao: string
+    projetoId: string
+    createdAt: string
+  }[]
+  imagens: {
+    id: string
+    url: string
+    projetoId: string
+    createdAt: string
+  }[]
 }
 
 export type ErrorResponseType =

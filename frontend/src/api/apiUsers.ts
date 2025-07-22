@@ -32,6 +32,12 @@ const getUsers = async () => {
   return response.data
 }
 
+const getCoordenadores = async () => {
+  const response = await api.get<User[]>('/users/coordenadores')
+
+  return response.data
+}
+
 const updateUser = async (
   id: string,
   userData: {
@@ -62,6 +68,7 @@ export {
   postUser,
   postUsersLote,
   getUsers,
+  getCoordenadores,
   updateUser,
   updateSenhaUser,
   deleteUser,
