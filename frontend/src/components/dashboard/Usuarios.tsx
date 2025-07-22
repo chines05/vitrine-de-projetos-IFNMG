@@ -21,9 +21,9 @@ import {
 import toast from 'react-hot-toast'
 import { UserForm } from '../forms/UserForm'
 import { formatErrorMessage } from '@/utils/format'
-import ExcluirUsuarioDialog from '../dialog/ExcluirUsuarioDialog'
+import ExcluirUsuarioDialog from '../dialogs/ExcluirUsuarioDialog'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
-import { CadastroEmLoteUserDialog } from '../dialog/CadastroEmLoteUserDialog'
+import { CadastroEmLoteUserDialog } from '../dialogs/CadastroEmLoteUserDialog'
 
 const Usuarios = () => {
   const [users, setUsers] = useState<User[]>([])

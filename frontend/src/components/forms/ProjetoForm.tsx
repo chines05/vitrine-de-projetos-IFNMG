@@ -1,32 +1,28 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ProjetoSchema, type ProjetoSchemaType } from '@/schemas/projetoSchema'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+import { format } from 'date-fns'
+import { CalendarIcon } from 'lucide-react'
+import toast from 'react-hot-toast'
+import { formatErrorMessage } from '@/utils/format'
+import { postProjeto, updateProjeto } from '@/api/apiProjeto'
+import { getCoordenadores } from '@/api/apiUsers'
+import { cn } from '@/lib/utils'
+import { useEffect, useState } from 'react'
+import type { User } from '@/utils/types'
+import { Label } from '../ui/label'
+import { Input } from '../ui/input'
+import { Textarea } from '../ui/textarea'
+import { Button } from '../ui/button'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Calendar } from '@/components/ui/calendar'
-import { getCoordenadores } from '@/api/apiUsers'
-import toast from 'react-hot-toast'
-import { formatErrorMessage } from '@/utils/format'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import { format } from 'date-fns'
-import { CalendarIcon } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { postProjeto, updateProjeto } from '@/api/apiProjeto'
-import type { User } from '@/utils/types'
-import { useEffect, useState } from 'react'
+} from '../ui/select'
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
+import { Calendar } from '../ui/calendar'
 
 interface ProjetoFormProps {
   projeto?: ProjetoSchemaType | null
@@ -75,56 +71,52 @@ export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
     }
   }
 
+  const renderError = (field: keyof ProjetoSchemaType) =>
+    formState.errors[field] && (
+      <span className="text-red-500 text-xs mt-1 block">
+        {formState.errors[field]?.message}
+      </span>
+    )
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label>Título*</Label>
+        <div className="space-y-2">
+          <Label htmlFor="titulo">Título*</Label>
           <Input {...register('titulo')} />
-          {formState.errors.titulo && (
-            <span className="text-red-500 text-xs">
-              {formState.errors.titulo.message}
-            </span>
-          )}
+          {renderError('titulo')}
         </div>
-
-        <div>
-          <Label>URL*</Label>
+        <div className="space-y-2">
+          <Label htmlFor="url">URL*</Label>
           <Input {...register('url')} />
-          {formState.errors.url && (
-            <span className="text-red-500 text-xs">
-              {formState.errors.url.message}
-            </span>
-          )}
+          {renderError('url')}
         </div>
       </div>
 
-      <div>
-        <Label>Descrição*</Label>
-        <Textarea {...register('descricao')} rows={4} />
-        {formState.errors.descricao && (
-          <span className="text-red-500 text-xs">
-            {formState.errors.descricao.message}
-          </span>
-        )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label>Descrição*</Label>
+          <Textarea rows={4} {...register('descricao')} />
+          {renderError('descricao')}
+        </div>
+        <div className="space-y-2">
+          <Label>Resumo*</Label>
+          <Textarea rows={4} {...register('resumo')} />
+          {renderError('resumo')}
+        </div>
       </div>
 
-      <div>
-        <Label>Resumo*</Label>
-        <Textarea {...register('resumo')} rows={2} maxLength={200} />
-        {formState.errors.resumo && (
-          <span className="text-red-500 text-xs">
-            {formState.errors.resumo.message}
-          </span>
-        )}
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="space-y-2">
           <Label>Tipo*</Label>
-          <Select {...register('tipo')}>
+          <Select
+            value={watch('tipo')}
+            onValueChange={(val: ProjetoSchemaType['tipo']) =>
+              setValue('tipo', val as ProjetoSchemaType['tipo'])
+            }
+          >
             <SelectTrigger>
-              <SelectValue placeholder="Selecione" />
+              <SelectValue placeholder="Selecione o tipo" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="PESQUISA">Pesquisa</SelectItem>
@@ -132,13 +124,18 @@ export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
               <SelectItem value="EXTENSAO">Extensão</SelectItem>
             </SelectContent>
           </Select>
+          {renderError('tipo')}
         </div>
-
-        <div>
+        <div className="space-y-2">
           <Label>Status*</Label>
-          <Select {...register('status')}>
+          <Select
+            value={watch('status')}
+            onValueChange={(val: ProjetoSchemaType['status']) =>
+              setValue('status', val as ProjetoSchemaType['status'])
+            }
+          >
             <SelectTrigger>
-              <SelectValue placeholder="Selecione" />
+              <SelectValue placeholder="Selecione o status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="ATIVO">Ativo</SelectItem>
@@ -147,10 +144,13 @@ export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
               <SelectItem value="CANCELADO">Cancelado</SelectItem>
             </SelectContent>
           </Select>
+          {renderError('status')}
         </div>
+      </div>
 
-        <div>
-          <Label>Data Início*</Label>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label>Data de Início*</Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -161,26 +161,26 @@ export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {watch('dataInicio') ? (
-                  format(watch('dataInicio'), 'PPP')
-                ) : (
-                  <span>Selecione uma data</span>
-                )}
+                {watch('dataInicio')
+                  ? format(watch('dataInicio'), 'PPP')
+                  : 'Selecione'}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
               <Calendar
                 mode="single"
+                required
                 selected={watch('dataInicio')}
-                onSelect={(date) => setValue('dataInicio', date || new Date())}
-                initialFocus
+                onSelect={(date: Date) =>
+                  setValue('dataInicio', date || new Date())
+                }
               />
             </PopoverContent>
           </Popover>
+          {renderError('dataInicio')}
         </div>
-
-        <div>
-          <Label>Data Fim (opcional)</Label>
+        <div className="space-y-2">
+          <Label>Data de Fim (opcional)</Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -191,50 +191,55 @@ export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {watch('dataFim') ? (
-                  format(watch('dataFim') as Date, 'PPP')
-                ) : (
-                  <span>Selecione uma data</span>
-                )}
+                {watch('dataFim')
+                  ? format(watch('dataFim')!, 'PPP')
+                  : 'Selecione'}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
               <Calendar
                 mode="single"
+                required
                 selected={watch('dataFim')}
-                onSelect={(date) => setValue('dataFim', date || undefined)}
-                initialFocus
+                onSelect={(date: Date) =>
+                  setValue('dataFim', date || undefined)
+                }
               />
             </PopoverContent>
           </Popover>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label>Coordenador*</Label>
-          <Select {...register('coordenadorId')}>
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione" />
-            </SelectTrigger>
-            <SelectContent>
-              {coordenadores?.map((c) => (
-                <SelectItem key={c.id} value={c.id}>
-                  {c.nome}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {formState.errors.coordenadorId && (
-            <span className="text-red-500 text-xs">
-              {formState.errors.coordenadorId.message}
-            </span>
-          )}
-        </div>
+      <div className="space-y-2">
+        <Label>Coordenador*</Label>
+        <Select
+          value={watch('coordenadorId')}
+          onValueChange={(val: string) => setValue('coordenadorId', val)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Selecione o coordenador" />
+          </SelectTrigger>
+          <SelectContent>
+            {coordenadores.map((coord) => (
+              <SelectItem key={coord.id} value={coord.id}>
+                {coord.nome}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {renderError('coordenadorId')}
       </div>
 
-      <Button type="submit" disabled={formState.isSubmitting}>
-        {formState.isSubmitting ? 'Salvando...' : 'Salvar'}
+      <Button
+        type="submit"
+        disabled={formState.isSubmitting}
+        className="w-full md:w-auto"
+      >
+        {formState.isSubmitting
+          ? 'Salvando...'
+          : projeto
+          ? 'Atualizar Projeto'
+          : 'Cadastrar Projeto'}
       </Button>
     </form>
   )

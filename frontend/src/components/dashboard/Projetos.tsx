@@ -25,11 +25,11 @@ import {
 } from '@/components/ui/tooltip'
 import type { ProjetoType } from '@/utils/types'
 import { Badge } from '@/components/ui/badge'
-import { VincularAlunoDialog } from '@/components/dialog/VincularAlunoDialog'
+import { VincularAlunoDialog } from '@/components/dialogs/VincularAlunoDialog'
 import { deleteProjeto, getProjetos } from '@/api/apiProjeto'
 import { ProjetoForm } from '../forms/ProjetoForm'
-import { ImagemUploadDialog } from '../dialog/ ImagemUploadDialog'
-import { ExcluirProjetoDialog } from '../dialog/ExcluirProjetoDialog'
+import { ImagemUploadDialog } from '../dialogs/ ImagemUploadDialog'
+import { ExcluirProjetoDialog } from '../dialogs/ExcluirProjetoDialog'
 
 const Projetos = () => {
   const [projetos, setProjetos] = useState<ProjetoType[]>([])
@@ -79,7 +79,7 @@ const Projetos = () => {
               Cadastrar Projeto
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-4xl">
+          <DialogContent className="md:max-w-2xl">
             <DialogHeader>
               <DialogTitle>
                 {selectedProjeto ? 'Editar Projeto' : 'Cadastrar Projeto'}

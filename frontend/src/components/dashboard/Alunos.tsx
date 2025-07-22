@@ -19,12 +19,12 @@ import {
 } from '@/components/ui/dialog'
 import toast from 'react-hot-toast'
 import { formatErrorMessage } from '@/utils/format'
-import ExcluirAlunoDialog from '../dialog/ExcluirAlunoDialog'
+import ExcluirAlunoDialog from '../dialogs/ExcluirAlunoDialog'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import { deleteAluno, getAlunos } from '@/api/apiAlunos'
 import { AlunoForm } from '../forms/AlunoForm'
 import { Upload } from 'lucide-react'
-import { CadastroEmLoteAlunoDialog } from '../dialog/CadastroEmLoteAlunoDialog'
+import { CadastroEmLoteAlunoDialog } from '../dialogs/CadastroEmLoteAlunoDialog'
 
 const Alunos = () => {
   const [alunos, setAlunos] = useState<Aluno[]>([])
