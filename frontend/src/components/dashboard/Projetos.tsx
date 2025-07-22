@@ -79,7 +79,7 @@ const Projetos = () => {
               Cadastrar Projeto
             </Button>
           </DialogTrigger>
-          <DialogContent className="md:max-w-2xl">
+          <DialogContent className="md:max-w-4xl">
             <DialogHeader>
               <DialogTitle>
                 {selectedProjeto ? 'Editar Projeto' : 'Cadastrar Projeto'}

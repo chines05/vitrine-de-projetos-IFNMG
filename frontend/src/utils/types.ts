@@ -23,7 +23,6 @@ export type ProjetoType = {
   titulo: string
   url: string
   descricao: string
-  resumo: string
   dataInicio: Date
   dataFim?: Date
   tipo: 'PESQUISA' | 'ENSINO' | 'EXTENSAO'

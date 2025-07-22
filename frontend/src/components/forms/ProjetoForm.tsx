@@ -51,6 +51,7 @@ export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
       tipo: 'PESQUISA',
       status: 'ATIVO',
       dataInicio: new Date(),
+      coordenadorId: '',
     },
   })
 
@@ -86,27 +87,31 @@ export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
           <Input {...register('titulo')} />
           {renderError('titulo')}
         </div>
-        <div className="space-y-2">
+        <div className="space-y-2 relative">
           <Label htmlFor="url">URL*</Label>
-          <Input {...register('url')} />
+
+          <span className="absolute top-8/15 left-3 text-sm text-muted-foreground">
+            vitrine.ifalmenara.com.br/projeto/
+          </span>
+
+          <Input
+            {...register('url')}
+            id="url"
+            placeholder=""
+            className="pl-[227px]"
+          />
+
           {renderError('url')}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label>Descrição*</Label>
-          <Textarea rows={4} {...register('descricao')} />
-          {renderError('descricao')}
-        </div>
-        <div className="space-y-2">
-          <Label>Resumo*</Label>
-          <Textarea rows={4} {...register('resumo')} />
-          {renderError('resumo')}
-        </div>
+      <div className="space-y-2">
+        <Label>Descrição*</Label>
+        <Textarea rows={4} {...register('descricao')} />
+        {renderError('descricao')}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>Tipo*</Label>
           <Select
