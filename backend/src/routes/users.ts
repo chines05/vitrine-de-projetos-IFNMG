@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import { prisma } from '../lib/prisma'
+import { parse } from 'csv-parse/sync'
 import { authenticate, adminOnly } from '../middleware/auth'
 import bcrypt from 'bcryptjs'
 import { Prisma } from '@prisma/client'
@@ -45,6 +46,75 @@ export async function userRoutes(app: FastifyInstance) {
         email: user.email,
         role: user.role,
         createdAt: user.createdAt,
+      })
+    }
+  )
+
+  app.post(
+    '/api/users/lote',
+    { preHandler: [authenticate, adminOnly] },
+    async (request, reply) => {
+      const file = await request.file()
+
+      if (!file) {
+        return reply.status(400).send({ error: 'Arquivo CSV não encontrado.' })
+      }
+
+      const buffer = await file.toBuffer()
+
+      const registros = parse(buffer, {
+        columns: true,
+        skip_empty_lines: true,
+        trim: true,
+      }) as Array<{ nome: string; 'e-mail': string; senha: string }>
+
+      const userSchema = z.object({
+        nome: z.string().min(3),
+        'e-mail': z.string().email(),
+        senha: z.string().min(6),
+      })
+
+      const erros: any[] = []
+      const inseridos: any[] = []
+
+      for (const [index, registro] of registros.entries()) {
+        const result = userSchema.safeParse(registro)
+
+        if (!result.success) {
+          erros.push({ linha: index + 1, mensagens: result.error.issues })
+          continue
+        }
+
+        const { nome, 'e-mail': email, senha } = result.data
+
+        const userExists = await prisma.user.findUnique({ where: { email } })
+
+        if (userExists) {
+          erros.push({
+            linha: index + 1,
+            mensagens: [{ message: 'E-mail já cadastrado.' }],
+          })
+          continue
+        }
+
+        const hashedPassword = await bcrypt.hash(senha, 10)
+
+        const user = await prisma.user.create({
+          data: {
+            nome,
+            email,
+            senha: hashedPassword,
+            role: 'COORDENADOR',
+          },
+        })
+
+        inseridos.push(user)
+      }
+
+      return reply.send({
+        totalRecebido: registros.length,
+        totalInserido: inseridos.length,
+        erros,
       })
     }
   )
