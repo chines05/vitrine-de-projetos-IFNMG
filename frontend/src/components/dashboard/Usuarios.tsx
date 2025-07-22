@@ -64,7 +64,7 @@ const Usuarios = () => {
     <main>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-4xl font-bold">Usuários</h1>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button onClick={() => setSelectedUser(null)}>

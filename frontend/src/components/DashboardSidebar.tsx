@@ -17,6 +17,7 @@ import Projetos from './dashboard/Projetos'
 import Usuarios from './dashboard/Usuarios'
 import Alunos from './dashboard/Alunos'
 import type { User } from '@/utils/types'
+import { useNavigate } from 'react-router-dom'
 
 type ComponentKeys = 'visaoGeral' | 'projetos' | 'alunos' | 'usuarios'
 
@@ -25,6 +26,7 @@ type Props = {
 }
 
 export function DashboardSidebar({ user }: Props) {
+  const navigate = useNavigate()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeComponent, setActiveComponent] =
     useState<ComponentKeys>('visaoGeral')
@@ -39,9 +41,12 @@ export function DashboardSidebar({ user }: Props) {
   return (
     <>
       <div className="hidden lg:flex lg:w-64 h-full bg-gradient-to-b from-[#2f9e41] to-[#1BA863] text-white flex-col fixed z-30">
-        <div className="p-3 pl-4 border-b h-16 border-white/20 flex items-center gap-2">
+        <div
+          onClick={() => navigate('/')}
+          className="p-3 pl-4 border-b h-16 border-white/20 flex items-center gap-2"
+        >
           <School className="h-6 w-6" />
-          <h1 className="text-lg font-bold tracking-tight leading-tight">
+          <h1 className="cursor-pointer text-lg font-bold tracking-tight leading-tight">
             {`Painel ${user.role}`}
           </h1>
         </div>
@@ -118,9 +123,12 @@ export function DashboardSidebar({ user }: Props) {
       >
         <div className="flex flex-col h-full p-4">
           <div className="flex justify-between items-center p-4 border-b border-white/20">
-            <div className="flex items-center gap-2">
+            <div
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2"
+            >
               <School className="h-6 w-6" />
-              <h1 className="text-lg font-bold tracking-tight leading-tight">
+              <h1 className="cursor-pointer text-lg font-bold tracking-tight leading-tight">
                 {`Painel ${user.role}`}
               </h1>
             </div>
