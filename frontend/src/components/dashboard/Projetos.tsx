@@ -103,7 +103,6 @@ const Projetos = () => {
               <TableHead>Título</TableHead>
               <TableHead>Tipo</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Campus</TableHead>
               <TableHead>Período</TableHead>
               <TableHead>Coordenador</TableHead>
               <TableHead className="text-right">Ações</TableHead>
@@ -146,7 +145,6 @@ const Projetos = () => {
                       {projeto.status}
                     </Badge>
                   </TableCell>
-                  <TableCell>{projeto.campus}</TableCell>
                   <TableCell>
                     {new Date(projeto.dataInicio).toLocaleDateString()} -{' '}
                     {projeto.dataFim

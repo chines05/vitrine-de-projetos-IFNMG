@@ -16,7 +16,6 @@ export const ProjetoSchema = z.object({
     .string()
     .min(10, 'Resumo deve ter no mínimo 10 caracteres')
     .max(1000),
-  campus: z.string().min(2, 'Campo obrigatório').max(100),
   tipo: z.enum(['PESQUISA', 'ENSINO', 'EXTENSAO'], {
     message: 'Tipo inválido',
   }),

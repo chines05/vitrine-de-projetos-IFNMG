@@ -85,7 +85,6 @@ async function main() {
         resumo: 'Inovações para cultivo em regiões de seca prolongada.',
         dataInicio: new Date('2023-01-15'),
         tipo: 'PESQUISA',
-        campus: 'Almenara',
         coordenador: { connect: { id: coordenadores[0].id } },
         participantes: {
           create: [
@@ -116,7 +115,6 @@ async function main() {
         resumo: 'Tecnologias acessíveis para geração de energia limpa.',
         dataInicio: new Date('2023-03-10'),
         tipo: 'PESQUISA',
-        campus: 'Januária',
         coordenador: { connect: { id: coordenadores[1].id } },
         participantes: {
           create: [
@@ -141,7 +139,6 @@ async function main() {
           'Estratégias para engajar estudantes no processo de aprendizagem.',
         dataInicio: new Date('2023-02-20'),
         tipo: 'ENSINO',
-        campus: 'Montes Claros',
         coordenador: { connect: { id: coordenadores[2].id } },
         participantes: {
           create: [{ alunoId: alunos[3].id, funcao: 'Monitor' }],
@@ -161,7 +158,6 @@ async function main() {
         dataFim: new Date('2023-11-30'),
         tipo: 'EXTENSAO',
         status: 'CONCLUIDO',
-        campus: 'Almenara',
         coordenador: { connect: { id: coordenadores[0].id } },
         participantes: {
           create: [
@@ -179,7 +175,6 @@ async function main() {
         resumo: 'Agricultura urbana e segurança alimentar.',
         dataInicio: new Date('2023-05-15'),
         tipo: 'EXTENSAO',
-        campus: 'Januária',
         coordenador: { connect: { id: coordenadores[1].id } },
         participantes: {
           create: [

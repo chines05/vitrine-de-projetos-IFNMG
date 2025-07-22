@@ -43,7 +43,6 @@ model Projeto {
   dataFim       DateTime?
   tipo          TipoProjeto     
   status        StatusProjeto   @default(ATIVO)
-  campus        String
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   coordenador   User            @relation("ProjetosDoCoordenador", fields: [coordenadorId], references: [id])

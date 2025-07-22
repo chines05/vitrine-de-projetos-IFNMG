@@ -28,7 +28,6 @@ export type ProjetoType = {
   dataFim?: Date
   tipo: 'PESQUISA' | 'ENSINO' | 'EXTENSAO'
   status: 'ATIVO' | 'CONCLUIDO' | 'PAUSADO' | 'CANCELADO'
-  campus: string
   createdAt: string
   updatedAt: string
   coordenador: User

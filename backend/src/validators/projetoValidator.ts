@@ -9,7 +9,6 @@ export const createProjetoSchema = z.object({
   dataFim: z.string().datetime().optional(),
   tipo: z.enum(['PESQUISA', 'ENSINO', 'EXTENSAO']),
   status: z.enum(['ATIVO', 'CONCLUIDO', 'PAUSADO', 'CANCELADO']).optional(),
-  campus: z.string().min(2),
   coordenadorId: z.string().uuid(),
 })
 

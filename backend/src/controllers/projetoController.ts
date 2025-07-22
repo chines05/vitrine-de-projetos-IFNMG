@@ -23,7 +23,6 @@ async function createProjetoHandler(
       dataFim,
       tipo,
       status,
-      campus,
       coordenadorId,
     } = createProjetoSchema.parse(request.body)
 
@@ -53,7 +52,6 @@ async function createProjetoHandler(
         dataFim: dataFim ? new Date(dataFim) : null,
         tipo,
         status,
-        campus,
         coordenadorId,
       },
       include: {
@@ -83,15 +81,13 @@ async function getProjetosHandler(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
-  const { campus, tipo, status } = request.query as {
-    campus?: string
+  const { tipo, status } = request.query as {
     tipo?: string
     status?: string
   }
 
   const projetos = await prisma.projeto.findMany({
     where: {
-      campus: campus ? { equals: campus } : undefined,
       tipo: tipo ? { equals: tipo as any } : undefined,
       status: status ? { equals: status as any } : undefined,
     },
@@ -226,7 +222,6 @@ async function updateProjetoHandler(
         dataFim: body.dataFim ? new Date(body.dataFim) : undefined,
         tipo: body.tipo,
         status: body.status,
-        campus: body.campus,
         coordenadorId: body.coordenadorId,
       },
       include: {

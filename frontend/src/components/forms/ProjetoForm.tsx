@@ -55,7 +55,6 @@ export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
       tipo: 'PESQUISA',
       status: 'ATIVO',
       dataInicio: new Date(),
-      campus: '',
     },
   })
 
@@ -193,7 +192,7 @@ export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {watch('dataFim') ? (
-                  format(watch('dataFim'), 'PPP')
+                  format(watch('dataFim') as Date, 'PPP')
                 ) : (
                   <span>Selecione uma data</span>
                 )}
@@ -212,16 +211,6 @@ export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label>Campus*</Label>
-          <Input {...register('campus')} />
-          {formState.errors.campus && (
-            <span className="text-red-500 text-xs">
-              {formState.errors.campus.message}
-            </span>
-          )}
-        </div>
-
         <div>
           <Label>Coordenador*</Label>
           <Select {...register('coordenadorId')}>
