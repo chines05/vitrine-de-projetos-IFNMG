@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Plus, Pencil, Trash2 } from 'lucide-react'
+import { Plus, Pencil, Trash2, Upload } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { deleteUser, getUsers } from '@/api/apiUsers'
 import type { User } from '@/utils/types'
@@ -23,6 +23,7 @@ import { UserForm } from '../UserForm'
 import { formatErrorMessage } from '@/utils/format'
 import ExcluirUsuarioDialog from '../dialog/ExcluirUsuarioDialog'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
+import { CadastroEmLoteUserDialog } from '../dialog/CadastroEmLoteUserDialog'
 
 const Usuarios = () => {
   const [users, setUsers] = useState<User[]>([])
@@ -30,6 +31,7 @@ const Usuarios = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
 
   const fetchUsers = async () => {
     setIsLoading(true)
@@ -62,22 +64,29 @@ const Usuarios = () => {
     <main>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-4xl font-bold">Usuários</h1>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => setSelectedUser(null)}>
-              <Plus className="mr-2 h-4 w-4" />
-              Cadastrar Usuário
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                {selectedUser ? 'Editar Usuário' : 'Cadastrar Usuário'}
-              </DialogTitle>
-            </DialogHeader>
-            <UserForm user={selectedUser} onSuccess={fetchUsers} />
-          </DialogContent>
-        </Dialog>
+        <div className="flex gap-2">
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={() => setSelectedUser(null)}>
+                <Plus className="mr-2 h-4 w-4" />
+                Cadastrar Usuário
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>
+                  {selectedUser ? 'Editar Usuário' : 'Cadastrar Usuário'}
+                </DialogTitle>
+              </DialogHeader>
+              <UserForm user={selectedUser} onSuccess={fetchUsers} />
+            </DialogContent>
+          </Dialog>
+
+          <Button onClick={() => setIsImportDialogOpen(true)} variant="outline">
+            <Upload className="mr-2 h-4 w-4" />
+            Importar CSV
+          </Button>
+        </div>
       </div>
 
       <div className="rounded-md border">
@@ -159,11 +168,18 @@ const Usuarios = () => {
           </TableBody>
         </Table>
       </div>
+
       <ExcluirUsuarioDialog
         isOpen={isDialogDeleteOpen}
         onClose={() => setIsDialogDeleteOpen(false)}
         user={selectedUser}
         onDelete={handleDelete}
+      />
+
+      <CadastroEmLoteUserDialog
+        isOpen={isImportDialogOpen}
+        onClose={() => setIsImportDialogOpen(false)}
+        onSuccess={fetchUsers}
       />
     </main>
   )

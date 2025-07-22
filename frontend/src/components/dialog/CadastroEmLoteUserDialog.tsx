@@ -19,7 +19,7 @@ import toast from 'react-hot-toast'
 import { formatErrorMessage } from '@/utils/format'
 import { Upload, XCircle } from 'lucide-react'
 import { Input } from '../ui/input'
-import { postAlunosLote } from '@/api/apiAlunos'
+import { postUsersLote } from '@/api/apiUsers'
 
 interface Props {
   isOpen: boolean
@@ -27,14 +27,14 @@ interface Props {
   onSuccess: () => void
 }
 
-export const CadastroEmLoteAlunoDialog = ({
+export const CadastroEmLoteUserDialog = ({
   isOpen,
   onClose,
   onSuccess,
 }: Props) => {
   const [csvFile, setCsvFile] = useState<File | null>(null)
   const [csvPreview, setCsvPreview] = useState<
-    Array<{ nome: string; turma: string; curso: string }>
+    Array<{ nome: string; 'e-mail': string; senha: string }>
   >([])
 
   const handleCsvChange = async (
@@ -48,7 +48,7 @@ export const CadastroEmLoteAlunoDialog = ({
       columns: true,
       skip_empty_lines: true,
       trim: true,
-    }) as Array<{ nome: string; turma: string; curso: string }>
+    }) as Array<{ nome: string; 'e-mail': string; senha: string }>
     setCsvPreview(data)
   }
 
@@ -56,12 +56,12 @@ export const CadastroEmLoteAlunoDialog = ({
     if (!csvFile) return
 
     try {
-      await postAlunosLote(csvFile)
-      toast.success('Alunos importados com sucesso!')
+      await postUsersLote(csvFile)
+      toast.success('Usuarios importados com sucesso!')
       onSuccess()
       handleClose()
     } catch (error) {
-      toast.error(formatErrorMessage(error, 'Erro ao importar alunos.'))
+      toast.error(formatErrorMessage(error, 'Erro ao importar usuarios.'))
     }
   }
 
@@ -84,14 +84,14 @@ export const CadastroEmLoteAlunoDialog = ({
         <DialogHeader className="space-y-1.5">
           <DialogTitle className="text-lg font-semibold flex items-center gap-2">
             <Upload className="h-5 w-5 text-primary" />
-            Importar alunos via CSV
+            Importar usuarios via CSV
           </DialogTitle>
         </DialogHeader>
 
         <div className="w-full flex flex-col gap-2">
           <label
             htmlFor="csvFile"
-            className="cursor-pointer border border-dashed border-muted rounded-md bg-muted px-4 py-6 text-center text-sm text-muted-foreground hover:border-primary hover:bg-muted/80 transition"
+            className="senhar-pointer border border-dashed border-muted rounded-md bg-muted px-4 py-6 text-center text-sm text-muted-foreground hover:border-primary hover:bg-muted/80 transition"
           >
             {csvFile ? (
               <div className="flex flex-col items-center gap-1">
@@ -115,7 +115,7 @@ export const CadastroEmLoteAlunoDialog = ({
           </label>
           <p className="text-sm text-muted-foreground">
             O CSV deve conter colunas: <strong>nome</strong>,{' '}
-            <strong>turma</strong>, <strong>curso</strong>.
+            <strong>e-mail</strong>, <strong>senha</strong>.
           </p>
         </div>
 
@@ -124,17 +124,17 @@ export const CadastroEmLoteAlunoDialog = ({
             <Table>
               <TableHeader className="sticky top-0 bg-background z-10">
                 <TableRow>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>Turma</TableHead>
-                  <TableHead>Curso</TableHead>
+                  <TableHead>nome</TableHead>
+                  <TableHead>e-mail</TableHead>
+                  <TableHead>senha</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {csvPreview.map((aluno, idx) => (
+                {csvPreview.map((user, idx) => (
                   <TableRow key={idx} className="hover:bg-muted/50">
-                    <TableCell>{aluno.nome}</TableCell>
-                    <TableCell>{aluno.turma}</TableCell>
-                    <TableCell>{aluno.curso}</TableCell>
+                    <TableCell>{user.nome}</TableCell>
+                    <TableCell>{user['e-mail']}</TableCell>
+                    <TableCell>{user.senha}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

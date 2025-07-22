@@ -13,6 +13,19 @@ const postUser = async (userData: {
   return response.data
 }
 
+const postUsersLote = async (file: File) => {
+  const formData = new FormData()
+  formData.append('file', file)
+
+  const response = await api.post('/users/lote', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+
+  return response.data
+}
+
 const getUsers = async () => {
   const response = await api.get<User[]>('/users')
 
@@ -45,4 +58,11 @@ const deleteUser = async (id: string) => {
   return id
 }
 
-export { postUser, getUsers, updateUser, updateSenhaUser, deleteUser }
+export {
+  postUser,
+  postUsersLote,
+  getUsers,
+  updateUser,
+  updateSenhaUser,
+  deleteUser,
+}

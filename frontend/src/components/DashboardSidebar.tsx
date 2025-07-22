@@ -1,4 +1,12 @@
-import { Home, BookText, Users, Settings } from 'lucide-react'
+import {
+  Home,
+  BookText,
+  Users,
+  Settings,
+  LayoutDashboard,
+  FolderKanban,
+  GraduationCap,
+} from 'lucide-react'
 import { School } from 'lucide-react'
 import { useState, type JSX } from 'react'
 import { Menu, X } from 'lucide-react'
@@ -33,7 +41,9 @@ export function DashboardSidebar({ user }: Props) {
       <div className="hidden lg:flex lg:w-64 h-full bg-gradient-to-b from-[#2f9e41] to-[#1BA863] text-white flex-col fixed z-30">
         <div className="p-3 pl-4 border-b h-16 border-white/20 flex items-center gap-2">
           <School className="h-6 w-6" />
-          <h1 className="text-xl font-bold tracking-tight">Painel Admin</h1>
+          <h1 className="text-lg font-bold tracking-tight leading-tight">
+            {`Painel ${user.role}`}
+          </h1>
         </div>
 
         <nav className="flex-1 p-4 space-y-1">
@@ -46,7 +56,7 @@ export function DashboardSidebar({ user }: Props) {
                 : 'hover:bg-white/10'
             }`}
           >
-            <Home className="h-5 w-5" />
+            <LayoutDashboard className="h-5 w-5" />
             <span>Visão Geral</span>
           </Button>
 
@@ -59,7 +69,7 @@ export function DashboardSidebar({ user }: Props) {
                 : 'hover:bg-white/10'
             }`}
           >
-            <BookText className="h-5 w-5" />
+            <FolderKanban className="h-5 w-5" />
             <span>Projetos</span>
           </Button>
 
@@ -72,7 +82,7 @@ export function DashboardSidebar({ user }: Props) {
                 : 'hover:bg-white/10'
             }`}
           >
-            <Users className="h-5 w-5" />
+            <GraduationCap className="h-5 w-5" />
             <span>Alunos</span>
           </Button>
 
@@ -110,7 +120,9 @@ export function DashboardSidebar({ user }: Props) {
           <div className="flex justify-between items-center p-4 border-b border-white/20">
             <div className="flex items-center gap-2">
               <School className="h-6 w-6" />
-              <h1 className="text-xl font-bold">Painel Admin</h1>
+              <h1 className="text-lg font-bold tracking-tight leading-tight">
+                {`Painel ${user.role}`}
+              </h1>
             </div>
             <Button
               onClick={() => setMobileMenuOpen(false)}
