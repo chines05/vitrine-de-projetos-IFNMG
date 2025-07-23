@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Plus, Pencil, Trash2, Image, Users } from 'lucide-react'
+import { Plus, Pencil, Trash2, Image, Users, Eye } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import {
   Dialog,
@@ -30,8 +30,10 @@ import { deleteProjeto, getProjetos } from '@/api/apiProjeto'
 import { ProjetoForm } from '../forms/ProjetoForm'
 import { ImagemUploadDialog } from '../dialogs/ ImagemUploadDialog'
 import { ExcluirProjetoDialog } from '../dialogs/ExcluirProjetoDialog'
+import { useNavigate } from 'react-router-dom'
 
 const Projetos = () => {
+  const navigate = useNavigate()
   const [projetos, setProjetos] = useState<ProjetoType[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -153,64 +155,65 @@ const Projetos = () => {
                   </TableCell>
                   <TableCell>{projeto.coordenador.nome}</TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
+                    <div className="flex justify-end items-center gap-5">
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
+                          <Eye
+                            className="h-4 w-4 cursor-pointer"
+                            onClick={() => navigate(`/projeto/${projeto.id}`)}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent>Visualizar Projeto</TooltipContent>
+                      </Tooltip>
+
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Image
+                            className="h-4 w-4 cursor-pointer"
                             onClick={() => {
                               setSelectedProjeto(projeto)
                               setIsDialogImagensOpen(true)
                             }}
-                          >
-                            <Image className="h-4 w-4" />
-                          </Button>
+                          />
                         </TooltipTrigger>
                         <TooltipContent>Gerenciar Imagens</TooltipContent>
                       </Tooltip>
+
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
+                          <Users
+                            className="h-4 w-4 cursor-pointer"
                             onClick={() => {
                               setSelectedProjeto(projeto)
                               setIsDialogAlunosOpen(true)
                             }}
-                          >
-                            <Users className="h-4 w-4" />
-                          </Button>
+                          />
                         </TooltipTrigger>
                         <TooltipContent>Participantes</TooltipContent>
                       </Tooltip>
+
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
+                          <Pencil
+                            className="h-4 w-4 cursor-pointer"
                             onClick={() => {
                               setSelectedProjeto(projeto)
                               setIsDialogOpen(true)
                             }}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
+                          />
                         </TooltipTrigger>
                         <TooltipContent>Editar Projeto</TooltipContent>
                       </Tooltip>
+
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
+                          <Trash2
+                            className="h-4 w-4 cursor-pointer text-red-600"
                             onClick={() => {
                               setSelectedProjeto(projeto)
                               setIsDialogDeleteOpen(true)
                             }}
-                          >
-                            <Trash2 className="h-4 w-4 text-red-600" />
-                          </Button>
+                          />
                         </TooltipTrigger>
                         <TooltipContent>Excluir Projeto</TooltipContent>
                       </Tooltip>

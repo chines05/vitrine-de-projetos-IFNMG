@@ -120,34 +120,29 @@ const Alunos = () => {
                   <TableCell>{aluno.turma}</TableCell>
                   <TableCell>{aluno.curso}</TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
+                    <div className="flex justify-end items-center gap-10">
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
+                          <Pencil
+                            className="h-4 w-4 cursor-pointer"
                             onClick={() => {
                               setSelectedAluno(aluno)
                               setIsDialogOpen(true)
                             }}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
+                          />
                         </TooltipTrigger>
                         <TooltipContent>Editar Aluno</TooltipContent>
                       </Tooltip>
+
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
+                          <Trash2
+                            className="h-4 w-4 cursor-pointer text-red-600"
                             onClick={() => {
                               setSelectedAluno(aluno)
                               setIsDialogDeleteOpen(true)
                             }}
-                          >
-                            <Trash2 className="h-4 w-4 text-red-600" />
-                          </Button>
+                          />
                         </TooltipTrigger>
                         <TooltipContent>Excluir Aluno</TooltipContent>
                       </Tooltip>
