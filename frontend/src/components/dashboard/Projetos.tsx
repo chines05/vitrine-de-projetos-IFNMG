@@ -7,7 +7,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Plus, Pencil, Trash2, Image, Users, Eye } from 'lucide-react'
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Image,
+  Users,
+  Eye,
+  CalendarIcon,
+} from 'lucide-react'
 import { useState, useEffect } from 'react'
 import {
   Dialog,
@@ -23,7 +31,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import type { ProjetoType } from '@/utils/types'
+import type { ProjetoType, User } from '@/utils/types'
 import { Badge } from '@/components/ui/badge'
 import { VincularAlunoDialog } from '@/components/dialogs/VincularAlunoDialog'
 import { deleteProjeto, getProjetos } from '@/api/apiProjeto'
@@ -31,6 +39,18 @@ import { ProjetoForm } from '../forms/ProjetoForm'
 import { ImagemUploadDialog } from '../dialogs/ ImagemUploadDialog'
 import { ExcluirProjetoDialog } from '../dialogs/ExcluirProjetoDialog'
 import { useNavigate } from 'react-router-dom'
+import { Input } from '../ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select'
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
+import { Calendar } from '../ui/calendar'
+import { cn } from '@/lib/utils'
+import { format } from 'date-fns'
 
 const Projetos = () => {
   const navigate = useNavigate()
@@ -43,6 +63,12 @@ const Projetos = () => {
   const [selectedProjeto, setSelectedProjeto] = useState<ProjetoType | null>(
     null
   )
+  const [filterTitulo, setFilterTitulo] = useState('')
+  const [filterTipo, setFilterTipo] = useState('all')
+  const [filterStatus, setFilterStatus] = useState('all')
+  const [filterCoordenadorId, setFilterCoordenadorId] = useState('all')
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined)
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined)
 
   const fetchProjetos = async () => {
     setIsLoading(true)
@@ -69,6 +95,43 @@ const Projetos = () => {
   useEffect(() => {
     fetchProjetos()
   }, [])
+
+  const coordenadoresUnicos: User[] = Array.from(
+    new Map(projetos.map((p) => [p.coordenadorId, p.coordenador])).values()
+  )
+
+  const filteredProjetos = projetos.filter((projeto) => {
+    const matchTitulo = projeto.titulo
+      .toLowerCase()
+      .includes(filterTitulo.toLowerCase())
+    const matchTipo = filterTipo === 'all' || projeto.tipo === filterTipo
+    const matchStatus =
+      filterStatus === 'all' || projeto.status === filterStatus
+    const matchCoordenador =
+      filterCoordenadorId === 'all' ||
+      projeto.coordenadorId === filterCoordenadorId
+
+    const matchDataInicio =
+      (!startDate || new Date(projeto.dataInicio) >= startDate) &&
+      (!endDate || new Date(projeto.dataInicio) <= endDate)
+
+    return (
+      matchTitulo &&
+      matchTipo &&
+      matchStatus &&
+      matchCoordenador &&
+      matchDataInicio
+    )
+  })
+
+  const limparFiltros = () => {
+    setFilterTitulo('')
+    setFilterTipo('all')
+    setFilterStatus('all')
+    setFilterCoordenadorId('all')
+    setStartDate(undefined)
+    setEndDate(undefined)
+  }
 
   return (
     <main>
@@ -98,6 +161,117 @@ const Projetos = () => {
         </Dialog>
       </div>
 
+      <div className="mb-6 grid grid-cols-1  gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          <Input
+            type="text"
+            value={filterTitulo}
+            onChange={(e) => setFilterTitulo(e.target.value)}
+            placeholder="Filtrar por título"
+            className="h-10 text-sm w-full"
+          />
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  'w-full h-10 justify-start text-left text-sm',
+                  !startDate && 'text-muted-foreground'
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {startDate ? format(startDate, 'dd/MM/yyyy') : 'Data início'}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={startDate}
+                onSelect={(date) => setStartDate(date || undefined)}
+                required
+              />
+            </PopoverContent>
+          </Popover>
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  'w-full h-10 justify-start text-left text-sm',
+                  !endDate && 'text-muted-foreground'
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {endDate ? format(endDate, 'dd/MM/yyyy') : 'Data fim'}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={endDate}
+                onSelect={(date) => setEndDate(date || undefined)}
+                required
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Select
+            value={filterStatus}
+            onValueChange={(value) => setFilterStatus(value)}
+          >
+            <SelectTrigger className="h-10 text-sm w-full">
+              <SelectValue placeholder="Filtrar por status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os status</SelectItem>
+              <SelectItem value="ATIVO">Ativo</SelectItem>
+              <SelectItem value="CONCLUIDO">Concluído</SelectItem>
+              <SelectItem value="PAUSADO">Pausado</SelectItem>
+              <SelectItem value="CANCELADO">Cancelado</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={filterCoordenadorId}
+            onValueChange={setFilterCoordenadorId}
+          >
+            <SelectTrigger className="h-10 text-sm w-full">
+              <SelectValue placeholder="Filtrar por coordenador" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Coordenadores</SelectItem>
+              {coordenadoresUnicos.map((coord) => (
+                <SelectItem key={coord.id} value={coord.id}>
+                  {coord.nome}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={filterTipo}
+            onValueChange={(value) => setFilterTipo(value)}
+          >
+            <SelectTrigger className="h-10 text-sm w-full">
+              <SelectValue placeholder="Filtrar por tipo" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os tipos</SelectItem>
+              <SelectItem value="PESQUISA">Pesquisa</SelectItem>
+              <SelectItem value="ENSINO">Ensino</SelectItem>
+              <SelectItem value="EXTENSAO">Extensão</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button variant="outline" className="text-sm" onClick={limparFiltros}>
+            Limpar Filtros
+          </Button>
+        </div>
+      </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -124,7 +298,7 @@ const Projetos = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              projetos.map((projeto) => (
+              filteredProjetos.map((projeto) => (
                 <TableRow key={projeto.id}>
                   <TableCell className="font-medium">
                     {projeto.titulo}

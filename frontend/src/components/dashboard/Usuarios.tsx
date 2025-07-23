@@ -24,6 +24,14 @@ import { formatErrorMessage } from '@/utils/format'
 import ExcluirUsuarioDialog from '../dialogs/ExcluirUsuarioDialog'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import { CadastroEmLoteUserDialog } from '../dialogs/CadastroEmLoteUserDialog'
+import { Input } from '../ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select'
 
 const Usuarios = () => {
   const [users, setUsers] = useState<User[]>([])
@@ -32,6 +40,9 @@ const Usuarios = () => {
   const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
+  const [filterNome, setFilterNome] = useState('')
+  const [filterEmail, setFilterEmail] = useState('')
+  const [filterCargo, setFilterCargo] = useState('all')
 
   const fetchUsers = async () => {
     setIsLoading(true)
@@ -59,6 +70,16 @@ const Usuarios = () => {
   useEffect(() => {
     fetchUsers()
   }, [])
+
+  const filteredUsers = users.filter((user) => {
+    const matchNome = user.nome.toLowerCase().includes(filterNome.toLowerCase())
+    const matchEmail = user.email
+      .toLowerCase()
+      .includes(filterEmail.toLowerCase())
+    const matchCargo = filterCargo === 'all' || user.role === filterCargo
+
+    return matchNome && matchEmail && matchCargo
+  })
 
   return (
     <main>
@@ -89,6 +110,36 @@ const Usuarios = () => {
         </div>
       </div>
 
+      <div className="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Input
+          type="text"
+          value={filterNome}
+          onChange={(e) => setFilterNome(e.target.value)}
+          placeholder="Filtrar por nome"
+          className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full"
+        />
+        <Input
+          type="text"
+          value={filterEmail}
+          onChange={(e) => setFilterEmail(e.target.value)}
+          placeholder="Filtrar por email"
+          className="border border-gray-300 rounded-md px-3 py-2 text-sm w-full"
+        />
+        <Select
+          value={filterCargo}
+          onValueChange={(value: string) => setFilterCargo(value)}
+        >
+          <SelectTrigger className="w-full h-10">
+            <SelectValue placeholder="Filtrar por cargo" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os cargos</SelectItem>
+            <SelectItem value="ADMIN">Administrador</SelectItem>
+            <SelectItem value="COORDENADOR">Coordenador</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -113,7 +164,7 @@ const Usuarios = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              users.map((user) => (
+              filteredUsers.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.nome}</TableCell>
                   <TableCell>{user.email}</TableCell>

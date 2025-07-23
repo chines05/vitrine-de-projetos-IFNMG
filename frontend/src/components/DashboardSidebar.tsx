@@ -1,9 +1,7 @@
 import {
-  Home,
   BookText,
   Users,
   Settings,
-  LayoutDashboard,
   FolderKanban,
   GraduationCap,
 } from 'lucide-react'
@@ -12,14 +10,13 @@ import { useState, type JSX } from 'react'
 import { Menu, X } from 'lucide-react'
 import { Button } from './ui/button'
 
-import VisaoGeral from './dashboard/VisaoGeral'
 import Projetos from './dashboard/Projetos'
 import Usuarios from './dashboard/Usuarios'
 import Alunos from './dashboard/Alunos'
 import type { User } from '@/utils/types'
 import { useNavigate } from 'react-router-dom'
 
-type ComponentKeys = 'visaoGeral' | 'projetos' | 'alunos' | 'usuarios'
+type ComponentKeys = 'projetos' | 'alunos' | 'usuarios'
 
 type Props = {
   user: User
@@ -29,10 +26,9 @@ export function DashboardSidebar({ user }: Props) {
   const navigate = useNavigate()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeComponent, setActiveComponent] =
-    useState<ComponentKeys>('visaoGeral')
+    useState<ComponentKeys>('projetos')
 
   const components: Record<ComponentKeys, JSX.Element> = {
-    visaoGeral: <VisaoGeral />,
     projetos: <Projetos />,
     alunos: <Alunos />,
     usuarios: <Usuarios />,
@@ -52,19 +48,6 @@ export function DashboardSidebar({ user }: Props) {
         </div>
 
         <nav className="flex-1 p-4 space-y-1">
-          <Button
-            variant="unstyled"
-            onClick={() => setActiveComponent('visaoGeral')}
-            className={`w-full justify-start gap-3 ${
-              activeComponent === 'visaoGeral'
-                ? 'bg-white/20 hover:bg-white/20'
-                : 'hover:bg-white/10'
-            }`}
-          >
-            <LayoutDashboard className="h-5 w-5" />
-            <span>Visão Geral</span>
-          </Button>
-
           <Button
             variant="unstyled"
             onClick={() => setActiveComponent('projetos')}
@@ -107,7 +90,7 @@ export function DashboardSidebar({ user }: Props) {
           )}
         </nav>
       </div>
-      <div className="ml-4 lg:ml-70 pt-20 pr-7 w-full">
+      <div className="ml-4 lg:ml-70 pt-20 w-full">
         {components[activeComponent]}
       </div>
       <Button
@@ -143,7 +126,6 @@ export function DashboardSidebar({ user }: Props) {
 
           <nav className="flex-1 p-4 space-y-2">
             {[
-              { id: 'visaoGeral', icon: Home, label: 'Visão Geral' },
               { id: 'projetos', icon: BookText, label: 'Projetos' },
               { id: 'alunos', icon: Users, label: 'Alunos' },
               ...(user.role === 'ADMIN'

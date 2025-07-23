@@ -28,7 +28,7 @@ export default function Dashboard() {
   if (!user) return navigate('/login') as unknown as JSX.Element
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex mr-7">
       <DashboardNavbar user={user} />
       <DashboardSidebar user={user} />
     </div>
