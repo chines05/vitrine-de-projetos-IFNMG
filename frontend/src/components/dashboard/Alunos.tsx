@@ -26,6 +26,14 @@ import { AlunoForm } from '../forms/AlunoForm'
 import { Upload } from 'lucide-react'
 import { CadastroEmLoteAlunoDialog } from '../dialogs/CadastroEmLoteAlunoDialog'
 import { Input } from '../ui/input'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select'
+import { turmasPermitidas, cursosPermitidos } from '@/utils/format'
 
 const Alunos = () => {
   const [alunos, setAlunos] = useState<Aluno[]>([])
@@ -35,8 +43,8 @@ const Alunos = () => {
   const [selectedAluno, setSelectedAluno] = useState<Aluno | null>(null)
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
   const [filterNome, setFilterNome] = useState('')
-  const [filterTurma, setFilterTurma] = useState('')
-  const [filterCurso, setFilterCurso] = useState('')
+  const [filterTurma, setFilterTurma] = useState('all')
+  const [filterCurso, setFilterCurso] = useState('all')
   const [currentPage, setCurrentPage] = useState(0)
   const alunosPorPagina = 10
 
@@ -71,12 +79,8 @@ const Alunos = () => {
     const matchNome = aluno.nome
       .toLowerCase()
       .includes(filterNome.toLowerCase())
-    const matchTurma = aluno.turma
-      .toLowerCase()
-      .includes(filterTurma.toLowerCase())
-    const matchCurso = aluno.curso
-      .toLowerCase()
-      .includes(filterCurso.toLowerCase())
+    const matchTurma = filterTurma === 'all' || aluno.turma === filterTurma
+    const matchCurso = filterCurso === 'all' || aluno.curso === filterCurso
 
     return matchNome && matchTurma && matchCurso
   })
@@ -122,20 +126,40 @@ const Alunos = () => {
           placeholder="Filtrar por nome"
           className="w-full h-9 text-sm"
         />
-        <Input
-          type="text"
+
+        <Select
           value={filterTurma}
-          onChange={(e) => setFilterTurma(e.target.value)}
-          placeholder="Filtrar por turma"
-          className="w-full h-9 text-sm"
-        />
-        <Input
-          type="text"
+          onValueChange={(value) => setFilterTurma(value)}
+        >
+          <SelectTrigger className="w-full h-9">
+            <SelectValue placeholder="Filtrar por turma" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todas</SelectItem>
+            {turmasPermitidas.map((turma) => (
+              <SelectItem key={turma} value={turma}>
+                {turma}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
           value={filterCurso}
-          onChange={(e) => setFilterCurso(e.target.value)}
-          placeholder="Filtrar por curso"
-          className="w-full h-9 text-sm"
-        />
+          onValueChange={(value) => setFilterCurso(value)}
+        >
+          <SelectTrigger className="w-full h-9">
+            <SelectValue placeholder="Filtrar por curso" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos</SelectItem>
+            {cursosPermitidos.map((curso) => (
+              <SelectItem key={curso} value={curso}>
+                {curso}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="rounded-md border">

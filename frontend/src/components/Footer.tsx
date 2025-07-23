@@ -1,12 +1,5 @@
 import { Link } from 'react-router-dom'
-import {
-  Mail,
-  Facebook,
-  Instagram,
-  Linkedin,
-  MapPin,
-  Phone,
-} from 'lucide-react'
+import { Mail, Instagram, Linkedin, MapPin, Phone } from 'lucide-react'
 
 const Footer = () => {
   return (
@@ -23,13 +16,6 @@ const Footer = () => {
             </p>
             <div className="flex gap-3 mt-2">
               <a
-                href="#"
-                className="text-white hover:text-white/80"
-                target="_blank"
-              >
-                <Facebook className="h-4 w-4" />
-              </a>
-              <a
                 href="https://www.instagram.com/almenara_ifnmg/"
                 className="text-white hover:text-white/80"
                 target="_blank"
@@ -37,7 +23,7 @@ const Footer = () => {
                 <Instagram className="h-4 w-4" />
               </a>
               <a
-                href="https://www.linkedin.com/in/gabrielporto05/"
+                href="https://www.linkedin.com/company/instituto-federal-do-norte-de-minas-gerais-ifnmg/"
                 className="text-white hover:text-white/80"
                 target="_blank"
               >
