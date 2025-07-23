@@ -23,8 +23,6 @@ export const deleteProjetoSchema = z.object({
 })
 
 export const vincularAlunoSchema = z.object({
-  projetoId: z.string().uuid(),
-  alunoId: z.string().uuid(),
   funcao: z.string().min(2),
 })
 

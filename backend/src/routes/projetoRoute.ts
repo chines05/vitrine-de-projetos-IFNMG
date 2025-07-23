@@ -40,13 +40,13 @@ export async function projetosRoutes(app: FastifyInstance) {
   )
 
   app.post(
-    '/api/projetos/:projetoId/participantes',
+    '/api/projetos/:projetoId/alunos/:alunoId',
     { preHandler: [authenticate] },
     vincularAlunoHandler
   )
 
   app.delete(
-    '/api/projetos/participantes/:id',
+    '/api/projetos/:projetoId/alunos/:alunoId',
     { preHandler: [authenticate] },
     desvincularAlunoHandler
   )

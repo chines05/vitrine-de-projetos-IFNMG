@@ -286,19 +286,21 @@ async function vincularAlunoHandler(
   reply: FastifyReply
 ) {
   try {
-    const { projetoId, alunoId, funcao } = vincularAlunoSchema.parse(
-      request.body
-    )
+    const { funcao } = vincularAlunoSchema.parse(request.body)
 
-    // Verificar se o projeto existe
+    const { projetoId, alunoId } = request.params as {
+      projetoId: string
+      alunoId: string
+    }
+
     const projetoExists = await prisma.projeto.findUnique({
       where: { id: projetoId },
     })
+
     if (!projetoExists) {
       return reply.status(404).send({ error: 'Projeto não encontrado' })
     }
 
-    // Verificar se o aluno existe
     const alunoExists = await prisma.aluno.findUnique({
       where: { id: alunoId },
     })
@@ -306,7 +308,6 @@ async function vincularAlunoHandler(
       return reply.status(404).send({ error: 'Aluno não encontrado' })
     }
 
-    // Verificar se o aluno já está vinculado ao projeto
     const vinculoExists = await prisma.projetoAluno.findFirst({
       where: {
         projetoId,
@@ -319,7 +320,6 @@ async function vincularAlunoHandler(
         .send({ error: 'Aluno já vinculado a este projeto' })
     }
 
-    // Criar o vínculo
     const vinculo = await prisma.projetoAluno.create({
       data: {
         projetoId,
@@ -353,10 +353,13 @@ async function desvincularAlunoHandler(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
-  const { id } = request.params as { id: string }
+  const { projetoId, alunoId } = request.params as {
+    projetoId: string
+    alunoId: string
+  }
 
-  const vinculo = await prisma.projetoAluno.findUnique({
-    where: { id },
+  const vinculo = await prisma.projetoAluno.findFirst({
+    where: { projetoId, alunoId },
   })
 
   if (!vinculo) {
@@ -364,7 +367,7 @@ async function desvincularAlunoHandler(
   }
 
   await prisma.projetoAluno.delete({
-    where: { id },
+    where: { id: vinculo.id },
   })
 
   return reply.status(204).send()
