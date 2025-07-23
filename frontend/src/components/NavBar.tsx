@@ -1,25 +1,17 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Button } from './ui/button'
 import { ScrollText, LogIn, Home, School, Menu, X } from 'lucide-react'
-import { getCurrentUser } from '@/api/apiAuth'
 import type { User } from '@/utils/types'
 
-const Navbar = () => {
+type Props = {
+  user?: User
+}
+
+const Navbar = ({ user }: Props) => {
   const navigate = useNavigate()
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
-  const [user, setUser] = useState<User>()
-
-  const checkAuth = useCallback(async () => {
-    const currentUser = await getCurrentUser()
-    setUser(currentUser)
-  }, [])
-
-  useEffect(() => {
-    checkAuth()
-  }, [checkAuth])
 
   const handleLogin = () => {
     if (user) {
@@ -34,6 +26,12 @@ const Navbar = () => {
   const handleScrollToProjetos = () => {
     if (location.pathname.startsWith('/projeto/')) {
       navigate('/')
+      setTimeout(() => {
+        const target = document.getElementById('projetos')
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' })
+        }
+      }, 100)
       setMobileMenuOpen(false)
 
       return

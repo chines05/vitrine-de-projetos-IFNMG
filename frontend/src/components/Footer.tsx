@@ -10,14 +10,25 @@ import {
   Phone,
   LogIn,
 } from 'lucide-react'
+import { Button } from './ui/button'
 
-const Footer = () => {
+type Props = {
+  handleLogin: () => void
+}
+
+const Footer = ({ handleLogin }: Props) => {
   const navigate = useNavigate()
   const location = useLocation()
 
   const handleScrollToProjetos = () => {
     if (location.pathname.startsWith('/projeto/')) {
       navigate('/')
+      setTimeout(() => {
+        const target = document.getElementById('projetos')
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' })
+        }
+      }, 100)
 
       return
     }
@@ -67,34 +78,52 @@ const Footer = () => {
 
           <div>
             <h4 className="text-lg font-semibold mb-4">Links Rápidos</h4>
-            <ul className="space-y-3">
+            <ul>
               <li>
-                <Link
-                  to="/"
+                <Button
+                  variant="unstyled"
+                  onClick={() => {
+                    if (location.pathname.startsWith('/projeto/')) {
+                      navigate('/')
+                      setTimeout(() => {
+                        const target = document.getElementById('home')
+                        if (target) {
+                          target.scrollIntoView({ behavior: 'smooth' })
+                        }
+                      }, 100)
+
+                      return
+                    }
+                    const target = document.getElementById('home')
+                    if (target) {
+                      target.scrollIntoView({ behavior: 'smooth' })
+                    }
+                  }}
                   className="flex items-center gap-2 text-white/80 hover:text-white transition-colors"
                 >
                   <Home className="h-4 w-4" />
                   Início
-                </Link>
+                </Button>
               </li>
               <li>
-                <Link
-                  to=""
+                <Button
+                  variant="unstyled"
                   onClick={handleScrollToProjetos}
                   className="flex items-center gap-2 text-white/80 hover:text-white transition-colors"
                 >
                   <ScrollText className="h-4 w-4" />
                   Projetos
-                </Link>
+                </Button>
               </li>
               <li>
-                <Link
-                  to="/login"
+                <Button
+                  variant="unstyled"
+                  onClick={handleLogin}
                   className="flex items-center gap-2 text-white/80 hover:text-white transition-colors"
                 >
                   <LogIn className="h-4 w-4" />
                   Área do Pesquisador
-                </Link>
+                </Button>
               </li>
             </ul>
           </div>
