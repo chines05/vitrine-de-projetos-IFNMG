@@ -1,9 +1,12 @@
 import Footer from '@/components/Footer'
 import NavBar from '@/components/NavBar'
-import { Link, useParams } from 'react-router-dom'
+import type { User } from '@/utils/types'
+import { Link, useLocation, useParams } from 'react-router-dom'
 
 const Projeto = () => {
   const { urlid } = useParams()
+  const location = useLocation()
+  const user = location.state as User | undefined
 
   const projetos = [
     {
@@ -43,7 +46,7 @@ const Projeto = () => {
 
   return (
     <div className="min-h-screen ">
-      <NavBar />
+      <NavBar user={user} />
       <div className="bg-white rounded-lg shadow-lg overflow-hidden py-12 px-6 max-w-4xl mx-auto mt-20">
         <img
           src={projeto.imagem}

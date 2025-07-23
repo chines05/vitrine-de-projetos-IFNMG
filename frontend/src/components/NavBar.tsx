@@ -83,7 +83,7 @@ const Navbar = ({ user }: Props) => {
 
           <nav className="hidden md:flex items-center gap-4">
             <Button
-              variant="ghost"
+              variant="unstyled"
               onClick={handleLogo}
               className="text-white hover:bg-white/10 gap-2 px-3 py-2 rounded-md transition-all"
             >
@@ -92,7 +92,7 @@ const Navbar = ({ user }: Props) => {
             </Button>
 
             <Button
-              variant="ghost"
+              variant="unstyled"
               onClick={handleScrollToProjetos}
               className="text-white hover:bg-white/10 gap-2 px-3 py-2 rounded-md transition-all"
             >

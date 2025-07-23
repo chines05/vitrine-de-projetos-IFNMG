@@ -130,12 +130,13 @@ const Home = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
+                variant="unstyled"
                 onClick={() =>
                   document
                     .getElementById('projetos')
                     ?.scrollIntoView({ behavior: 'smooth' })
                 }
-                className="bg-white text-green-700 hover:bg-gray-100"
+                className="bg-white text-green-700 hover:scale-105"
                 size="lg"
               >
                 <Search className="h-4 w-4 mr-2" />
@@ -143,8 +144,8 @@ const Home = () => {
               </Button>
               <Button
                 onClick={handleLogin}
-                variant="outline"
-                className="bg-transparent border-white text-white hover:bg-white/10"
+                variant="unstyled"
+                className="bg-transparent border-2 border-white text-white hover:scale-105"
                 size="lg"
               >
                 <BookOpen className="h-4 w-4 mr-2" />
@@ -217,9 +218,7 @@ const Home = () => {
           </div>
 
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">
-              Projetos em Destaque
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-800">Projetos</h2>
           </div>
 
           {isLoading ? (
@@ -266,7 +265,11 @@ const Home = () => {
                     <Button
                       variant="link"
                       className="text-green-600 p-0 h-auto text-sm"
-                      onClick={() => navigate(`/projeto/${project.url}`)}
+                      onClick={() =>
+                        navigate(`/projeto/${project.url}`, {
+                          state: user,
+                        })
+                      }
                     >
                       <span className="flex items-center gap-1">
                         Saiba mais
@@ -281,7 +284,7 @@ const Home = () => {
         </section>
       </main>
 
-      <Footer handleLogin={handleLogin} />
+      <Footer />
     </div>
   )
 }
