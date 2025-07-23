@@ -201,7 +201,7 @@ const Alunos = () => {
             )}
             <TableRow>
               <TableCell colSpan={4}>
-                <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 mt-4 px-2">
+                <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 px-2">
                   <div className="text-sm text-muted-foreground">
                     Total: <strong>{filteredAlunos.length}</strong> alunos
                   </div>

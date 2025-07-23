@@ -7,7 +7,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Plus, Pencil, Trash2, Upload } from 'lucide-react'
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Upload,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { deleteUser, getUsers } from '@/api/apiUsers'
 import type { User } from '@/utils/types'
@@ -43,6 +50,8 @@ const Usuarios = () => {
   const [filterNome, setFilterNome] = useState('')
   const [filterEmail, setFilterEmail] = useState('')
   const [filterCargo, setFilterCargo] = useState('all')
+  const [currentPage, setCurrentPage] = useState(0)
+  const usuariosPorPagina = 10
 
   const fetchUsers = async () => {
     setIsLoading(true)
@@ -80,6 +89,10 @@ const Usuarios = () => {
 
     return matchNome && matchEmail && matchCargo
   })
+
+  const startIndex = currentPage * usuariosPorPagina
+  const endIndex = startIndex + usuariosPorPagina
+  const usuariosPaginados = filteredUsers.slice(startIndex, endIndex)
 
   return (
     <main>
@@ -164,7 +177,7 @@ const Usuarios = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              filteredUsers.map((user) => (
+              usuariosPaginados.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.nome}</TableCell>
                   <TableCell>{user.email}</TableCell>
@@ -211,6 +224,41 @@ const Usuarios = () => {
                 </TableRow>
               ))
             )}
+            <TableRow>
+              <TableCell colSpan={4}>
+                <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 px-2">
+                  <div className="text-sm text-muted-foreground">
+                    Total: <strong>{filteredUsers.length}</strong> usuários
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm text-muted-foreground">
+                      Página <strong>{currentPage + 1}</strong> de{' '}
+                      {Math.ceil(filteredUsers.length / usuariosPorPagina)}
+                    </span>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        disabled={currentPage === 0}
+                        onClick={() => setCurrentPage((prev) => prev - 1)}
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        disabled={endIndex >= filteredUsers.length}
+                        onClick={() => setCurrentPage((prev) => prev + 1)}
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </div>

@@ -15,6 +15,8 @@ import {
   Users,
   Eye,
   CalendarIcon,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import {
@@ -69,6 +71,8 @@ const Projetos = () => {
   const [filterCoordenadorId, setFilterCoordenadorId] = useState('all')
   const [startDate, setStartDate] = useState<Date | undefined>(undefined)
   const [endDate, setEndDate] = useState<Date | undefined>(undefined)
+  const [currentPage, setCurrentPage] = useState(0)
+  const projetosPorPagina = 10
 
   const fetchProjetos = async () => {
     setIsLoading(true)
@@ -123,6 +127,10 @@ const Projetos = () => {
       matchDataInicio
     )
   })
+
+  const startIndex = currentPage * projetosPorPagina
+  const endIndex = startIndex + projetosPorPagina
+  const alunosPaginados = filteredProjetos.slice(startIndex, endIndex)
 
   const limparFiltros = () => {
     setFilterTitulo('')
@@ -298,7 +306,7 @@ const Projetos = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              filteredProjetos.map((projeto) => (
+              alunosPaginados.map((projeto) => (
                 <TableRow key={projeto.id}>
                   <TableCell className="font-medium">
                     {projeto.titulo}
@@ -396,6 +404,41 @@ const Projetos = () => {
                 </TableRow>
               ))
             )}
+            <TableRow>
+              <TableCell colSpan={6}>
+                <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 px-2">
+                  <div className="text-sm text-muted-foreground">
+                    Total: <strong>{filteredProjetos.length}</strong> projetos
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm text-muted-foreground">
+                      Página <strong>{currentPage + 1}</strong> de{' '}
+                      {Math.ceil(filteredProjetos.length / projetosPorPagina)}
+                    </span>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        disabled={currentPage === 0}
+                        onClick={() => setCurrentPage((prev) => prev - 1)}
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        disabled={endIndex >= filteredProjetos.length}
+                        onClick={() => setCurrentPage((prev) => prev + 1)}
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </div>
