@@ -35,35 +35,32 @@ const deleteProjeto = async (id: string) => {
 const postProjetoAluno = async (
   projetoId: string,
   alunoId: string,
-  funcao: string
+  funcao: { funcao: string }
 ) => {
-  const response = await api.post('/api/projeto-aluno', {
-    projetoId,
-    alunoId,
-    funcao,
-  })
-  return response.data
-}
-
-const deleteProjetoAluno = async (vinculoId: string) => {
-  return await api.delete(`/api/projeto-aluno/${vinculoId}`)
-}
-
-const postProjetoImagem = async (projetoId: string, formData: FormData) => {
   const response = await api.post(
-    `/api/projetos/${projetoId}/imagens`,
-    formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }
+    `/projetos/${projetoId}/alunos/${alunoId}`,
+    funcao
   )
   return response.data
 }
 
+const deleteProjetoAluno = async (projetoId: string, alunoId: string) => {
+  const response = await api.delete(`/projetos/${projetoId}/alunos/${alunoId}`)
+
+  return response.data
+}
+
+const postProjetoImagem = async (projetoId: string, formData: FormData) => {
+  const response = await api.post(`/projetos/${projetoId}/imagens`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+  return response.data
+}
+
 const deleteProjetoImagem = async (imagemId: string) => {
-  return await api.delete(`/api/projeto-imagem/${imagemId}`)
+  return await api.delete(`/projeto-imagem/${imagemId}`)
 }
 
 export {

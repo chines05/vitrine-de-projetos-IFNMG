@@ -454,7 +454,7 @@ const Projetos = () => {
         isOpen={isDialogAlunosOpen}
         onClose={() => setIsDialogAlunosOpen(false)}
         projeto={selectedProjeto}
-        onSuccess={fetchProjetos}
+        onUpdateProjeto={fetchProjetos}
       />
 
       <ImagemUploadDialog

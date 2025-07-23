@@ -161,14 +161,14 @@ export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
               <Button
                 variant="outline"
                 className={cn(
-                  'w-full justify-start text-left font-normal',
+                  'w-full h-10 justify-start text-left text-sm',
                   !watch('dataInicio') && 'text-muted-foreground'
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {watch('dataInicio')
-                  ? format(watch('dataInicio'), 'PPP')
-                  : 'Selecione'}
+                  ? format(watch('dataInicio'), 'dd/MM/yyyy')
+                  : 'Selecione a data'}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
@@ -184,6 +184,7 @@ export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
           </Popover>
           {renderError('dataInicio')}
         </div>
+
         <div className="space-y-2">
           <Label>Data de Fim (opcional)</Label>
           <Popover>
@@ -191,14 +192,14 @@ export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
               <Button
                 variant="outline"
                 className={cn(
-                  'w-full justify-start text-left font-normal',
+                  'w-full h-10 justify-start text-left text-sm',
                   !watch('dataFim') && 'text-muted-foreground'
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {watch('dataFim')
-                  ? format(watch('dataFim')!, 'PPP')
-                  : 'Selecione'}
+                  ? format(watch('dataFim')!, 'dd/MM/yyyy')
+                  : 'Selecione a data'}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
