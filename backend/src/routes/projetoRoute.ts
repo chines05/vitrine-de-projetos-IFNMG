@@ -19,7 +19,7 @@ export async function projetosRoutes(app: FastifyInstance) {
     createProjetoHandler
   )
 
-  app.get('/api/projetos', { preHandler: [authenticate] }, getProjetosHandler)
+  app.get('/api/projetos', getProjetosHandler)
 
   app.get(
     '/api/projetos/:id',
