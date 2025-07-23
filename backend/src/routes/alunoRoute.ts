@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import { authenticate, adminOnly } from '../middleware/auth'
+import { authenticate } from '../middleware/auth'
 import {
   createAlunoHandler,
   deleteAlunoHandler,
@@ -9,29 +9,17 @@ import {
 } from '../controllers/alunoController'
 
 export async function alunoRoutes(app: FastifyInstance) {
-  app.post(
-    '/api/alunos',
-    { preHandler: [authenticate, adminOnly] },
-    createAlunoHandler
-  )
+  app.post('/api/alunos', { preHandler: [authenticate] }, createAlunoHandler)
   app.post(
     '/api/alunos/lote',
-    { preHandler: [authenticate, adminOnly] },
+    { preHandler: [authenticate] },
     importAlunosHandler
   )
-  app.get(
-    '/api/alunos',
-    { preHandler: [authenticate, adminOnly] },
-    getAlunosHandler
-  )
-  app.put(
-    '/api/alunos/:id',
-    { preHandler: [authenticate, adminOnly] },
-    updateAlunoHandler
-  )
+  app.get('/api/alunos', { preHandler: [authenticate] }, getAlunosHandler)
+  app.put('/api/alunos/:id', { preHandler: [authenticate] }, updateAlunoHandler)
   app.delete(
     '/api/alunos/:id',
-    { preHandler: [authenticate, adminOnly] },
+    { preHandler: [authenticate] },
     deleteAlunoHandler
   )
 }

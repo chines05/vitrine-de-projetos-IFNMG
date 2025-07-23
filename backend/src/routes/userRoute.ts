@@ -26,7 +26,7 @@ export async function userRoutes(app: FastifyInstance) {
   )
   app.get(
     '/api/users/coordenadores',
-    { preHandler: [authenticate, adminOnly] },
+    { preHandler: [authenticate] },
     getCoordenadoresHandler
   )
   app.put(
