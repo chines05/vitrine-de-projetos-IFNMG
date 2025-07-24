@@ -13,7 +13,7 @@ import {
 } from '../controllers/projetoController'
 import { authenticate } from '../middleware/auth'
 
-export async function projetosRoutes(app: FastifyInstance) {
+export const projetosRoutes = (app: FastifyInstance) => {
   app.post(
     '/api/projetos',
     { preHandler: [authenticate] },

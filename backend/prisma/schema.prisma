@@ -16,6 +16,7 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   projetos  Projeto[] @relation("ProjetosDoCoordenador")
+  tccs      TCC[]     @relation("TCCsDoCoordenador")
 
   @@map("users")
 }
@@ -28,26 +29,26 @@ model Aluno {
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
   projetos  ProjetoAluno[]
+  tccs      TCC?
 
   @@map("alunos")
 }
 
-
 model Projeto {
-  id            String          @id @default(uuid())
+  id            String         @id @default(uuid())
   titulo        String
-  url           String          @unique 
-  descricao     String @db.Text
+  url           String         @unique
+  descricao     String         @db.Text
   dataInicio    DateTime
   dataFim       DateTime?
-  tipo          TipoProjeto     
-  status        StatusProjeto   @default(ATIVO)
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  coordenador   User            @relation("ProjetosDoCoordenador", fields: [coordenadorId], references: [id])
+  tipo          TipoProjeto
+  status        StatusProjeto  @default(ATIVO)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  coordenador   User           @relation("ProjetosDoCoordenador", fields: [coordenadorId], references: [id])
   coordenadorId String
   participantes ProjetoAluno[]
-  imagem       ImagemProjeto?
+  imagem        ImagemProjeto?
 
   @@map("projetos")
 }
@@ -75,10 +76,27 @@ model ImagemProjeto {
   @@map("imagens_projeto")
 }
 
+model TCC {
+  id            String   @id @default(uuid())
+  titulo        String
+  url           String   @unique
+  curso         String
+  resumo        String   @db.Text
+  dataDefesa    DateTime
+  arquivoUrl    String
+  aluno         Aluno    @relation(fields: [alunoId], references: [id])
+  alunoId       String   @unique
+  coordenador   User     @relation("TCCsDoCoordenador", fields: [coordenadorId], references: [id])
+  coordenadorId String
+  createdAt     DateTime @default(now())
+
+  @@map("tccs")
+}
 
 enum Role {
   ADMIN
   COORDENADOR
+  COORDENADOR_CURSO
 }
 
 enum TipoProjeto {
