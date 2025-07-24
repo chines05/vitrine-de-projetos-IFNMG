@@ -237,23 +237,15 @@ const Home = () => {
                   className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col border border-gray-200"
                 >
                   <div className="p-5 flex-1">
-                    <div className="flex justify-between items-start mb-3">
-                      <span
-                        className={`px-2.5 py-1 rounded-full text-xs font-medium flex items-center gap-1.5 ${
-                          projectCategories.find((c) => c.id === project.tipo)
-                            ?.color
-                        }`}
-                      >
-                        {
-                          projectCategories.find((c) => c.id === project.tipo)
-                            ?.icon
-                        }
-                        {
-                          projectCategories.find((c) => c.id === project.tipo)
-                            ?.name
-                        }
-                      </span>
-                    </div>
+                    {project.imagem?.url && (
+                      <div className="flex justify-center mb-3">
+                        <img
+                          src={project.imagem.url}
+                          alt={`Imagem do projeto ${project.titulo}`}
+                          className="rounded-md object-cover w-full max-h-48"
+                        />
+                      </div>
+                    )}
                     <h3 className="text-lg font-semibold text-gray-800 mb-2">
                       {project.titulo}
                     </h3>

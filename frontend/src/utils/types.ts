@@ -44,12 +44,12 @@ export type ProjetoType = {
     projetoId: string
     createdAt: string
   }[]
-  imagens: {
+  imagem: {
     id: string
     url: string
     projetoId: string
     createdAt: string
-  }[]
+  }
 }
 
 export type ErrorResponseType =

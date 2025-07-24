@@ -50,17 +50,21 @@ const deleteProjetoAluno = async (projetoId: string, alunoId: string) => {
   return response.data
 }
 
-const postProjetoImagem = async (projetoId: string, formData: FormData) => {
-  const response = await api.post(`/projetos/${projetoId}/imagens`, formData, {
+const postProjetoImagem = async (projetoId: string, file: File) => {
+  const formData = new FormData()
+  formData.append('file', file)
+
+  const response = await api.post(`/projetos/${projetoId}/imagem`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   })
+
   return response.data
 }
 
 const deleteProjetoImagem = async (imagemId: string) => {
-  return await api.delete(`/projeto-imagem/${imagemId}`)
+  return await api.delete(`/projetos/imagem/${imagemId}`)
 }
 
 export {
