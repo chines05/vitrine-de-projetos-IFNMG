@@ -47,7 +47,7 @@ model Projeto {
   coordenador   User            @relation("ProjetosDoCoordenador", fields: [coordenadorId], references: [id])
   coordenadorId String
   participantes ProjetoAluno[]
-  imagens       ImagemProjeto[]
+  imagem       ImagemProjeto?
 
   @@map("projetos")
 }
@@ -69,11 +69,12 @@ model ImagemProjeto {
   id        String   @id @default(uuid())
   url       String
   projeto   Projeto  @relation(fields: [projetoId], references: [id])
-  projetoId String
+  projetoId String   @unique
   createdAt DateTime @default(now())
 
   @@map("imagens_projeto")
 }
+
 
 enum Role {
   ADMIN

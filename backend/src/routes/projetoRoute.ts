@@ -52,7 +52,7 @@ export async function projetosRoutes(app: FastifyInstance) {
   )
 
   app.post(
-    '/api/projetos/:projetoId/imagens',
+    '/api/projetos/:projetoId/imagem',
     {
       preHandler: [authenticate],
       config: {
@@ -67,7 +67,7 @@ export async function projetosRoutes(app: FastifyInstance) {
   )
 
   app.delete(
-    '/api/projetos/imagens/:id',
+    '/api/projetos/imagem/:id',
     { preHandler: [authenticate] },
     removerImagemHandler
   )

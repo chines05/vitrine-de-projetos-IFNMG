@@ -97,14 +97,9 @@ async function main() {
             },
           ],
         },
-        imagens: {
-          create: [
-            { url: '/uploads/agricultura-1.jpg' },
-            { url: '/uploads/agricultura-2.jpg' },
-          ],
-        },
       },
     }),
+
     prisma.projeto.create({
       data: {
         titulo: 'Energias Renováveis em Comunidades Rurais',

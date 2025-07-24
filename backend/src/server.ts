@@ -4,14 +4,11 @@ import jwt from '@fastify/jwt'
 import { authenticate } from './middleware/auth'
 import fastifyMultipart from '@fastify/multipart'
 import { routes } from './routes'
+import path from 'node:path'
+import fastifyStatic from '@fastify/static'
+import { fileURLToPath } from 'node:url'
 
-const app = fastify({ logger: true })
-
-declare module 'fastify' {
-  interface FastifyInstance {
-    authenticate: typeof authenticate
-  }
-}
+const app = fastify()
 
 await app.register(cors, {
   origin: ['http://localhost:5173'],
@@ -21,6 +18,13 @@ await app.register(cors, {
 
 await app.register(jwt, {
   secret: 'secret-key-vitrine-projects-ifnmg-chines05',
+})
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+await app.register(fastifyStatic, {
+  root: path.join(__dirname, '..', 'uploads'),
+  prefix: '/uploads/',
 })
 
 await app.register(fastifyMultipart)

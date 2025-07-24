@@ -8,6 +8,11 @@ import {
   deleteProjetoSchema,
   vincularAlunoSchema,
 } from '../validators/projetoValidator'
+import fs from 'node:fs'
+import path from 'node:path'
+import pump from 'pump'
+import { pipeline } from 'stream/promises'
+import { createWriteStream } from 'fs'
 
 async function createProjetoHandler(
   request: FastifyRequest,
@@ -25,7 +30,6 @@ async function createProjetoHandler(
       coordenadorId,
     } = createProjetoSchema.parse(request.body)
 
-    // Verificar se a URL já existe
     const urlExists = await prisma.projeto.findUnique({ where: { url } })
     if (urlExists) {
       return reply
@@ -33,7 +37,6 @@ async function createProjetoHandler(
         .send({ error: 'Já existe um projeto com esta URL' })
     }
 
-    // Verificar se o coordenador existe
     const coordenadorExists = await prisma.user.findUnique({
       where: { id: coordenadorId, role: 'COORDENADOR' },
     })
@@ -109,7 +112,7 @@ async function getProjetosHandler(
           funcao: true,
         },
       },
-      imagens: {
+      imagem: {
         select: {
           id: true,
           url: true,
@@ -152,7 +155,7 @@ async function getProjetoHandler(request: FastifyRequest, reply: FastifyReply) {
           createdAt: true,
         },
       },
-      imagens: {
+      imagem: {
         select: {
           id: true,
           url: true,
@@ -187,7 +190,6 @@ async function updateProjetoHandler(
       return reply.status(404).send({ error: 'Projeto não encontrado' })
     }
 
-    // Verificar se a nova URL já existe (caso tenha sido alterada)
     if (body.url && body.url !== projeto.url) {
       const urlExists = await prisma.projeto.findUnique({
         where: { url: body.url },
@@ -199,7 +201,6 @@ async function updateProjetoHandler(
       }
     }
 
-    // Verificar se o novo coordenador existe (caso tenha sido alterado)
     if (body.coordenadorId && body.coordenadorId !== projeto.coordenadorId) {
       const coordenadorExists = await prisma.user.findUnique({
         where: { id: body.coordenadorId, role: 'COORDENADOR' },
@@ -385,7 +386,19 @@ async function uploadImagemHandler(
       return reply.status(400).send({ error: 'Nenhuma imagem enviada' })
     }
 
-    // Verificar se o projeto existe
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp']
+    if (!allowedMimeTypes.includes(file.mimetype)) {
+      return reply.status(400).send({
+        error: 'Tipo de arquivo não permitido. Use JPEG, PNG ou WebP',
+      })
+    }
+
+    if (file.file.bytesRead > 5 * 1024 * 1024) {
+      return reply.status(400).send({
+        error: 'Arquivo muito grande. Tamanho máximo: 5MB',
+      })
+    }
+
     const projetoExists = await prisma.projeto.findUnique({
       where: { id: projetoId },
     })
@@ -393,20 +406,39 @@ async function uploadImagemHandler(
       return reply.status(404).send({ error: 'Projeto não encontrado' })
     }
 
-    // Aqui você implementaria a lógica para upload real (AWS S3, etc.)
-    // Este é um exemplo simplificado que apenas simula o upload
-    const fileUrl = `/uploads/${Date.now()}-${file.filename}`
+    const uploadDir = path.join(__dirname, '..', 'uploads')
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true })
+    }
+
+    const sanitizedFilename = file.filename.replace(/[^a-zA-Z0-9._-]/g, '')
+    const filename = `${Date.now()}-${sanitizedFilename}`
+    const filePath = path.join(uploadDir, filename)
+
+    await pipeline(file.file, createWriteStream(filePath))
+
+    const fileUrl = `/uploads/${filename}`
+
+    await prisma.imagemProjeto.deleteMany({
+      where: { projetoId },
+    })
 
     const imagem = await prisma.imagemProjeto.create({
       data: {
         url: fileUrl,
         projetoId,
       },
+      include: {
+        projeto: true,
+      },
     })
 
     return reply.status(201).send(imagem)
   } catch (error) {
-    throw error
+    console.error('Erro detalhado:', error)
+    return reply.status(500).send({
+      error: 'Erro ao processar upload da imagem',
+    })
   }
 }
 
@@ -424,8 +456,20 @@ async function removerImagemHandler(
     return reply.status(404).send({ error: 'Imagem não encontrada' })
   }
 
-  // Aqui você implementaria a lógica para remover o arquivo físico
-  // Este é um exemplo simplificado que apenas remove do banco
+  try {
+    const filePath = path.join(
+      __dirname,
+      '..',
+      'uploads',
+      path.basename(imagem.url)
+    )
+
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath)
+    }
+  } catch (fileError) {
+    request.log.warn(`Não foi possível apagar arquivo físico: ${fileError}`)
+  }
 
   await prisma.imagemProjeto.delete({
     where: { id },
