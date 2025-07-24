@@ -172,6 +172,54 @@ async function getProjetoHandler(request: FastifyRequest, reply: FastifyReply) {
   return reply.send(projeto)
 }
 
+async function getProjetoByUrlHandler(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  const { url } = request.params as { url: string }
+
+  const projeto = await prisma.projeto.findUnique({
+    where: { url },
+    include: {
+      coordenador: {
+        select: {
+          id: true,
+          nome: true,
+          email: true,
+        },
+      },
+      participantes: {
+        select: {
+          id: true,
+          aluno: {
+            select: {
+              id: true,
+              nome: true,
+              turma: true,
+              curso: true,
+            },
+          },
+          funcao: true,
+          createdAt: true,
+        },
+      },
+      imagem: {
+        select: {
+          id: true,
+          url: true,
+          createdAt: true,
+        },
+      },
+    },
+  })
+
+  if (!projeto) {
+    return reply.status(404).send({ error: 'Projeto não encontrado por URL' })
+  }
+
+  return reply.send(projeto)
+}
+
 async function updateProjetoHandler(
   request: FastifyRequest,
   reply: FastifyReply
@@ -482,6 +530,7 @@ export {
   createProjetoHandler,
   getProjetosHandler,
   getProjetoHandler,
+  getProjetoByUrlHandler,
   updateProjetoHandler,
   deleteProjetoHandler,
   vincularAlunoHandler,

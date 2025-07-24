@@ -3,6 +3,7 @@ import {
   createProjetoHandler,
   deleteProjetoHandler,
   desvincularAlunoHandler,
+  getProjetoByUrlHandler,
   getProjetoHandler,
   getProjetosHandler,
   removerImagemHandler,
@@ -26,6 +27,8 @@ export async function projetosRoutes(app: FastifyInstance) {
     { preHandler: [authenticate] },
     getProjetoHandler
   )
+
+  app.get('/api/projetos/url/:url', getProjetoByUrlHandler)
 
   app.put(
     '/api/projetos/:id',
