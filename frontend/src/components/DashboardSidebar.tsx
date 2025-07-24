@@ -29,7 +29,7 @@ export function DashboardSidebar({ user }: Props) {
     useState<ComponentKeys>('projetos')
 
   const components: Record<ComponentKeys, JSX.Element> = {
-    projetos: <Projetos />,
+    projetos: <Projetos user={user} />,
     alunos: <Alunos />,
     usuarios: <Usuarios />,
   }

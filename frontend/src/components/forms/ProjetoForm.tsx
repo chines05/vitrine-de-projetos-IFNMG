@@ -47,11 +47,16 @@ export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
 
   const form = useForm<ProjetoSchemaType>({
     resolver: zodResolver(ProjetoSchema),
-    defaultValues: projeto || {
-      tipo: 'PESQUISA',
-      status: 'ATIVO',
-      dataInicio: new Date(),
-      coordenadorId: '',
+    defaultValues: {
+      id: projeto?.id,
+      titulo: projeto?.titulo || '',
+      descricao: projeto?.descricao || '',
+      url: projeto?.url || '',
+      coordenadorId: projeto?.coordenadorId || '',
+      dataInicio: projeto?.dataInicio || new Date(),
+      tipo: projeto?.tipo || 'PESQUISA',
+      status: projeto?.status || 'ATIVO',
+      dataFim: projeto?.dataFim || undefined,
     },
   })
 
@@ -80,7 +85,10 @@ export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
     )
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form
+      onSubmit={handleSubmit(onSubmit, (e) => console.log(e))}
+      className="space-y-6"
+    >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="titulo">Título*</Label>

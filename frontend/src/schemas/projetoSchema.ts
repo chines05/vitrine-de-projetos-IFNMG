@@ -8,10 +8,7 @@ export const ProjetoSchema = z.object({
     .max(100, 'Título deve ter no máximo 100 caracteres'),
 
   url: z.string().min(3, 'URL é obrigatória').max(100),
-  descricao: z
-    .string()
-    .min(10, 'Descrição deve ter no mínimo 10 caracteres')
-    .max(1000),
+  descricao: z.string().min(10, 'Descrição deve ter no mínimo 10 caracteres'),
   tipo: z.enum(['PESQUISA', 'ENSINO', 'EXTENSAO'], {
     message: 'Tipo inválido',
   }),

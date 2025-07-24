@@ -20,6 +20,12 @@ const getProjetoById = async (id: string) => {
   return response.data
 }
 
+const getProjetoByUrl = async (url: string) => {
+  const response = await api.get<ProjetoType>(`/projetos/url/${url}`)
+
+  return response.data
+}
+
 const updateProjeto = async (id: string, data: ProjetoSchemaType) => {
   const response = await api.put(`/projetos/${id}`, data)
 
@@ -71,6 +77,7 @@ export {
   postProjeto,
   getProjetos,
   getProjetoById,
+  getProjetoByUrl,
   updateProjeto,
   deleteProjeto,
   postProjetoAluno,

@@ -54,7 +54,11 @@ import { Calendar } from '../ui/calendar'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 
-const Projetos = () => {
+type Props = {
+  user: User
+}
+
+const Projetos = ({ user }: Props) => {
   const navigate = useNavigate()
   const [projetos, setProjetos] = useState<ProjetoType[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -342,7 +346,11 @@ const Projetos = () => {
                         <TooltipTrigger asChild>
                           <Eye
                             className="h-4 w-4 cursor-pointer"
-                            onClick={() => navigate(`/projeto/${projeto.id}`)}
+                            onClick={() =>
+                              navigate(`/projeto/${projeto.url}`, {
+                                state: user,
+                              })
+                            }
                           />
                         </TooltipTrigger>
                         <TooltipContent>Visualizar Projeto</TooltipContent>
