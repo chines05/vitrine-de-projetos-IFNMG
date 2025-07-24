@@ -46,7 +46,7 @@ const Projeto = () => {
     <div className="min-h-screen bg-gray-50">
       <NavBar user={user} />
 
-      <div className="max-w-5xl mx-auto py-16 px-4">
+      <div className="max-w-5xl mx-auto px-4">
         {projeto.imagem?.url && (
           <div className="mb-8">
             <img
@@ -57,7 +57,7 @@ const Projeto = () => {
           </div>
         )}
 
-        <h1 className="text-3xl font-bold text-gray-800 my-6">
+        <h1 className="text-3xl font-bold text-gray-800 mt-20 my-6">
           {projeto.titulo}
         </h1>
 

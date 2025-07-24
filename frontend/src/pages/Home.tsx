@@ -105,6 +105,24 @@ const Home = () => {
     return categoryMatch && searchMatch
   })
 
+  const tipoProjetoEstilo: Record<
+    ProjetoType['tipo'],
+    { borda: string; badge: string }
+  > = {
+    PESQUISA: {
+      borda: 'border-purple-600',
+      badge: 'bg-purple-100 text-purple-800',
+    },
+    ENSINO: {
+      borda: 'border-sky-600',
+      badge: 'bg-sky-200 text-sky-900',
+    },
+    EXTENSAO: {
+      borda: 'border-green-600',
+      badge: 'bg-green-100 text-green-800',
+    },
+  }
+
   return (
     <div id="home" className="min-h-screen flex flex-col bg-gray-50">
       <NavBar user={user} />
@@ -234,7 +252,9 @@ const Home = () => {
               {filteredProjects.map((project) => (
                 <div
                   key={project.id}
-                  className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col border border-gray-200"
+                  className={`bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col border-t-4 border-gray-200 ${
+                    tipoProjetoEstilo[project.tipo].borda
+                  }`}
                 >
                   <div className="p-5 flex-1">
                     {project.imagem?.url && (
@@ -246,6 +266,18 @@ const Home = () => {
                         />
                       </div>
                     )}
+                    <span
+                      className={`inline-block mb-2 px-3 py-1 text-xs font-semibold rounded-full ${
+                        tipoProjetoEstilo[project.tipo].badge
+                      }`}
+                    >
+                      {project.tipo === 'PESQUISA'
+                        ? 'Pesquisa'
+                        : project.tipo === 'ENSINO'
+                        ? 'Ensino'
+                        : 'Extensão'}
+                    </span>
+
                     <h3 className="text-lg font-semibold text-gray-800 mb-2">
                       {project.titulo}
                     </h3>
