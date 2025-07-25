@@ -51,11 +51,11 @@ const importUsersHandler = async (
     columns: true,
     skip_empty_lines: true,
     trim: true,
-  }) as Array<{ nome: string; email: string; senha: string }>
+  }) as Array<{ nome: string; 'e-mail': string; senha: string }>
 
   const userSchema = z.object({
     nome: z.string().min(3),
-    email: z.string().email(),
+    'e-mail': z.string().email(),
     senha: z.string().min(6),
   })
 
@@ -69,7 +69,7 @@ const importUsersHandler = async (
       continue
     }
 
-    const { nome, email, senha } = result.data
+    const { nome, 'e-mail': email, senha } = result.data
 
     const exists = await prisma.user.findUnique({ where: { email } })
     if (exists) {
