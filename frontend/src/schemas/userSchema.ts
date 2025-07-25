@@ -17,7 +17,7 @@ export const UserSchema = z
         { message: 'Use seu e-mail institucional (@ifnmg.edu.br)' }
       ),
 
-    role: z.enum(['ADMIN', 'COORDENADOR', 'COORDENADOR_DE_CURSO']),
+    role: z.enum(['ADMIN', 'COORDENADOR', 'COORDENADOR_CURSO']),
     senha: z
       .union([
         z

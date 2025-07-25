@@ -104,6 +104,9 @@ export const UserForm = ({ user, onSuccess }: UserFormProps) => {
           <SelectContent>
             <SelectItem value="ADMIN">Administrador</SelectItem>
             <SelectItem value="COORDENADOR">Coordenador</SelectItem>
+            <SelectItem value="COORDENADOR_CURSO">
+              Coordenador de curso
+            </SelectItem>
           </SelectContent>
         </Select>
         {errors.role && (

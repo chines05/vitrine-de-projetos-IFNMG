@@ -1,12 +1,12 @@
 import type { UpdateSenhaSchemaType } from '@/schemas/updateSenhaSchema'
 import api from '@/utils/api'
-import type { User } from '@/utils/types'
+import type { UserType } from '@/utils/types'
 
 const postUser = async (userData: {
   nome: string
   email: string
   senha: string
-  role: 'ADMIN' | 'COORDENADOR'
+  role: 'ADMIN' | 'COORDENADOR' | 'COORDENADOR_CURSO'
 }) => {
   const response = await api.post('/users', userData)
 
@@ -27,13 +27,13 @@ const postUsersLote = async (file: File) => {
 }
 
 const getUsers = async () => {
-  const response = await api.get<User[]>('/users')
+  const response = await api.get<UserType[]>('/users')
 
   return response.data
 }
 
 const getCoordenadores = async () => {
-  const response = await api.get<User[]>('/users/coordenadores')
+  const response = await api.get<UserType[]>('/users/coordenadores')
 
   return response.data
 }
@@ -44,7 +44,7 @@ const updateUser = async (
     nome?: string
     email?: string
     senha?: string
-    role?: 'ADMIN' | 'COORDENADOR'
+    role?: 'ADMIN' | 'COORDENADOR' | 'COORDENADOR_CURSO'
   }
 ) => {
   const response = await api.put(`/users/${id}`, userData)

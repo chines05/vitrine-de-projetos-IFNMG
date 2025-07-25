@@ -10,7 +10,7 @@ import {
 } from 'lucide-react'
 import { getTccs, deleteTcc, downloadTcc } from '@/api/apiTcc'
 import { format } from 'date-fns'
-import type { TccType } from '@/utils/types'
+import type { TccType, UserType } from '@/utils/types'
 import toast from 'react-hot-toast'
 import { cursosPermitidosTcc, formatErrorMessage } from '@/utils/format'
 import {
@@ -43,7 +43,11 @@ import { TccForm } from '../forms/TccForm'
 import { ExcluirTccDialog } from '../dialogs/ExcluirTccDialog'
 import { Badge } from '../ui/badge'
 
-const TccDashboard = () => {
+type Props = {
+  user: UserType
+}
+
+const TccDashboard = ({ user }: Props) => {
   const navigate = useNavigate()
   const [tccs, setTccs] = useState<TccType[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -95,7 +99,9 @@ const TccDashboard = () => {
   }
 
   const handleViewDetails = (tccId: string) => {
-    navigate(`/tcc/${tccId}`)
+    navigate(`/tcc/${tccId}`, {
+      state: user,
+    })
   }
 
   const filteredTccs = tccs.filter((tcc) => {

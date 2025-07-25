@@ -2,13 +2,13 @@ import { getCurrentUser } from '@/api/apiAuth'
 import { DashboardNavbar } from '@/components/DashboardNavbar'
 import { DashboardSidebar } from '@/components/DashboardSidebar'
 import { formatErrorMessage } from '@/utils/format'
-import type { User } from '@/utils/types'
+import type { UserType } from '@/utils/types'
 import { useCallback, useEffect, useState, type JSX } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 
 export default function Dashboard() {
-  const [user, setUser] = useState<User>()
+  const [user, setUser] = useState<UserType>()
   const navigate = useNavigate()
 
   const checkAuth = useCallback(async () => {

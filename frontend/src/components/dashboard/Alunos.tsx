@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/table'
 import { Plus, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import type { Aluno } from '@/utils/types'
+import type { AlunoType } from '@/utils/types'
 import {
   Dialog,
   DialogContent,
@@ -36,11 +36,11 @@ import {
 import { turmasPermitidas, cursosPermitidos } from '@/utils/format'
 
 const Alunos = () => {
-  const [alunos, setAlunos] = useState<Aluno[]>([])
+  const [alunos, setAlunos] = useState<AlunoType[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState(false)
-  const [selectedAluno, setSelectedAluno] = useState<Aluno | null>(null)
+  const [selectedAluno, setSelectedAluno] = useState<AlunoType | null>(null)
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
   const [filterNome, setFilterNome] = useState('')
   const [filterTurma, setFilterTurma] = useState('all')

@@ -5,12 +5,12 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import type { User } from '@/utils/types'
+import type { UserType } from '@/utils/types'
 
 interface ExcluirUsuarioDialogProps {
   isOpen: boolean
   onClose: () => void
-  user: User | null
+  user: UserType | null
   onDelete: (id: string) => void
 }
 

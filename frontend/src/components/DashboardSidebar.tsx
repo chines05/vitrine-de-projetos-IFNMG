@@ -13,14 +13,14 @@ import { Button } from './ui/button'
 import Projetos from './dashboard/Projetos'
 import Usuarios from './dashboard/Usuarios'
 import Alunos from './dashboard/Alunos'
-import type { User } from '@/utils/types'
+import type { UserType } from '@/utils/types'
 import { useNavigate } from 'react-router-dom'
 import TccDashboard from './dashboard/TccDashboard'
 
 type ComponentKeys = 'projetos' | 'alunos' | 'usuarios' | 'tcc'
 
 type Props = {
-  user: User
+  user: UserType
 }
 
 export function DashboardSidebar({ user }: Props) {
@@ -33,7 +33,7 @@ export function DashboardSidebar({ user }: Props) {
     projetos: <Projetos user={user} />,
     alunos: <Alunos />,
     usuarios: <Usuarios />,
-    tcc: <TccDashboard />,
+    tcc: <TccDashboard user={user} />,
   }
 
   return (
@@ -91,7 +91,7 @@ export function DashboardSidebar({ user }: Props) {
             </Button>
           )}
 
-          {(user.role === 'ADMIN' || user.role === 'COORDENADOR_DE_CURSO') && (
+          {(user.role === 'ADMIN' || user.role === 'COORDENADOR_CURSO') && (
             <Button
               variant="unstyled"
               onClick={() => setActiveComponent('tcc')}
@@ -148,7 +148,7 @@ export function DashboardSidebar({ user }: Props) {
               ...(user.role === 'ADMIN'
                 ? [{ id: 'usuarios', icon: Settings, label: 'Usuários' }]
                 : []),
-              ...(user.role === 'ADMIN' || user.role === 'COORDENADOR_DE_CURSO'
+              ...(user.role === 'ADMIN' || user.role === 'COORDENADOR_CURSO'
                 ? [{ id: 'tcc', icon: BookText, label: 'TCCs' }]
                 : []),
             ].map((item) => (

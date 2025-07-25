@@ -2,7 +2,7 @@ export type UserType = {
   id: string
   nome: string
   email: string
-  role: 'ADMIN' | 'COORDENADOR' | 'COORDENADOR_DE_CURSO'
+  role: 'ADMIN' | 'COORDENADOR' | 'COORDENADOR_CURSO'
   createdAt?: string
   updatedAt?: string
   iat?: number

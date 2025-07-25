@@ -33,7 +33,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import type { ProjetoType, User } from '@/utils/types'
+import type { ProjetoType, UserType } from '@/utils/types'
 import { Badge } from '@/components/ui/badge'
 import { VincularAlunoDialog } from '@/components/dialogs/VincularAlunoDialog'
 import { deleteProjeto, getProjetos } from '@/api/apiProjeto'
@@ -55,7 +55,7 @@ import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 
 type Props = {
-  user: User
+  user: UserType
 }
 
 const Projetos = ({ user }: Props) => {
@@ -104,7 +104,7 @@ const Projetos = ({ user }: Props) => {
     fetchProjetos()
   }, [])
 
-  const coordenadoresUnicos: User[] = Array.from(
+  const coordenadoresUnicos: UserType[] = Array.from(
     new Map(projetos.map((p) => [p.coordenadorId, p.coordenador])).values()
   )
 

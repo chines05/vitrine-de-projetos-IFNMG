@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { deleteUser, getUsers } from '@/api/apiUsers'
-import type { User } from '@/utils/types'
+import type { UserType } from '@/utils/types'
 import {
   Dialog,
   DialogContent,
@@ -41,11 +41,11 @@ import {
 } from '../ui/select'
 
 const Usuarios = () => {
-  const [users, setUsers] = useState<User[]>([])
+  const [users, setUsers] = useState<UserType[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState(false)
-  const [selectedUser, setSelectedUser] = useState<User | null>(null)
+  const [selectedUser, setSelectedUser] = useState<UserType | null>(null)
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
   const [filterNome, setFilterNome] = useState('')
   const [filterEmail, setFilterEmail] = useState('')
@@ -149,6 +149,9 @@ const Usuarios = () => {
             <SelectItem value="all">Todos os cargos</SelectItem>
             <SelectItem value="ADMIN">Administrador</SelectItem>
             <SelectItem value="COORDENADOR">Coordenador</SelectItem>
+            <SelectItem value="COORDENADOR_CURSO">
+              Coordenador de curso
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -186,10 +189,16 @@ const Usuarios = () => {
                       className={`px-2 py-1 rounded-full text-xs ${
                         user.role === 'ADMIN'
                           ? 'bg-purple-100 text-purple-800'
-                          : 'bg-green-100 text-green-800'
+                          : user.role === 'COORDENADOR'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-blue-100 text-blue-800'
                       }`}
                     >
-                      {user.role === 'ADMIN' ? 'Administrador' : 'Coordenador'}
+                      {user.role === 'ADMIN'
+                        ? 'Administrador'
+                        : user.role === 'COORDENADOR'
+                        ? 'Coordenador'
+                        : 'Coordenador de curso'}
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
