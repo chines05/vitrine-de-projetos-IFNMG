@@ -1,4 +1,4 @@
-export type User = {
+export type UserType = {
   id: string
   nome: string
   email: string
@@ -9,7 +9,7 @@ export type User = {
   exp?: number
 }
 
-export type Aluno = {
+export type AlunoType = {
   id: string
   nome: string
   turma: string
@@ -29,7 +29,7 @@ export type ProjetoType = {
   status: 'ATIVO' | 'CONCLUIDO' | 'PAUSADO' | 'CANCELADO'
   createdAt: string
   updatedAt: string
-  coordenador: User
+  coordenador: UserType
   coordenadorId: string
   participantes: {
     id: string
@@ -62,8 +62,9 @@ export type TccType = {
   alunoId: string
   coordenadorId: string
   createdAt: string
-  aluno: Aluno
-  coordenador: User
+  aluno: AlunoType
+  coordenador: UserType
+  orientador: string
 }
 
 export type ErrorResponseType =

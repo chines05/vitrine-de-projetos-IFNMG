@@ -17,6 +17,7 @@ export const tccSchema = z.object({
   ),
   alunoId: z.string().uuid('ID do aluno inválido'),
   coordenadorId: z.string().uuid('ID do coordenador inválido'),
+  orientador: z.string().min(3, 'Orientador inválido'),
   file: z
     .instanceof(File, { message: 'Arquivo PDF é obrigatório' })
     .refine((file) => file.size <= 5 * 1024 * 1024, 'Tamanho máximo de 5MB')

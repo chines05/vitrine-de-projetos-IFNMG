@@ -1,11 +1,19 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Button } from './ui/button'
-import { ScrollText, LogIn, Home, School, Menu, X } from 'lucide-react'
-import type { User } from '@/utils/types'
+import {
+  LogIn,
+  Home,
+  School,
+  Menu,
+  X,
+  LayoutDashboard,
+  GraduationCap,
+} from 'lucide-react'
+import type { UserType } from '@/utils/types'
 
 type Props = {
-  user?: User
+  user?: UserType
 }
 
 const Navbar = ({ user }: Props) => {
@@ -24,7 +32,10 @@ const Navbar = ({ user }: Props) => {
   }
 
   const handleScrollToProjetos = () => {
-    if (location.pathname.startsWith('/projeto/')) {
+    if (
+      location.pathname.startsWith('/tcc') ||
+      location.pathname.startsWith('/projeto/')
+    ) {
       navigate('/')
       setTimeout(() => {
         const target = document.getElementById('projetos')
@@ -33,7 +44,6 @@ const Navbar = ({ user }: Props) => {
         }
       }, 100)
       setMobileMenuOpen(false)
-
       return
     }
 
@@ -45,7 +55,10 @@ const Navbar = ({ user }: Props) => {
   }
 
   const handleLogo = () => {
-    if (location.pathname.startsWith('/projeto/')) {
+    if (
+      location.pathname.startsWith('/tcc') ||
+      location.pathname.startsWith('/projeto/')
+    ) {
       navigate('/')
       setTimeout(() => {
         const target = document.getElementById('home')
@@ -96,15 +109,19 @@ const Navbar = ({ user }: Props) => {
               onClick={handleScrollToProjetos}
               className="text-white hover:bg-white/10 gap-2 px-3 py-2 rounded-md transition-all"
             >
-              <ScrollText className="h-4 w-4" />
+              <LayoutDashboard className="h-4 w-4" />
               <span>Projetos</span>
             </Button>
             <Button
               variant="unstyled"
-              onClick={() => navigate('/tcc')}
+              onClick={() =>
+                navigate('/tcc', {
+                  state: user,
+                })
+              }
               className="text-white hover:bg-white/10 gap-2 px-3 py-2 rounded-md transition-all"
             >
-              <ScrollText className="h-4 w-4" />
+              <GraduationCap className="h-4 w-4" />
               <span>TCC</span>
             </Button>
 
@@ -167,8 +184,17 @@ const Navbar = ({ user }: Props) => {
               onClick={handleScrollToProjetos}
               className="w-full justify-start text-white  gap-4 px-4 py-3 rounded-md transition-all text-2xl font-bold"
             >
-              <ScrollText size={37} />
+              <LayoutDashboard size={37} />
               Projetos
+            </Button>
+
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/tcc')}
+              className="w-full justify-start text-white  gap-4 px-4 py-3 rounded-md transition-all text-2xl font-bold"
+            >
+              <GraduationCap size={37} />
+              TCC
             </Button>
 
             <div className="mt-auto">

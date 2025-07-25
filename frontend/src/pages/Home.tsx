@@ -23,7 +23,7 @@ import {
 import { getProjetos } from '@/api/apiProjeto'
 import toast from 'react-hot-toast'
 import { formatErrorMessage } from '@/utils/format'
-import type { ProjetoType, User } from '@/utils/types'
+import type { ProjetoType, UserType } from '@/utils/types'
 import { getCurrentUser } from '@/api/apiAuth'
 
 const Home = () => {
@@ -32,7 +32,7 @@ const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [projetos, setProjetos] = useState<ProjetoType[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [user, setUser] = useState<User>()
+  const [user, setUser] = useState<UserType>()
 
   const checkAuth = useCallback(async () => {
     const currentUser = await getCurrentUser()

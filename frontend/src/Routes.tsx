@@ -4,6 +4,7 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Projeto from './pages/Projeto'
 import Tcc from './pages/Tcc'
+import TccId from './pages/TccId'
 
 const AppRoutes = () => {
   return (
@@ -12,6 +13,7 @@ const AppRoutes = () => {
         <Route path="/" element={<Home />} />
         <Route path="/projeto/:url" element={<Projeto />} />
         <Route path="/tcc" element={<Tcc />} />
+        <Route path="/tcc/:id" element={<TccId />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>

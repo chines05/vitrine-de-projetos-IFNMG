@@ -1,17 +1,18 @@
 import Footer from '@/components/Footer'
 import NavBar from '@/components/NavBar'
-import type { ProjetoType, User } from '@/utils/types'
+import type { ProjetoType, UserType } from '@/utils/types'
 import { useLocation, useParams } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type JSX } from 'react'
 import toast from 'react-hot-toast'
 import { formatErrorMessage } from '@/utils/format'
 import { formatDate } from 'date-fns'
 import { getProjetoByUrl } from '@/api/apiProjeto'
+import { FlaskConical, GraduationCap, Users } from 'lucide-react'
 
 const Projeto = () => {
   const { url } = useParams()
   const location = useLocation()
-  const user = location.state as User | undefined
+  const user = location.state as UserType | undefined
 
   const [projeto, setProjeto] = useState<ProjetoType | null>(null)
 
@@ -29,6 +30,31 @@ const Projeto = () => {
 
     fetchProjeto()
   }, [url])
+
+  const tipoProjetoEstilo: Record<
+    ProjetoType['tipo'],
+    {
+      badge: string
+      bg: string
+      icon: JSX.Element
+    }
+  > = {
+    PESQUISA: {
+      badge: 'bg-purple-100 text-purple-800',
+      bg: 'bg-purple-50 border-purple-100',
+      icon: <FlaskConical className="h-4 w-4" />,
+    },
+    ENSINO: {
+      badge: 'bg-sky-200 text-sky-900',
+      bg: 'bg-sky-50 border-sky-100',
+      icon: <GraduationCap className="h-4 w-4" />,
+    },
+    EXTENSAO: {
+      badge: 'bg-green-100 text-green-800',
+      bg: 'bg-green-50 border-green-100',
+      icon: <Users className="h-4 w-4" />,
+    },
+  }
 
   if (!projeto) {
     return (
@@ -57,11 +83,30 @@ const Projeto = () => {
           </div>
         )}
 
-        <h1 className="text-3xl font-bold text-gray-800 mt-20 my-6">
-          {projeto.titulo}
-        </h1>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-20 mb-6">
+          <h1 className="text-3xl font-bold text-gray-800">{projeto.titulo}</h1>
 
-        <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
+          <div className="flex items-center gap-2">
+            <span
+              className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold ${
+                tipoProjetoEstilo[projeto.tipo].badge
+              }`}
+            >
+              {tipoProjetoEstilo[projeto.tipo].icon}
+              {projeto.tipo === 'PESQUISA'
+                ? 'Pesquisa'
+                : projeto.tipo === 'ENSINO'
+                ? 'Ensino'
+                : 'Extensão'}
+            </span>
+          </div>
+        </div>
+
+        <div
+          className={`p-6 rounded-lg shadow-sm mb-8 border ${
+            tipoProjetoEstilo[projeto.tipo].bg
+          }`}
+        >
           <h2 className="text-xl font-semibold text-green-700 mb-2">
             Descrição
           </h2>
@@ -69,7 +114,11 @@ const Projeto = () => {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 mb-10">
-          <div className="bg-white p-6 rounded-lg shadow-sm">
+          <div
+            className={`p-6 rounded-lg shadow-sm border ${
+              tipoProjetoEstilo[projeto.tipo].bg
+            }`}
+          >
             <h3 className="text-lg font-semibold text-green-700 mb-4">
               Informações Institucionais
             </h3>
@@ -93,7 +142,11 @@ const Projeto = () => {
             </ul>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm">
+          <div
+            className={`p-6 rounded-lg shadow-sm border ${
+              tipoProjetoEstilo[projeto.tipo].bg
+            }`}
+          >
             <h3 className="text-lg font-semibold text-green-700 mb-4">
               Coordenador
             </h3>
@@ -109,7 +162,11 @@ const Projeto = () => {
         </div>
 
         {projeto.participantes.length > 0 && (
-          <div className="bg-white p-6 rounded-lg shadow-sm mb-12">
+          <div
+            className={`p-6 rounded-lg shadow-sm mb-12 border ${
+              tipoProjetoEstilo[projeto.tipo].bg
+            }`}
+          >
             <h3 className="text-lg font-semibold text-green-700 mb-4">
               Participantes
             </h3>

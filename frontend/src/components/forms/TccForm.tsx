@@ -21,7 +21,6 @@ import { postTcc, updateTcc } from '@/api/apiTcc'
 import { getAlunos } from '@/api/apiAlunos'
 import { getCoordenadores } from '@/api/apiUsers'
 import { tccSchema, type TccSchemaType } from '@/schemas/tccSchema'
-import { type User, type Aluno, type TccType } from '@/utils/types'
 import {
   Popover,
   PopoverContent,
@@ -29,6 +28,7 @@ import {
 } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
 import { cn } from '@/lib/utils'
+import type { AlunoType, TccType, UserType } from '@/utils/types'
 
 interface Props {
   tcc?: TccType | null
@@ -36,8 +36,8 @@ interface Props {
 }
 
 export const TccForm = ({ tcc, onSuccess }: Props) => {
-  const [alunos, setAlunos] = useState<Aluno[]>([])
-  const [coordenadores, setCoordenadores] = useState<User[]>([])
+  const [alunos, setAlunos] = useState<AlunoType[]>([])
+  const [coordenadores, setCoordenadores] = useState<UserType[]>([])
   const [filePreview, setFilePreview] = useState<string | null>(
     tcc?.file ? `/uploads/${tcc.file}` : null
   )
@@ -53,6 +53,7 @@ export const TccForm = ({ tcc, onSuccess }: Props) => {
         : format(new Date(), 'yyyy-MM-dd'),
       alunoId: tcc?.alunoId || '',
       coordenadorId: tcc?.coordenadorId || '',
+      orientador: tcc?.orientador || '',
       file: undefined,
     },
   })
@@ -213,7 +214,7 @@ export const TccForm = ({ tcc, onSuccess }: Props) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-2">
           <Label>Aluno*</Label>
           <Select
@@ -254,6 +255,16 @@ export const TccForm = ({ tcc, onSuccess }: Props) => {
             </SelectContent>
           </Select>
           {renderError('coordenadorId')}
+        </div>
+
+        <div className="space-y-2">
+          <Label>Orientador</Label>
+          <Input
+            {...register('orientador')}
+            placeholder="Orientador"
+            className={errors.orientador ? 'border-red-500' : ''}
+          />
+          {renderError('orientador')}
         </div>
       </div>
 
