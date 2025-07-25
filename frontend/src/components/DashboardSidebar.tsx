@@ -15,8 +15,9 @@ import Usuarios from './dashboard/Usuarios'
 import Alunos from './dashboard/Alunos'
 import type { User } from '@/utils/types'
 import { useNavigate } from 'react-router-dom'
+import TccDashboard from './dashboard/TccDashboard'
 
-type ComponentKeys = 'projetos' | 'alunos' | 'usuarios'
+type ComponentKeys = 'projetos' | 'alunos' | 'usuarios' | 'tcc'
 
 type Props = {
   user: User
@@ -32,6 +33,7 @@ export function DashboardSidebar({ user }: Props) {
     projetos: <Projetos user={user} />,
     alunos: <Alunos />,
     usuarios: <Usuarios />,
+    tcc: <TccDashboard />,
   }
 
   return (
@@ -88,6 +90,21 @@ export function DashboardSidebar({ user }: Props) {
               <span>Usuários</span>
             </Button>
           )}
+
+          {(user.role === 'ADMIN' || user.role === 'COORDENADOR_DE_CURSO') && (
+            <Button
+              variant="unstyled"
+              onClick={() => setActiveComponent('tcc')}
+              className={`w-full justify-start gap-3 ${
+                activeComponent === 'tcc'
+                  ? 'bg-white/20 hover:bg-white/20'
+                  : 'hover:bg-white/10'
+              }`}
+            >
+              <BookText className="h-5 w-5" />
+              <span>TCCs</span>
+            </Button>
+          )}
         </nav>
       </div>
       <div className="ml-4 lg:ml-70 pt-20 w-full">
@@ -130,6 +147,9 @@ export function DashboardSidebar({ user }: Props) {
               { id: 'alunos', icon: Users, label: 'Alunos' },
               ...(user.role === 'ADMIN'
                 ? [{ id: 'usuarios', icon: Settings, label: 'Usuários' }]
+                : []),
+              ...(user.role === 'ADMIN' || user.role === 'COORDENADOR_DE_CURSO'
+                ? [{ id: 'tcc', icon: BookText, label: 'TCCs' }]
                 : []),
             ].map((item) => (
               <Button

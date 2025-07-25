@@ -84,3 +84,10 @@ export const cursosPermitidos = [
   'Técnico em Informática Integrado ao Ensino Médio',
   'Técnico em Agropecuária Integrado ao Ensino Médio em Regime de Alternância',
 ]
+
+export const cursosPermitidosTcc = [
+  'Tecnólogo em Processos Gerenciais',
+  'Tecnologia em Análise e Desenvolvimento de Sistemas',
+  'Técnico em Enfermagem',
+  'Bacharelado em Engenharia Agronômica',
+]

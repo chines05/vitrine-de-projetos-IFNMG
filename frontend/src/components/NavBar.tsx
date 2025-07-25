@@ -99,6 +99,14 @@ const Navbar = ({ user }: Props) => {
               <ScrollText className="h-4 w-4" />
               <span>Projetos</span>
             </Button>
+            <Button
+              variant="unstyled"
+              onClick={() => navigate('/tcc')}
+              className="text-white hover:bg-white/10 gap-2 px-3 py-2 rounded-md transition-all"
+            >
+              <ScrollText className="h-4 w-4" />
+              <span>TCC</span>
+            </Button>
 
             <Button
               onClick={handleLogin}

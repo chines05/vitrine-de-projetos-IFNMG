@@ -2,7 +2,7 @@ export type User = {
   id: string
   nome: string
   email: string
-  role: 'ADMIN' | 'COORDENADOR'
+  role: 'ADMIN' | 'COORDENADOR' | 'COORDENADOR_DE_CURSO'
   createdAt?: string
   updatedAt?: string
   iat?: number
@@ -50,6 +50,20 @@ export type ProjetoType = {
     projetoId: string
     createdAt: string
   }
+}
+
+export type TccType = {
+  id: string
+  titulo: string
+  curso: string
+  resumo: string
+  dataDefesa: Date
+  file: string
+  alunoId: string
+  coordenadorId: string
+  createdAt: string
+  aluno: Aluno
+  coordenador: User
 }
 
 export type ErrorResponseType =
