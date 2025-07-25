@@ -9,7 +9,6 @@ import { postProjeto, updateProjeto } from '@/api/apiProjeto'
 import { getCoordenadores } from '@/api/apiUsers'
 import { cn } from '@/lib/utils'
 import { useEffect, useState } from 'react'
-import type { User } from '@/utils/types'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
@@ -23,6 +22,7 @@ import {
 } from '../ui/select'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Calendar } from '../ui/calendar'
+import type { UserType } from '@/utils/types'
 
 interface ProjetoFormProps {
   projeto?: ProjetoSchemaType | null
@@ -30,7 +30,7 @@ interface ProjetoFormProps {
 }
 
 export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
-  const [coordenadores, setCoordenadores] = useState<User[]>([])
+  const [coordenadores, setCoordenadores] = useState<UserType[]>([])
 
   const fetchCoordenadores = async () => {
     try {
@@ -97,16 +97,10 @@ export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
         </div>
         <div className="space-y-2 relative">
           <Label htmlFor="url">URL*</Label>
-
-          <span className="absolute top-8/15 left-3 text-sm text-muted-foreground">
-            vitrine.ifalmenara.com.br/projeto/
-          </span>
-
           <Input
             {...register('url')}
             id="url"
-            placeholder=""
-            className="pl-[227px]"
+            placeholder="vitrine.ifalmenara.com.br/projeto/{url}"
           />
 
           {renderError('url')}

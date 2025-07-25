@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { postUser, updateUser } from '@/api/apiUsers'
-import type { User } from '@/utils/types'
 import {
   Select,
   SelectContent,
@@ -15,9 +14,10 @@ import {
 import toast from 'react-hot-toast'
 import { UserSchema, type UserSchemaType } from '@/schemas/userSchema'
 import { formatErrorMessage } from '@/utils/format'
+import type { UserType } from '@/utils/types'
 
 interface UserFormProps {
-  user?: User | null
+  user?: UserType | null
   onSuccess: () => void
 }
 

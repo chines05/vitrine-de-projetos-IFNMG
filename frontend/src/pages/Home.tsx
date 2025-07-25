@@ -30,6 +30,7 @@ const Home = () => {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [selectedStatus, setSelectedStatus] = useState<string>('all')
   const [projetos, setProjetos] = useState<ProjetoType[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [user, setUser] = useState<UserType>()
@@ -68,9 +69,25 @@ const Home = () => {
   }, [])
 
   const stats = [
-    { value: '20+', label: 'Projetos ativos' },
-    { value: '15+', label: 'Coordenadores' },
-    { value: '100+', label: 'Alunos' },
+    {
+      value: projetos.filter((p) => p.status === 'ATIVO').length.toString(),
+      label: 'Projetos ativos',
+      icon: <FlaskConical className="h-5 w-5" />,
+    },
+    {
+      value: [
+        ...new Set(projetos.map((p) => p.coordenadorId)),
+      ].length.toString(),
+      label: 'Coordenadores',
+      icon: <GraduationCap className="h-5 w-5" />,
+    },
+    {
+      value: projetos
+        .reduce((total, p) => total + p.participantes.length, 0)
+        .toString(),
+      label: 'Alunos participantes',
+      icon: <Users className="h-5 w-5" />,
+    },
   ]
 
   const projectCategories = [
@@ -98,11 +115,17 @@ const Home = () => {
     const categoryMatch =
       selectedCategory === 'all' ||
       project.tipo.toLowerCase() === selectedCategory
+
+    const statusMatch =
+      selectedStatus === 'all' ||
+      project.status.toLowerCase() === selectedStatus.toLowerCase()
+
     const searchMatch =
       !searchTerm ||
       project.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
       project.descricao.toLowerCase().includes(searchTerm.toLowerCase())
-    return categoryMatch && searchMatch
+
+    return categoryMatch && statusMatch && searchMatch
   })
 
   const tipoProjetoEstilo: Record<
@@ -180,12 +203,17 @@ const Home = () => {
             {stats.map((stat, index) => (
               <div
                 key={index}
-                className="bg-white rounded-lg shadow-md p-4 text-center hover:shadow-lg transition-shadow"
+                className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-all flex items-center"
               >
-                <span className="block text-3xl font-bold text-green-600 mb-1">
-                  {stat.value}
-                </span>
-                <span className="text-gray-600 text-sm">{stat.label}</span>
+                <div className="p-3 rounded-full bg-green-100 text-green-600 flex-shrink-0">
+                  {stat.icon}
+                </div>
+                <div className="text-center w-full">
+                  <span className="block text-2xl font-bold text-green-600 leading-tight">
+                    {stat.value}
+                  </span>
+                  <span className="text-gray-600 text-sm">{stat.label}</span>
+                </div>
               </div>
             ))}
           </div>
@@ -198,18 +226,16 @@ const Home = () => {
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               Encontre projetos
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-              <div className="md:col-span-3">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <Input
-                    type="text"
-                    placeholder="Buscar projetos..."
-                    className="pl-10 w-full h-10 text-sm"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  type="text"
+                  placeholder="Buscar projetos..."
+                  className="pl-10 w-full h-10 text-sm"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
               <div>
                 <Select
@@ -229,6 +255,23 @@ const Home = () => {
                         </div>
                       </SelectItem>
                     ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Select
+                  value={selectedStatus}
+                  onValueChange={(value) => setSelectedStatus(value)}
+                >
+                  <SelectTrigger className="w-full h-10">
+                    <SelectValue placeholder="Filtrar por status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos os status</SelectItem>
+                    <SelectItem value="ATIVO">Ativo</SelectItem>
+                    <SelectItem value="CONCLUIDO">Concluído</SelectItem>
+                    <SelectItem value="PAUSADO">Pausado</SelectItem>
+                    <SelectItem value="CANCELADO">Cancelado</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
