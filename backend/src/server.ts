@@ -25,6 +25,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 await app.register(fastifyStatic, {
   root: path.join(__dirname, '..', 'uploads'),
   prefix: '/uploads/',
+  decorateReply: false,
 })
 
 await app.register(fastifyMultipart, {

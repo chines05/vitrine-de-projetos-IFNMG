@@ -4,6 +4,10 @@ dist/
 .env
 .env.local
 
+# files
+uploads/files/*
+uploads/images/*
+
 # Prisma
 prisma/dev.db
 prisma/*.sqlite

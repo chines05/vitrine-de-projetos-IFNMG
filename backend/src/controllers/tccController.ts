@@ -112,7 +112,7 @@ const createTCCHandler = async (
         .send({ error: 'Este aluno já possui um TCC cadastrado' })
     }
 
-    const uploadDir = path.join(process.cwd(), 'uploads')
+    const uploadDir = path.join(process.cwd(), 'uploads', 'files')
     try {
       await fs.mkdir(uploadDir, { recursive: true })
     } catch (err) {
@@ -159,7 +159,7 @@ const createTCCHandler = async (
         curso,
         resumo,
         dataDefesa: parsedDate,
-        file: fileName,
+        file: `files/${fileName}`,
         aluno: { connect: { id: alunoId } },
         coordenador: { connect: { id: coordenadorId } },
       },
@@ -195,11 +195,12 @@ const downloadTCCHandler = async (
 
     try {
       await fs.access(filePath)
+      reply.header('Content-Type', 'application/pdf')
+      reply.header('Content-Disposition', `attachment; filename=${tcc.file}`)
+      return reply.send(await fs.readFile(filePath))
     } catch {
       return reply.status(404).send({ error: 'Arquivo não encontrado' })
     }
-
-    return reply.sendFile(tcc.file, path.join(__dirname, '..', '..', 'uploads'))
   } catch (error) {
     console.error('Erro ao baixar TCC:', error)
     return reply.status(500).send({ error: 'Erro interno ao baixar arquivo' })
