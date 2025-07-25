@@ -6,12 +6,13 @@ import {
   Download,
   ChevronLeft,
   ChevronRight,
+  Eye,
 } from 'lucide-react'
 import { getTccs, deleteTcc, downloadTcc } from '@/api/apiTcc'
 import { format } from 'date-fns'
 import type { TccType } from '@/utils/types'
 import toast from 'react-hot-toast'
-import { formatErrorMessage } from '@/utils/format'
+import { cursosPermitidosTcc, formatErrorMessage } from '@/utils/format'
 import {
   Dialog,
   DialogContent,
@@ -39,12 +40,15 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import { useNavigate } from 'react-router-dom'
 import { TccForm } from '../forms/TccForm'
+import { ExcluirTccDialog } from '../dialogs/ExcluirTccDialog'
+import { Badge } from '../ui/badge'
 
 const TccDashboard = () => {
   const navigate = useNavigate()
   const [tccs, setTccs] = useState<TccType[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [selectedTcc, setSelectedTcc] = useState<TccType | null>(null)
   const [filterCurso, setFilterCurso] = useState('all')
   const [filterTitulo, setFilterTitulo] = useState('')
@@ -67,7 +71,12 @@ const TccDashboard = () => {
     fetchTccs()
   }, [])
 
-  const handleDelete = async (tccId: string) => {
+  const handleDeleteClick = (tccId: string) => {
+    setSelectedTcc(tccs.find((t) => t.id === tccId) || null)
+    setIsDeleteDialogOpen(true)
+  }
+
+  const handleConfirmDelete = async (tccId: string) => {
     try {
       await deleteTcc(tccId)
       await fetchTccs()
@@ -79,14 +88,7 @@ const TccDashboard = () => {
 
   const handleDownload = async (tccId: string, fileName: string) => {
     try {
-      const response = await downloadTcc(tccId)
-      const url = window.URL.createObjectURL(new Blob([response.data]))
-      const link = document.createElement('a')
-      link.href = url
-      link.setAttribute('download', fileName)
-      document.body.appendChild(link)
-      link.click()
-      link.remove()
+      await downloadTcc(tccId, fileName)
     } catch (error) {
       toast.error(formatErrorMessage(error, 'Erro ao baixar arquivo.'))
     }
@@ -146,7 +148,7 @@ const TccDashboard = () => {
             setCurrentPage(0)
           }}
           placeholder="Filtrar por título..."
-          className="h-10"
+          className="h-10 text-sm"
         />
         <Select
           value={filterCurso}
@@ -155,28 +157,21 @@ const TccDashboard = () => {
             setCurrentPage(0)
           }}
         >
-          <SelectTrigger className="h-10">
+          <SelectTrigger className="h-10 text-sm">
             <SelectValue placeholder="Filtrar por curso" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos os cursos</SelectItem>
-            <SelectItem value="tecnologia_em_processos_gerenciais">
-              Tecnologia em Processos Gerenciais
-            </SelectItem>
-            <SelectItem value="tecnologia_em_analise_e_desenvolvimento_de_sistemas">
-              Tecnologia em Análise e Desenvolvimento de Sistemas
-            </SelectItem>
-            <SelectItem value="tecnico_em_enfermagem">
-              Técnico em Enfermagem
-            </SelectItem>
-            <SelectItem value="bacharelado_em_engenharia_agronomica">
-              Bacharelado em Engenharia Agronômica
-            </SelectItem>
+            <SelectItem value="all">Todos</SelectItem>
+            {cursosPermitidosTcc.map((curso) => (
+              <SelectItem key={curso} value={curso}>
+                {curso}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
 
-      <div className="rounded-lg border shadow-sm">
+      <div className="rounded-md border shadow-sm">
         <Table>
           <TableHeader className="bg-gray-50">
             <TableRow>
@@ -202,13 +197,13 @@ const TccDashboard = () => {
               </TableRow>
             ) : (
               tccsPaginados.map((tcc) => (
-                <TableRow
-                  key={tcc.id}
-                  className="hover:bg-gray-50 cursor-pointer"
-                  onClick={() => handleViewDetails(tcc.id)}
-                >
+                <TableRow key={tcc.id} className="hover:bg-gray-50">
                   <TableCell className="font-medium">{tcc.titulo}</TableCell>
-                  <TableCell>{tcc.curso}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="capitalize">
+                      {tcc.curso.replace(/_/g, ' ')}
+                    </Badge>
+                  </TableCell>
                   <TableCell>{tcc.aluno?.nome}</TableCell>
                   <TableCell>
                     {format(new Date(tcc.dataDefesa), 'dd/MM/yyyy')}
@@ -220,10 +215,19 @@ const TccDashboard = () => {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              handleDownload(tcc.id, tcc.file)
-                            }}
+                            onClick={() => handleViewDetails(tcc.id)}
+                          >
+                            <Eye className="h-4 w-4 text-gray-600" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Visualizar TCC</TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDownload(tcc.id, tcc.file)}
                           >
                             <Download className="h-4 w-4 text-blue-600" />
                           </Button>
@@ -235,8 +239,7 @@ const TccDashboard = () => {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={(e) => {
-                              e.stopPropagation()
+                            onClick={() => {
                               setSelectedTcc(tcc)
                               setIsDialogOpen(true)
                             }}
@@ -251,10 +254,7 @@ const TccDashboard = () => {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              handleDelete(tcc.id)
-                            }}
+                            onClick={() => handleDeleteClick(tcc.id)}
                           >
                             <Trash2 className="h-4 w-4 text-red-600" />
                           </Button>
@@ -304,6 +304,13 @@ const TccDashboard = () => {
           </TableBody>
         </Table>
       </div>
+
+      <ExcluirTccDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        tcc={selectedTcc}
+        onDelete={handleConfirmDelete}
+      />
     </main>
   )
 }
