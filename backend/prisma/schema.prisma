@@ -79,11 +79,10 @@ model ImagemProjeto {
 model TCC {
   id            String   @id @default(uuid())
   titulo        String
-  url           String   @unique
   curso         String
   resumo        String   @db.Text
   dataDefesa    DateTime
-  arquivoUrl    String
+  file       String
   aluno         Aluno    @relation(fields: [alunoId], references: [id])
   alunoId       String   @unique
   coordenador   User     @relation("TCCsDoCoordenador", fields: [coordenadorId], references: [id])

@@ -6,18 +6,27 @@ import {
   getTCCByIdHandler,
   updateTCCHandler,
   deleteTCCHandler,
+  downloadTCCHandler,
 } from '../controllers/tccController'
 
 export const tccRoutes = (app: FastifyInstance) => {
   app.post(
-    '/tcc',
+    '/api/tcc',
     {
       preHandler: [authenticate],
+      config: {
+        payload: {
+          allow: 'multipart/form-data',
+          multipart: true,
+        },
+      },
     },
     createTCCHandler
   )
-  app.get('/tcc', getAllTCCsHandler)
-  app.get('/tcc/:id', getTCCByIdHandler)
-  app.put('/tcc/:id', { preHandler: [authenticate] }, updateTCCHandler)
-  app.delete('/tcc/:id', { preHandler: [authenticate] }, deleteTCCHandler)
+
+  app.get('/api/tcc', getAllTCCsHandler)
+  app.get('/api/tcc/:id', getTCCByIdHandler)
+  app.get('/api/tcc/:id/download', downloadTCCHandler)
+  app.put('/api/tcc/:id', { preHandler: [authenticate] }, updateTCCHandler)
+  app.delete('/api/tcc/:id', { preHandler: [authenticate] }, deleteTCCHandler)
 }

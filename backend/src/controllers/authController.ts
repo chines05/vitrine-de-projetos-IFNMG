@@ -8,11 +8,11 @@ const loginSchema = z.object({
   senha: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
 })
 
-export async function loginHandler(
+const loginHandler = async (
   app: FastifyInstance,
   request: FastifyRequest,
   reply: FastifyReply
-) {
+) => {
   const { email, senha } = loginSchema.parse(request.body)
 
   const user = await prisma.user.findUnique({ where: { email } })
@@ -34,6 +34,8 @@ export async function loginHandler(
   return reply.send({ token })
 }
 
-export async function meHandler(request: FastifyRequest, reply: FastifyReply) {
+const meHandler = (request: FastifyRequest, reply: FastifyReply) => {
   return reply.send(request.user)
 }
+
+export { loginHandler, meHandler }

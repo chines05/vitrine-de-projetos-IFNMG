@@ -10,14 +10,13 @@ import {
 } from '../validators/projetoValidator'
 import fs from 'node:fs'
 import path from 'node:path'
-import pump from 'pump'
 import { pipeline } from 'stream/promises'
 import { createWriteStream } from 'fs'
 
-async function createProjetoHandler(
+const createProjetoHandler = async (
   request: FastifyRequest,
   reply: FastifyReply
-) {
+) => {
   try {
     const {
       titulo,
@@ -78,10 +77,10 @@ async function createProjetoHandler(
   }
 }
 
-async function getProjetosHandler(
+const getProjetosHandler = async (
   request: FastifyRequest,
   reply: FastifyReply
-) {
+) => {
   const { tipo, status } = request.query as {
     tipo?: string
     status?: string
@@ -127,7 +126,10 @@ async function getProjetosHandler(
   return reply.send(projetos)
 }
 
-async function getProjetoHandler(request: FastifyRequest, reply: FastifyReply) {
+const getProjetoHandler = async (
+  request: FastifyRequest,
+  reply: FastifyReply
+) => {
   const { id } = request.params as { id: string }
 
   const projeto = await prisma.projeto.findUnique({
@@ -172,10 +174,10 @@ async function getProjetoHandler(request: FastifyRequest, reply: FastifyReply) {
   return reply.send(projeto)
 }
 
-async function getProjetoByUrlHandler(
+const getProjetoByUrlHandler = async (
   request: FastifyRequest,
   reply: FastifyReply
-) {
+) => {
   const { url } = request.params as { url: string }
 
   const projeto = await prisma.projeto.findUnique({
@@ -220,10 +222,10 @@ async function getProjetoByUrlHandler(
   return reply.send(projeto)
 }
 
-async function updateProjetoHandler(
+const updateProjetoHandler = async (
   request: FastifyRequest,
   reply: FastifyReply
-) {
+) => {
   try {
     const { params, body } = updateProjetoSchema.parse({
       params: request.params,
@@ -293,10 +295,10 @@ async function updateProjetoHandler(
   }
 }
 
-async function deleteProjetoHandler(
+const deleteProjetoHandler = async (
   request: FastifyRequest,
   reply: FastifyReply
-) {
+) => {
   const { id } = deleteProjetoSchema.parse(request.params)
 
   const projeto = await prisma.projeto.findUnique({
@@ -330,10 +332,10 @@ async function deleteProjetoHandler(
   }
 }
 
-async function vincularAlunoHandler(
+const vincularAlunoHandler = async (
   request: FastifyRequest,
   reply: FastifyReply
-) {
+) => {
   try {
     const { funcao } = vincularAlunoSchema.parse(request.body)
 
@@ -398,10 +400,10 @@ async function vincularAlunoHandler(
   }
 }
 
-async function desvincularAlunoHandler(
+const desvincularAlunoHandler = async (
   request: FastifyRequest,
   reply: FastifyReply
-) {
+) => {
   const { projetoId, alunoId } = request.params as {
     projetoId: string
     alunoId: string
@@ -422,10 +424,10 @@ async function desvincularAlunoHandler(
   return reply.status(204).send()
 }
 
-async function uploadImagemHandler(
+const uploadImagemHandler = async (
   request: FastifyRequest,
   reply: FastifyReply
-) {
+) => {
   try {
     const { projetoId } = request.params as { projetoId: string }
     const file = await request.file()
@@ -490,10 +492,10 @@ async function uploadImagemHandler(
   }
 }
 
-async function removerImagemHandler(
+const removerImagemHandler = async (
   request: FastifyRequest,
   reply: FastifyReply
-) {
+) => {
   const { id } = request.params as { id: string }
 
   const imagem = await prisma.imagemProjeto.findUnique({

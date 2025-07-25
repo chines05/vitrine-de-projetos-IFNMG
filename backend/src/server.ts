@@ -27,7 +27,12 @@ await app.register(fastifyStatic, {
   prefix: '/uploads/',
 })
 
-await app.register(fastifyMultipart)
+await app.register(fastifyMultipart, {
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+    files: 1,
+  },
+})
 
 app.decorate('authenticate', authenticate)
 

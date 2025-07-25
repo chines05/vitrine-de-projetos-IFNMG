@@ -8,10 +8,10 @@ import {
   deleteAlunoSchema,
 } from '../validators/alunoValidator'
 
-export async function createAlunoHandler(
+const createAlunoHandler = async (
   request: FastifyRequest,
   reply: FastifyReply
-) {
+) => {
   try {
     const data = alunoSchema.parse(request.body)
     const aluno = await prisma.aluno.create({ data })
@@ -21,10 +21,10 @@ export async function createAlunoHandler(
   }
 }
 
-export async function importAlunosHandler(
+const importAlunosHandler = async (
   request: FastifyRequest,
   reply: FastifyReply
-) {
+) => {
   try {
     const file = await request.file()
     if (!file) {
@@ -70,10 +70,10 @@ export async function importAlunosHandler(
   }
 }
 
-export async function getAlunosHandler(
+const getAlunosHandler = async (
   request: FastifyRequest,
   reply: FastifyReply
-) {
+) => {
   try {
     const alunos = await prisma.aluno.findMany({
       orderBy: { createdAt: 'desc' },
@@ -84,10 +84,10 @@ export async function getAlunosHandler(
   }
 }
 
-export async function updateAlunoHandler(
+const updateAlunoHandler = async (
   request: FastifyRequest,
   reply: FastifyReply
-) {
+) => {
   try {
     const { params, body } = updateAlunoSchema.parse({
       params: request.params,
@@ -138,10 +138,10 @@ export async function updateAlunoHandler(
   }
 }
 
-export async function deleteAlunoHandler(
+const deleteAlunoHandler = async (
   request: FastifyRequest,
   reply: FastifyReply
-) {
+) => {
   try {
     const { id } = deleteAlunoSchema.parse(request.params)
 
@@ -164,4 +164,12 @@ export async function deleteAlunoHandler(
     }
     return reply.status(500).send({ error: 'Erro ao deletar aluno' })
   }
+}
+
+export {
+  createAlunoHandler,
+  getAlunosHandler,
+  updateAlunoHandler,
+  deleteAlunoHandler,
+  importAlunosHandler,
 }

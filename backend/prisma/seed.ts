@@ -174,6 +174,45 @@ async function main() {
       },
     }),
   ])
+
+  const tccs = await Promise.all([
+    prisma.tCC.create({
+      data: {
+        titulo: 'Análise da Eficiência Energética em Redes Domésticas',
+        curso: alunos[0].curso,
+        resumo:
+          'Estudo sobre o consumo energético de dispositivos IoT em redes domésticas.',
+        dataDefesa: new Date('2024-12-10'),
+        file: '',
+        aluno: { connect: { id: alunos[0].id } },
+        coordenador: { connect: { id: coordenadores[0].id } },
+      },
+    }),
+    prisma.tCC.create({
+      data: {
+        titulo: 'Aplicações da Agricultura de Precisão em Culturas de Milho',
+        curso: alunos[1].curso,
+        resumo:
+          'Avaliação do uso de sensores e mapas de produtividade para otimizar o cultivo de milho.',
+        dataDefesa: new Date('2024-11-25'),
+        file: '',
+        aluno: { connect: { id: alunos[1].id } },
+        coordenador: { connect: { id: coordenadores[0].id } },
+      },
+    }),
+    prisma.tCC.create({
+      data: {
+        titulo: 'Inclusão Digital na Terceira Idade: Desafios e Estratégias',
+        curso: alunos[2].curso,
+        resumo:
+          'Análise de oficinas digitais voltadas a idosos e impactos sociais gerados.',
+        dataDefesa: new Date('2025-01-12'),
+        file: '',
+        aluno: { connect: { id: alunos[2].id } },
+        coordenador: { connect: { id: coordenadores[1].id } },
+      },
+    }),
+  ])
 }
 
 main()
