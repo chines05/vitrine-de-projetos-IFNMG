@@ -82,11 +82,12 @@ model TCC {
   curso         String
   resumo        String   @db.Text
   dataDefesa    DateTime
-  file       String
+  file          String
   aluno         Aluno    @relation(fields: [alunoId], references: [id])
   alunoId       String   @unique
   coordenador   User     @relation("TCCsDoCoordenador", fields: [coordenadorId], references: [id])
   coordenadorId String
+  orientador    String
   createdAt     DateTime @default(now())
 
   @@map("tccs")

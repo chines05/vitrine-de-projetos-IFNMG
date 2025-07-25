@@ -30,6 +30,7 @@ const createTCCHandler = async (
       dataDefesa?: { value: string }
       alunoId?: { value: string }
       coordenadorId?: { value: string }
+      orientador?: { value: string }
     }
 
     const fields = data.fields as FormFields
@@ -41,6 +42,7 @@ const createTCCHandler = async (
       'dataDefesa',
       'alunoId',
       'coordenadorId',
+      'orientador',
     ]
 
     for (const field of requiredFields) {
@@ -55,6 +57,7 @@ const createTCCHandler = async (
     const dataDefesa = fields.dataDefesa!.value
     const alunoId = fields.alunoId!.value
     const coordenadorId = fields.coordenadorId!.value
+    const orientador = fields.orientador!.value
 
     let parsedDate: Date
     try {
@@ -162,6 +165,7 @@ const createTCCHandler = async (
         file: `files/${fileName}`,
         aluno: { connect: { id: alunoId } },
         coordenador: { connect: { id: coordenadorId } },
+        orientador,
       },
       include: {
         aluno: true,
@@ -255,16 +259,21 @@ const updateTCCHandler = async (
 ) => {
   try {
     const { id } = request.params as { id: string }
-    const { titulo, curso, resumo, dataDefesa, alunoId, coordenadorId } =
-      request.body as any
+    const {
+      titulo,
+      curso,
+      resumo,
+      dataDefesa,
+      alunoId,
+      coordenadorId,
+      orientador,
+    } = request.body as any
 
-    // Verifica se o TCC existe
     const tccExistente = await prisma.tCC.findUnique({ where: { id } })
     if (!tccExistente) {
       return reply.status(404).send({ error: 'TCC não encontrado' })
     }
 
-    // Valida relacionamentos se forem fornecidos
     if (alunoId || coordenadorId) {
       const [aluno, coordenador] = await Promise.all([
         alunoId
@@ -302,6 +311,7 @@ const updateTCCHandler = async (
         coordenador: coordenadorId
           ? { connect: { id: coordenadorId } }
           : undefined,
+        orientador,
       },
       include: {
         aluno: true,

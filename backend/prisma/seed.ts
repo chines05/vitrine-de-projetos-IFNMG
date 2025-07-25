@@ -56,21 +56,28 @@ async function main() {
       data: {
         nome: 'Maria Souza',
         turma: 'TENGA221JA',
-        curso: 'Engenharia Agronômica',
+        curso: 'Tecnólogo em Processos Gerenciais',
       },
     }),
     prisma.aluno.create({
       data: {
         nome: 'Pedro Costa',
         turma: 'TLIC321MC',
-        curso: 'Licenciatura em Computação',
+        curso: 'Tecnologia em Análise e Desenvolvimento de Sistemas',
       },
     }),
     prisma.aluno.create({
       data: {
         nome: 'Ana Santos',
         turma: 'TAGRO119JA',
-        curso: 'Agronomia',
+        curso: 'Bacharelado em Engenharia Agronômica',
+      },
+    }),
+    prisma.aluno.create({
+      data: {
+        nome: 'Lucas Oliveira',
+        turma: 'TLAS124NA',
+        curso: 'Tecnologia em Análise e Desenvolvimento de Sistemas',
       },
     }),
   ])
@@ -186,6 +193,7 @@ async function main() {
         file: '',
         aluno: { connect: { id: alunos[0].id } },
         coordenador: { connect: { id: coordenadores[0].id } },
+        orientador: 'Prof. Dr. João Silva',
       },
     }),
     prisma.tCC.create({
@@ -198,6 +206,7 @@ async function main() {
         file: '',
         aluno: { connect: { id: alunos[1].id } },
         coordenador: { connect: { id: coordenadores[0].id } },
+        orientador: 'Prof. Dra. Maria Santos',
       },
     }),
     prisma.tCC.create({
@@ -210,6 +219,33 @@ async function main() {
         file: '',
         aluno: { connect: { id: alunos[2].id } },
         coordenador: { connect: { id: coordenadores[1].id } },
+        orientador: 'Prof. Dr. Carlos Oliveira',
+      },
+    }),
+    prisma.tCC.create({
+      data: {
+        titulo: 'Desenvolvimento de Sistemas para Internet das Coisas',
+        curso: alunos[3].curso,
+        resumo:
+          'Estudo sobre o desenvolvimento de sistemas para internet das coisas.',
+        dataDefesa: new Date('2024-12-30'),
+        file: '',
+        aluno: { connect: { id: alunos[3].id } },
+        coordenador: { connect: { id: coordenadores[1].id } },
+        orientador: 'Prof. Dr. João Silva',
+      },
+    }),
+    prisma.tCC.create({
+      data: {
+        titulo: 'Desenvolvimento de Sistemas para Internet das Coisas',
+        curso: alunos[3].curso,
+        resumo:
+          'Estudo sobre o desenvolvimento de sistemas para internet das coisas.',
+        dataDefesa: new Date('2024-12-30'),
+        file: '',
+        aluno: { connect: { id: alunos[3].id } },
+        coordenador: { connect: { id: coordenadores[1].id } },
+        orientador: 'Prof. Dr. João Silva',
       },
     }),
   ])
