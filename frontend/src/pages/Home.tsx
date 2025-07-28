@@ -299,34 +299,38 @@ const Home = () => {
                     tipoProjetoEstilo[project.tipo].borda
                   }`}
                 >
-                  <div className="p-5 flex-1">
-                    {project.imagem?.url && (
+                  <div className="flex-1">
+                    {project.imagens?.find((img) => img.principal)?.url && (
                       <div className="flex justify-center mb-3">
                         <img
-                          src={project.imagem.url}
+                          src={`http://localhost:8080${
+                            project.imagens.find((img) => img.principal)?.url
+                          }`}
                           alt={`Imagem do projeto ${project.titulo}`}
                           className="rounded-md object-cover w-full max-h-48"
                         />
                       </div>
                     )}
-                    <span
-                      className={`inline-block mb-2 px-3 py-1 text-xs font-semibold rounded-full ${
-                        tipoProjetoEstilo[project.tipo].badge
-                      }`}
-                    >
-                      {project.tipo === 'PESQUISA'
-                        ? 'Pesquisa'
-                        : project.tipo === 'ENSINO'
-                        ? 'Ensino'
-                        : 'Extensão'}
-                    </span>
+                    <div className="p-6">
+                      <span
+                        className={`inline-block mb-2 px-3 py-1 text-xs font-semibold rounded-full ${
+                          tipoProjetoEstilo[project.tipo].badge
+                        }`}
+                      >
+                        {project.tipo === 'PESQUISA'
+                          ? 'Pesquisa'
+                          : project.tipo === 'ENSINO'
+                          ? 'Ensino'
+                          : 'Extensão'}
+                      </span>
 
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                      {project.titulo}
-                    </h3>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                      {project.descricao}
-                    </p>
+                      <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                        {project.titulo}
+                      </h3>
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                        {project.descricao}
+                      </p>
+                    </div>
                   </div>
                   <div className="px-5 py-3 bg-gray-50 border-t border-gray-100">
                     <Button

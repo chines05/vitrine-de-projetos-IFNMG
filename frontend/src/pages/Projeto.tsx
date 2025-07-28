@@ -8,6 +8,14 @@ import { formatErrorMessage } from '@/utils/format'
 import { formatDate } from 'date-fns'
 import { getProjetoByUrl } from '@/api/apiProjeto'
 import { FlaskConical, GraduationCap, Users } from 'lucide-react'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel'
+import { Card, CardContent } from '@/components/ui/card'
 
 const Projeto = () => {
   const { url } = useParams()
@@ -70,16 +78,6 @@ const Projeto = () => {
 
       <main className="flex-1 py-12 px-6">
         <section className="max-w-6xl mx-auto mb-12">
-          {projeto.imagem?.url && (
-            <div className="mb-8">
-              <img
-                src={`${projeto.imagem.url}`}
-                alt={`Imagem do projeto ${projeto.titulo}`}
-                className="rounded-lg w-full h-72 object-cover shadow"
-              />
-            </div>
-          )}
-
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-8 mb-6">
             <h1 className="text-3xl font-bold text-gray-800">
               {projeto.titulo}
@@ -163,6 +161,39 @@ const Projeto = () => {
                   </li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {projeto.imagens && projeto.imagens.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-green-700 mb-4">
+                Imagens do projeto
+              </h3>
+
+              <Carousel className="w-full mx-auto">
+                <CarouselContent>
+                  {projeto.imagens
+                    .filter((img) => !img.principal)
+                    .map((img) => (
+                      <CarouselItem
+                        key={img.id}
+                        className="md:basis-1/2 lg:basis-1/3"
+                      >
+                        <Card className="p-0">
+                          <CardContent className="p-0">
+                            <img
+                              src={`http://localhost:8080${img.url}`}
+                              alt="Imagem do projeto"
+                              className="rounded-md object-cover h-48 w-full"
+                            />
+                          </CardContent>
+                        </Card>
+                      </CarouselItem>
+                    ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
             </div>
           )}
         </section>

@@ -44,12 +44,15 @@ export type ProjetoType = {
     projetoId: string
     createdAt: string
   }[]
-  imagem: {
-    id: string
-    url: string
-    projetoId: string
-    createdAt: string
-  }
+  imagens: [
+    {
+      id: string
+      url: string
+      principal: boolean
+      projetoId: string
+      createdAt: string
+    }
+  ]
 }
 
 export type TccType = {
