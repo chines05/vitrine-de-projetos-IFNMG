@@ -48,7 +48,7 @@ model Projeto {
   coordenador   User           @relation("ProjetosDoCoordenador", fields: [coordenadorId], references: [id])
   coordenadorId String
   participantes ProjetoAluno[]
-  imagem        ImagemProjeto?
+  imagens ImagemProjeto[]
 
   @@map("projetos")
 }
@@ -70,7 +70,8 @@ model ImagemProjeto {
   id        String   @id @default(uuid())
   url       String
   projeto   Projeto  @relation(fields: [projetoId], references: [id])
-  projetoId String   @unique
+  projetoId String
+  principal Boolean  @default(false)
   createdAt DateTime @default(now())
 
   @@map("imagens_projeto")

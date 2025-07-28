@@ -11,7 +11,12 @@ import {
 import fs from 'node:fs'
 import path from 'node:path'
 import { pipeline } from 'stream/promises'
-import { createWriteStream } from 'fs'
+import { createWriteStream } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import { dirname } from 'node:path'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 const createProjetoHandler = async (
   request: FastifyRequest,
@@ -111,10 +116,14 @@ const getProjetosHandler = async (
           funcao: true,
         },
       },
-      imagem: {
+      imagens: {
         select: {
           id: true,
           url: true,
+          principal: true,
+        },
+        orderBy: {
+          principal: 'desc',
         },
       },
     },
@@ -157,11 +166,15 @@ const getProjetoHandler = async (
           createdAt: true,
         },
       },
-      imagem: {
+      imagens: {
         select: {
           id: true,
           url: true,
+          principal: true,
           createdAt: true,
+        },
+        orderBy: {
+          principal: 'desc',
         },
       },
     },
@@ -205,7 +218,7 @@ const getProjetoByUrlHandler = async (
           createdAt: true,
         },
       },
-      imagem: {
+      imagens: {
         select: {
           id: true,
           url: true,
@@ -430,6 +443,7 @@ const uploadImagemHandler = async (
 ) => {
   try {
     const { projetoId } = request.params as { projetoId: string }
+    const { principal = 'false' } = request.query as { principal?: string }
     const file = await request.file()
 
     if (!file) {
@@ -443,12 +457,6 @@ const uploadImagemHandler = async (
       })
     }
 
-    if (file.file.bytesRead > 5 * 1024 * 1024) {
-      return reply.status(400).send({
-        error: 'Arquivo muito grande. Tamanho máximo: 5MB',
-      })
-    }
-
     const projetoExists = await prisma.projeto.findUnique({
       where: { id: projetoId },
     })
@@ -456,7 +464,7 @@ const uploadImagemHandler = async (
       return reply.status(404).send({ error: 'Projeto não encontrado' })
     }
 
-    const uploadDir = path.join(__dirname, '..', 'uploads')
+    const uploadDir = path.join(__dirname, '..', '..', 'uploads', 'images')
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true })
     }
@@ -465,29 +473,42 @@ const uploadImagemHandler = async (
     const filename = `${Date.now()}-${sanitizedFilename}`
     const filePath = path.join(uploadDir, filename)
 
-    await pipeline(file.file, createWriteStream(filePath))
+    try {
+      await pipeline(file.file, createWriteStream(filePath))
+    } catch (err) {
+      console.error('Erro ao salvar arquivo:', err)
+      return reply.status(500).send({
+        error: 'Erro ao salvar arquivo no servidor',
+        details: err instanceof Error ? err.message : undefined,
+      })
+    }
 
-    const fileUrl = `/uploads/${filename}`
+    const fileUrl = `/uploads/images/${filename}`
+    const isPrincipal = principal === 'true'
 
-    await prisma.imagemProjeto.deleteMany({
-      where: { projetoId },
+    const result = await prisma.$transaction(async (prisma) => {
+      if (isPrincipal) {
+        await prisma.imagemProjeto.updateMany({
+          where: { projetoId, principal: true },
+          data: { principal: false },
+        })
+      }
+
+      return await prisma.imagemProjeto.create({
+        data: {
+          url: fileUrl,
+          projetoId,
+          principal: isPrincipal,
+        },
+      })
     })
 
-    const imagem = await prisma.imagemProjeto.create({
-      data: {
-        url: fileUrl,
-        projetoId,
-      },
-      include: {
-        projeto: true,
-      },
-    })
-
-    return reply.status(201).send(imagem)
+    return reply.status(201).send(result)
   } catch (error) {
-    console.error('Erro detalhado:', error)
+    console.error('Erro no upload:', error)
     return reply.status(500).send({
-      error: 'Erro ao processar upload da imagem',
+      error: 'Erro interno no servidor ao processar upload',
+      details: error instanceof Error ? error.message : undefined,
     })
   }
 }
@@ -511,14 +532,14 @@ const removerImagemHandler = async (
       __dirname,
       '..',
       'uploads',
+      'images',
       path.basename(imagem.url)
     )
-
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath)
     }
-  } catch (fileError) {
-    request.log.warn(`Não foi possível apagar arquivo físico: ${fileError}`)
+  } catch (error) {
+    console.error('Erro ao remover arquivo:', error)
   }
 
   await prisma.imagemProjeto.delete({
@@ -526,6 +547,38 @@ const removerImagemHandler = async (
   })
 
   return reply.status(204).send()
+}
+
+const definirImagemPrincipalHandler = async (
+  request: FastifyRequest,
+  reply: FastifyReply
+) => {
+  const { id } = request.params as { id: string }
+
+  const imagem = await prisma.imagemProjeto.findUnique({
+    where: { id },
+    include: { projeto: true },
+  })
+
+  if (!imagem) {
+    return reply.status(404).send({ error: 'Imagem não encontrada' })
+  }
+
+  await prisma.imagemProjeto.updateMany({
+    where: {
+      projetoId: imagem.projetoId,
+      principal: true,
+      id: { not: id },
+    },
+    data: { principal: false },
+  })
+
+  const updated = await prisma.imagemProjeto.update({
+    where: { id },
+    data: { principal: true },
+  })
+
+  return reply.send(updated)
 }
 
 export {
@@ -539,4 +592,5 @@ export {
   desvincularAlunoHandler,
   uploadImagemHandler,
   removerImagemHandler,
+  definirImagemPrincipalHandler,
 }

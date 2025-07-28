@@ -1,10 +1,34 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import fs from 'fs'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const prisma = new PrismaClient()
 
 async function main() {
   const hashedPassword = await bcrypt.hash('Chines05', 10)
+
+  const uploadDir = path.join(__dirname, '..', 'uploads', 'images')
+  const uploadFilesDir = path.join(__dirname, '..', 'uploads', 'files')
+
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true })
+  }
+
+  if (!fs.existsSync(uploadFilesDir)) {
+    fs.mkdirSync(uploadFilesDir, { recursive: true })
+  }
+
+  await prisma.imagemProjeto.deleteMany()
+  await prisma.projetoAluno.deleteMany()
+  await prisma.tCC.deleteMany()
+  await prisma.projeto.deleteMany()
+  await prisma.aluno.deleteMany()
+  await prisma.user.deleteMany()
 
   const admin = await prisma.user.upsert({
     where: { email: 'admin@ifnmg.edu.br' },
@@ -94,13 +118,19 @@ async function main() {
         coordenador: { connect: { id: coordenadores[0].id } },
         participantes: {
           create: [
+            { alunoId: alunos[0].id, funcao: 'Pesquisador Principal' },
+            { alunoId: alunos[1].id, funcao: 'Assistente de Campo' },
+          ],
+        },
+        imagens: {
+          create: [
             {
-              alunoId: alunos[0].id,
-              funcao: 'Pesquisador Principal',
+              url: '/uploads/images/agricultura-1.jpg',
+              principal: false,
             },
             {
-              alunoId: alunos[1].id,
-              funcao: 'Assistente de Campo',
+              url: '/uploads/images/agricultura-2.jpg',
+              principal: false,
             },
           ],
         },
@@ -117,10 +147,13 @@ async function main() {
         tipo: 'PESQUISA',
         coordenador: { connect: { id: coordenadores[1].id } },
         participantes: {
+          create: [{ alunoId: alunos[2].id, funcao: 'Coordenador de Campo' }],
+        },
+        imagens: {
           create: [
             {
-              alunoId: alunos[2].id,
-              funcao: 'Coordenador de Campo',
+              url: '/uploads/images/energia-1.jpg',
+              principal: false,
             },
           ],
         },
@@ -140,6 +173,22 @@ async function main() {
         coordenador: { connect: { id: coordenadores[2].id } },
         participantes: {
           create: [{ alunoId: alunos[3].id, funcao: 'Monitor' }],
+        },
+        imagens: {
+          create: [
+            {
+              url: '/uploads/images/ensino-1.jpg',
+              principal: true,
+            },
+            {
+              url: '/uploads/images/ensino-2.jpg',
+              principal: false,
+            },
+            {
+              url: '/uploads/images/ensino-3.jpg',
+              principal: false,
+            },
+          ],
         },
       },
     }),
@@ -162,6 +211,14 @@ async function main() {
             { alunoId: alunos[2].id, funcao: 'Apoio Técnico' },
           ],
         },
+        imagens: {
+          create: [
+            {
+              url: '/uploads/images/educacao-1.jpg',
+              principal: false,
+            },
+          ],
+        },
       },
     }),
     prisma.projeto.create({
@@ -178,6 +235,18 @@ async function main() {
             { alunoId: alunos[3].id, funcao: 'Voluntário' },
           ],
         },
+        imagens: {
+          create: [
+            {
+              url: '/uploads/images/horta-1.jpg',
+              principal: false,
+            },
+            {
+              url: '/uploads/images/horta-2.jpg',
+              principal: false,
+            },
+          ],
+        },
       },
     }),
   ])
@@ -190,7 +259,7 @@ async function main() {
         resumo:
           'Estudo sobre o consumo energético de dispositivos IoT em redes domésticas.',
         dataDefesa: new Date('2024-12-10'),
-        file: '',
+        file: '/uploads/files/tcc-joao.pdf',
         aluno: { connect: { id: alunos[0].id } },
         coordenador: { connect: { id: coordenadores[0].id } },
         orientador: 'Prof. Dr. João Silva',
@@ -203,57 +272,27 @@ async function main() {
         resumo:
           'Avaliação do uso de sensores e mapas de produtividade para otimizar o cultivo de milho.',
         dataDefesa: new Date('2024-11-25'),
-        file: '',
+        file: '/uploads/files/tcc-maria.pdf',
         aluno: { connect: { id: alunos[1].id } },
         coordenador: { connect: { id: coordenadores[0].id } },
         orientador: 'Prof. Dra. Maria Santos',
       },
     }),
-    prisma.tCC.create({
-      data: {
-        titulo: 'Inclusão Digital na Terceira Idade: Desafios e Estratégias',
-        curso: alunos[2].curso,
-        resumo:
-          'Análise de oficinas digitais voltadas a idosos e impactos sociais gerados.',
-        dataDefesa: new Date('2025-01-12'),
-        file: '',
-        aluno: { connect: { id: alunos[2].id } },
-        coordenador: { connect: { id: coordenadores[1].id } },
-        orientador: 'Prof. Dr. Carlos Oliveira',
-      },
-    }),
-    prisma.tCC.create({
-      data: {
-        titulo: 'Desenvolvimento de Sistemas para Internet das Coisas',
-        curso: alunos[3].curso,
-        resumo:
-          'Estudo sobre o desenvolvimento de sistemas para internet das coisas.',
-        dataDefesa: new Date('2024-12-30'),
-        file: '',
-        aluno: { connect: { id: alunos[3].id } },
-        coordenador: { connect: { id: coordenadores[1].id } },
-        orientador: 'Prof. Dr. João Silva',
-      },
-    }),
-    prisma.tCC.create({
-      data: {
-        titulo: 'Desenvolvimento de Sistemas para Internet das Coisas',
-        curso: alunos[3].curso,
-        resumo:
-          'Estudo sobre o desenvolvimento de sistemas para internet das coisas.',
-        dataDefesa: new Date('2024-12-30'),
-        file: '',
-        aluno: { connect: { id: alunos[3].id } },
-        coordenador: { connect: { id: coordenadores[1].id } },
-        orientador: 'Prof. Dr. João Silva',
-      },
-    }),
   ])
+
+  console.log('Seed concluído com sucesso!')
+  console.log({
+    admin,
+    coordenadores,
+    alunos,
+    projetos: [...projetosPesquisa, ...projetosEnsino, ...projetosExtensao],
+    tccs,
+  })
 }
 
 main()
   .catch((e) => {
-    console.error(e)
+    console.error('Erro no seed:', e)
     process.exit(1)
   })
   .finally(async () => {

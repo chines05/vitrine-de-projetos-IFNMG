@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import {
   createProjetoHandler,
+  definirImagemPrincipalHandler,
   deleteProjetoHandler,
   desvincularAlunoHandler,
   getProjetoByUrlHandler,
@@ -55,22 +56,27 @@ export const projetosRoutes = (app: FastifyInstance) => {
   )
 
   app.post(
-    '/api/projetos/:projetoId/imagem',
+    '/api/projetos/:projetoId/imagens',
     {
       preHandler: [authenticate],
       config: {
         payload: {
           allow: 'multipart/form-data',
           multipart: true,
-          maxFileSize: 5 * 1024 * 1024,
         },
       },
     },
     uploadImagemHandler
   )
 
+  app.patch(
+    '/api/projetos/imagens/:id/principal',
+    { preHandler: [authenticate] },
+    definirImagemPrincipalHandler
+  )
+
   app.delete(
-    '/api/projetos/imagem/:id',
+    '/api/projetos/imagens/:id',
     { preHandler: [authenticate] },
     removerImagemHandler
   )

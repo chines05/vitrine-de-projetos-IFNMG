@@ -22,17 +22,18 @@ await app.register(jwt, {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-await app.register(fastifyStatic, {
-  root: path.join(__dirname, '..', 'uploads'),
-  prefix: '/uploads/',
-  decorateReply: false,
-})
-
 await app.register(fastifyMultipart, {
   limits: {
     fileSize: 5 * 1024 * 1024,
     files: 1,
   },
+  attachFieldsToBody: false,
+})
+
+await app.register(fastifyStatic, {
+  root: path.join(__dirname, '..', 'uploads'),
+  prefix: '/uploads/',
+  decorateReply: false,
 })
 
 app.decorate('authenticate', authenticate)
