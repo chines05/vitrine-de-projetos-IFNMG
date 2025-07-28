@@ -118,7 +118,7 @@ const TccDashboard = ({ user }: Props) => {
   const tccsPaginados = filteredTccs.slice(startIndex, endIndex)
 
   return (
-    <main className="p-6">
+    <main>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Trabalhos de Conclusão de Curso</h1>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -167,7 +167,7 @@ const TccDashboard = ({ user }: Props) => {
             <SelectValue placeholder="Filtrar por curso" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos</SelectItem>
+            <SelectItem value="all">Todos os cursos</SelectItem>
             {cursosPermitidosTcc.map((curso) => (
               <SelectItem key={curso} value={curso}>
                 {curso}
@@ -179,7 +179,7 @@ const TccDashboard = ({ user }: Props) => {
 
       <div className="rounded-md border shadow-sm">
         <Table>
-          <TableHeader className="bg-gray-50">
+          <TableHeader>
             <TableRow>
               <TableHead>Título</TableHead>
               <TableHead>Curso</TableHead>

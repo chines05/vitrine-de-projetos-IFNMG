@@ -102,7 +102,7 @@ const Tcc = () => {
 
       <main className="flex-1 py-12 px-6">
         <section className="max-w-6xl mx-auto mb-12">
-          <div className="mt-8 mb-8">
+          <div className="my-8">
             <h1 className="text-3xl font-bold text-green-700 mb-2">
               Trabalhos de Conclusão de Curso
             </h1>
