@@ -258,60 +258,67 @@ const updateTCCHandler = async (
   reply: FastifyReply
 ) => {
   try {
+    const data = await request.file()
+
+    if (!data || !data.fields) {
+      return reply.status(400).send({ error: 'Nenhum dado enviado' })
+    }
+
     const { id } = request.params as { id: string }
-    const {
-      titulo,
-      curso,
-      resumo,
-      dataDefesa,
-      alunoId,
-      coordenadorId,
-      orientador,
-    } = request.body as any
+    const fields = data.fields as Record<string, { value: string }>
+
+    const titulo = fields.titulo?.value
+    const curso = fields.curso?.value
+    const resumo = fields.resumo?.value
+    const dataDefesa = fields.dataDefesa?.value
+    const alunoId = fields.alunoId?.value
+    const coordenadorId = fields.coordenadorId?.value
+    const orientador = fields.orientador?.value
 
     const tccExistente = await prisma.tCC.findUnique({ where: { id } })
     if (!tccExistente) {
       return reply.status(404).send({ error: 'TCC não encontrado' })
     }
 
-    if (alunoId || coordenadorId) {
-      const [aluno, coordenador] = await Promise.all([
-        alunoId
-          ? prisma.aluno.findUnique({ where: { id: alunoId } })
-          : Promise.resolve(tccExistente.alunoId),
-        coordenadorId
-          ? prisma.user.findUnique({
-              where: {
-                id: coordenadorId,
-                role: { in: ['COORDENADOR', 'COORDENADOR_CURSO', 'ADMIN'] },
-              },
-            })
-          : Promise.resolve(tccExistente.coordenadorId),
-      ])
+    let fileName = tccExistente.file
+    if (data.file) {
+      const allowedExtensions = ['.pdf']
+      const fileExtension = path.extname(data.filename).toLowerCase()
 
-      if ((alunoId && !aluno) || (coordenadorId && !coordenador)) {
-        return reply.status(400).send({
-          error: 'IDs inválidos',
-          details: {
-            alunoExists: !!aluno,
-            coordenadorExists: !!coordenador,
-          },
-        })
+      if (!allowedExtensions.includes(fileExtension)) {
+        return reply
+          .status(400)
+          .send({ error: 'Apenas arquivos PDF são permitidos' })
       }
+
+      try {
+        const oldFilePath = path.join(process.cwd(), 'uploads', fileName)
+        await fs.unlink(oldFilePath)
+      } catch (err) {
+        console.error('Aviso: Não foi possível deletar o arquivo antigo', err)
+      }
+
+      const uploadDir = path.join(process.cwd(), 'uploads', 'files')
+      await fs.mkdir(uploadDir, { recursive: true })
+      fileName = `${randomUUID()}${fileExtension}`
+      const filePath = path.join(uploadDir, fileName)
+      await fs.writeFile(filePath, await data.toBuffer())
+      fileName = `files/${fileName}`
     }
 
     const updated = await prisma.tCC.update({
       where: { id },
       data: {
-        titulo,
-        curso,
-        resumo,
-        dataDefesa: dataDefesa ? new Date(dataDefesa) : undefined,
+        titulo: titulo || tccExistente.titulo,
+        curso: curso || tccExistente.curso,
+        resumo: resumo || tccExistente.resumo,
+        dataDefesa: dataDefesa ? new Date(dataDefesa) : tccExistente.dataDefesa,
+        file: fileName,
         aluno: alunoId ? { connect: { id: alunoId } } : undefined,
         coordenador: coordenadorId
           ? { connect: { id: coordenadorId } }
           : undefined,
-        orientador,
+        orientador: orientador || tccExistente.orientador,
       },
       include: {
         aluno: true,
