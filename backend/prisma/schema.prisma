@@ -37,7 +37,6 @@ model Aluno {
 model Projeto {
   id            String         @id @default(uuid())
   titulo        String
-  url           String         @unique
   descricao     String         @db.Text
   dataInicio    DateTime
   dataFim       DateTime?

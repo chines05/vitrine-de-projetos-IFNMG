@@ -4,7 +4,6 @@ import {
   definirImagemPrincipalHandler,
   deleteProjetoHandler,
   desvincularAlunoHandler,
-  getProjetoByUrlHandler,
   getProjetoHandler,
   getProjetosHandler,
   removerImagemHandler,
@@ -23,13 +22,7 @@ export const projetosRoutes = (app: FastifyInstance) => {
 
   app.get('/api/projetos', getProjetosHandler)
 
-  app.get(
-    '/api/projetos/:id',
-    { preHandler: [authenticate] },
-    getProjetoHandler
-  )
-
-  app.get('/api/projetos/url/:url', getProjetoByUrlHandler)
+  app.get('/api/projetos/:id', getProjetoHandler)
 
   app.put(
     '/api/projetos/:id',

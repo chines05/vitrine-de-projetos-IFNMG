@@ -25,7 +25,6 @@ const createProjetoHandler = async (
   try {
     const {
       titulo,
-      url,
       descricao,
       dataInicio,
       dataFim,
@@ -33,13 +32,6 @@ const createProjetoHandler = async (
       status,
       coordenadorId,
     } = createProjetoSchema.parse(request.body)
-
-    const urlExists = await prisma.projeto.findUnique({ where: { url } })
-    if (urlExists) {
-      return reply
-        .status(400)
-        .send({ error: 'Já existe um projeto com esta URL' })
-    }
 
     const coordenadorExists = await prisma.user.findUnique({
       where: { id: coordenadorId, role: 'COORDENADOR' },
@@ -51,7 +43,6 @@ const createProjetoHandler = async (
     const projeto = await prisma.projeto.create({
       data: {
         titulo,
-        url,
         descricao,
         dataInicio: new Date(dataInicio),
         dataFim: dataFim ? new Date(dataFim) : null,
@@ -187,54 +178,6 @@ const getProjetoHandler = async (
   return reply.send(projeto)
 }
 
-const getProjetoByUrlHandler = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
-  const { url } = request.params as { url: string }
-
-  const projeto = await prisma.projeto.findUnique({
-    where: { url },
-    include: {
-      coordenador: {
-        select: {
-          id: true,
-          nome: true,
-          email: true,
-        },
-      },
-      participantes: {
-        select: {
-          id: true,
-          aluno: {
-            select: {
-              id: true,
-              nome: true,
-              turma: true,
-              curso: true,
-            },
-          },
-          funcao: true,
-          createdAt: true,
-        },
-      },
-      imagens: {
-        select: {
-          id: true,
-          url: true,
-          createdAt: true,
-        },
-      },
-    },
-  })
-
-  if (!projeto) {
-    return reply.status(404).send({ error: 'Projeto não encontrado por URL' })
-  }
-
-  return reply.send(projeto)
-}
-
 const updateProjetoHandler = async (
   request: FastifyRequest,
   reply: FastifyReply
@@ -253,17 +196,6 @@ const updateProjetoHandler = async (
       return reply.status(404).send({ error: 'Projeto não encontrado' })
     }
 
-    if (body.url && body.url !== projeto.url) {
-      const urlExists = await prisma.projeto.findUnique({
-        where: { url: body.url },
-      })
-      if (urlExists) {
-        return reply
-          .status(400)
-          .send({ error: 'Já existe um projeto com esta URL' })
-      }
-    }
-
     if (body.coordenadorId && body.coordenadorId !== projeto.coordenadorId) {
       const coordenadorExists = await prisma.user.findUnique({
         where: { id: body.coordenadorId, role: 'COORDENADOR' },
@@ -277,7 +209,6 @@ const updateProjetoHandler = async (
       where: { id: params.id },
       data: {
         titulo: body.titulo,
-        url: body.url,
         descricao: body.descricao,
         dataInicio: body.dataInicio ? new Date(body.dataInicio) : undefined,
         dataFim: body.dataFim ? new Date(body.dataFim) : undefined,
@@ -585,7 +516,6 @@ export {
   createProjetoHandler,
   getProjetosHandler,
   getProjetoHandler,
-  getProjetoByUrlHandler,
   updateProjetoHandler,
   deleteProjetoHandler,
   vincularAlunoHandler,
