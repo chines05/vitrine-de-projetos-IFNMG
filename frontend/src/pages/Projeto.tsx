@@ -6,7 +6,6 @@ import { useEffect, useState, type JSX } from 'react'
 import toast from 'react-hot-toast'
 import { formatErrorMessage } from '@/utils/format'
 import { formatDate } from 'date-fns'
-import { getProjetoByUrl } from '@/api/apiProjeto'
 import { FlaskConical, GraduationCap, Users } from 'lucide-react'
 import {
   Carousel,
@@ -16,9 +15,10 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel'
 import { Card, CardContent } from '@/components/ui/card'
+import { getProjetoById } from '@/api/apiProjeto'
 
 const Projeto = () => {
-  const { url } = useParams()
+  const { id } = useParams()
   const location = useLocation()
   const user = location.state as UserType | undefined
 
@@ -27,8 +27,8 @@ const Projeto = () => {
   useEffect(() => {
     const fetchProjeto = async () => {
       try {
-        if (url) {
-          const data = await getProjetoByUrl(url)
+        if (id) {
+          const data = await getProjetoById(id)
           setProjeto(data)
         }
       } catch (error) {
@@ -37,7 +37,7 @@ const Projeto = () => {
     }
 
     fetchProjeto()
-  }, [url])
+  }, [id])
 
   const tipoProjetoEstilo: Record<
     ProjetoType['tipo'],

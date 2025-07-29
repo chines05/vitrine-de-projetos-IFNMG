@@ -347,7 +347,7 @@ const Projetos = ({ user }: Props) => {
                           <Eye
                             className="h-4 w-4 cursor-pointer"
                             onClick={() =>
-                              navigate(`/projeto/${projeto.url}`, {
+                              navigate(`/projeto/${projeto.id}`, {
                                 state: user,
                               })
                             }

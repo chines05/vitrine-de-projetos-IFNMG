@@ -21,7 +21,6 @@ export type AlunoType = {
 export type ProjetoType = {
   id: string
   titulo: string
-  url: string
   descricao: string
   dataInicio: Date
   dataFim?: Date

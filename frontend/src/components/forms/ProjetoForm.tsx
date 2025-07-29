@@ -51,7 +51,6 @@ export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
       id: projeto?.id,
       titulo: projeto?.titulo || '',
       descricao: projeto?.descricao || '',
-      url: projeto?.url || '',
       coordenadorId: projeto?.coordenadorId || '',
       dataInicio: projeto?.dataInicio || new Date(),
       tipo: projeto?.tipo || 'PESQUISA',
@@ -89,22 +88,10 @@ export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
       onSubmit={handleSubmit(onSubmit, (e) => console.log(e))}
       className="space-y-6"
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="titulo">Título*</Label>
-          <Input {...register('titulo')} />
-          {renderError('titulo')}
-        </div>
-        <div className="space-y-2 relative">
-          <Label htmlFor="url">URL*</Label>
-          <Input
-            {...register('url')}
-            id="url"
-            placeholder="vitrine.ifalmenara.com.br/projeto/{url}"
-          />
-
-          {renderError('url')}
-        </div>
+      <div className="space-y-2">
+        <Label htmlFor="titulo">Título*</Label>
+        <Input {...register('titulo')} />
+        {renderError('titulo')}
       </div>
 
       <div className="space-y-2">

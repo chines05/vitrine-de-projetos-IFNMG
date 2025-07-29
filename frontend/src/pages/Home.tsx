@@ -301,7 +301,7 @@ const Home = () => {
                 >
                   <div className="flex-1">
                     {project.imagens?.find((img) => img.principal)?.url && (
-                      <div className="flex justify-center mb-3">
+                      <div className="flex justify-center">
                         <img
                           src={`http://localhost:8080${
                             project.imagens.find((img) => img.principal)?.url
@@ -337,7 +337,7 @@ const Home = () => {
                       variant="link"
                       className="text-green-600 p-0 h-auto text-sm"
                       onClick={() =>
-                        navigate(`/projeto/${project.url}`, {
+                        navigate(`/projeto/${project.id}`, {
                           state: user,
                         })
                       }
