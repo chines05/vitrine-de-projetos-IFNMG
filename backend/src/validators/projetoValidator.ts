@@ -2,7 +2,6 @@ import { z } from 'zod'
 
 export const createProjetoSchema = z.object({
   titulo: z.string().min(3).max(100),
-  url: z.string(),
   descricao: z.string().min(10),
   dataInicio: z.string().datetime(),
   dataFim: z.string().datetime().optional(),
