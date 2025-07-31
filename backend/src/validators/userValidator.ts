@@ -1,12 +1,12 @@
+import { Especializacao } from '@prisma/client'
 import { z } from 'zod'
 
 export const createUserSchema = z.object({
-  nome: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
-  email: z.string().email('E-mail inválido'),
-  senha: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
-  role: z
-    .enum(['ADMIN', 'COORDENADOR', 'COORDENADOR_CURSO'])
-    .default('COORDENADOR'),
+  nome: z.string().min(3),
+  email: z.string().email(),
+  senha: z.string().min(6),
+  role: z.enum(['ADMIN', 'COORDENADOR', 'COORDENADOR_CURSO', 'PROFESSOR']),
+  especializacao: z.nativeEnum(Especializacao).optional(),
 })
 
 export const updateUserSchema = z.object({
@@ -16,8 +16,11 @@ export const updateUserSchema = z.object({
   body: z.object({
     nome: z.string().min(3).optional(),
     email: z.string().email().optional(),
-    role: z.enum(['ADMIN', 'COORDENADOR', 'COORDENADOR_CURSO']).optional(),
     senha: z.string().min(6).optional(),
+    role: z
+      .enum(['ADMIN', 'COORDENADOR', 'COORDENADOR_CURSO', 'PROFESSOR'])
+      .optional(),
+    especializacao: z.string().optional(),
   }),
 })
 

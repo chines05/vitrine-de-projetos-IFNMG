@@ -8,15 +8,16 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  nome      String
-  email     String    @unique
-  senha     String
-  role      Role      @default(COORDENADOR)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  projetos  Projeto[] @relation("ProjetosDoCoordenador")
-  tccs      TCC[]     @relation("TCCsDoCoordenador")
+  id             String          @id @default(uuid())
+  nome           String
+  email          String          @unique
+  senha          String
+  role           Role            @default(COORDENADOR)
+  especializacao Especializacao?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  projetos       Projeto[]       @relation("ProjetosDoCoordenador")
+  tccs           TCC[]           @relation("TCCsDoCoordenador")
 
   @@map("users")
 }
@@ -35,19 +36,19 @@ model Aluno {
 }
 
 model Projeto {
-  id            String         @id @default(uuid())
+  id            String          @id @default(uuid())
   titulo        String
-  descricao     String         @db.Text
+  descricao     String          @db.Text
   dataInicio    DateTime
   dataFim       DateTime?
   tipo          TipoProjeto
-  status        StatusProjeto  @default(ATIVO)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  coordenador   User           @relation("ProjetosDoCoordenador", fields: [coordenadorId], references: [id])
+  status        StatusProjeto   @default(ATIVO)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  coordenador   User            @relation("ProjetosDoCoordenador", fields: [coordenadorId], references: [id])
   coordenadorId String
   participantes ProjetoAluno[]
-  imagens ImagemProjeto[]
+  imagens       ImagemProjeto[]
 
   @@map("projetos")
 }
@@ -97,6 +98,7 @@ enum Role {
   ADMIN
   COORDENADOR
   COORDENADOR_CURSO
+  PROFESSOR
 }
 
 enum TipoProjeto {
@@ -110,4 +112,13 @@ enum StatusProjeto {
   CONCLUIDO
   PAUSADO
   CANCELADO
+}
+
+enum Especializacao {
+  PESQUISA
+  ENSINO
+  EXTENSAO
+  TECNOLOGO_EM_PROCESSOS_GERENCIAIS
+  TECNOLOGIA_EM_ANALISE_E_DESENVOLVIMENTO_DE_SISTEMAS
+  BACHARELADO_EM_ENGENHARIA_AGRONOMICA
 }

@@ -38,6 +38,7 @@ async function main() {
       email: 'admin@ifnmg.edu.br',
       senha: hashedPassword,
       role: 'ADMIN',
+      especializacao: undefined,
     },
   })
 
@@ -48,6 +49,7 @@ async function main() {
         email: 'alan.oliveira@ifnmg.edu.br',
         senha: hashedPassword,
         role: 'COORDENADOR',
+        especializacao: 'PESQUISA',
       },
     }),
     prisma.user.create({
@@ -56,6 +58,7 @@ async function main() {
         email: 'marcos.montanari@ifnmg.edu.br',
         senha: hashedPassword,
         role: 'COORDENADOR',
+        especializacao: 'EXTENSAO',
       },
     }),
     prisma.user.create({
@@ -64,6 +67,58 @@ async function main() {
         email: 'marcos.aurelio@ifnmg.edu.br',
         senha: hashedPassword,
         role: 'COORDENADOR',
+        especializacao: 'ENSINO',
+      },
+    }),
+  ])
+
+  const coordenadoresCurso = await Promise.all([
+    prisma.user.create({
+      data: {
+        nome: 'Prof. Carla Mendes',
+        email: 'carla.mendes@ifnmg.edu.br',
+        senha: hashedPassword,
+        role: 'COORDENADOR_CURSO',
+        especializacao: 'TECNOLOGO_EM_PROCESSOS_GERENCIAIS',
+      },
+    }),
+    prisma.user.create({
+      data: {
+        nome: 'Prof. Paulo Ribeiro',
+        email: 'paulo.ribeiro@ifnmg.edu.br',
+        senha: hashedPassword,
+        role: 'COORDENADOR_CURSO',
+        especializacao: 'TECNOLOGIA_EM_ANALISE_E_DESENVOLVIMENTO_DE_SISTEMAS',
+      },
+    }),
+    prisma.user.create({
+      data: {
+        nome: 'Prof. Fernanda Lima',
+        email: 'fernanda.lima@ifnmg.edu.br',
+        senha: hashedPassword,
+        role: 'COORDENADOR_CURSO',
+        especializacao: 'BACHARELADO_EM_ENGENHARIA_AGRONOMICA',
+      },
+    }),
+  ])
+
+  const professores = await Promise.all([
+    prisma.user.create({
+      data: {
+        nome: 'Prof. João Silva',
+        email: 'joao.silva@ifnmg.edu.br',
+        senha: hashedPassword,
+        role: 'PROFESSOR',
+        especializacao: undefined,
+      },
+    }),
+    prisma.user.create({
+      data: {
+        nome: 'Prof. Maria Santos',
+        email: 'maria.santos@ifnmg.edu.br',
+        senha: hashedPassword,
+        role: 'PROFESSOR',
+        especializacao: undefined,
       },
     }),
   ])
@@ -274,15 +329,6 @@ async function main() {
       },
     }),
   ])
-
-  console.log('Seed concluído com sucesso!')
-  console.log({
-    admin,
-    coordenadores,
-    alunos,
-    projetos: [...projetosPesquisa, ...projetosEnsino, ...projetosExtensao],
-    tccs,
-  })
 }
 
 main()

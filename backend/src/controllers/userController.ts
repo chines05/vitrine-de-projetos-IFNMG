@@ -10,12 +10,16 @@ import {
   updatePasswordSchema,
   deleteUserSchema,
 } from '../validators/userValidator'
+import { Especializacao } from '@prisma/client'
 
 const createUserHandler = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
-  const { nome, email, senha, role } = createUserSchema.parse(request.body)
+  const { nome, email, senha, role, especializacao } = createUserSchema.parse(
+    request.body
+  )
+
   const hashedPassword = await bcrypt.hash(senha, 10)
 
   const userExists = await prisma.user.findUnique({ where: { email } })
@@ -25,7 +29,15 @@ const createUserHandler = async (
       .send({ error: 'Já existe um usuário com este e-mail' })
 
   const user = await prisma.user.create({
-    data: { nome, email, senha: hashedPassword, role },
+    data: {
+      nome,
+      email,
+      senha: hashedPassword,
+      role,
+      especializacao: ['ADMIN', 'PROFESSOR'].includes(role)
+        ? undefined
+        : (especializacao as Especializacao),
+    },
   })
 
   return reply.status(201).send({
@@ -51,7 +63,12 @@ const importUsersHandler = async (
     columns: true,
     skip_empty_lines: true,
     trim: true,
-  }) as Array<{ nome: string; 'e-mail': string; senha: string }>
+  }) as Array<{
+    nome: string
+    'e-mail': string
+    senha: string
+    especializacao?: string
+  }>
 
   const userSchema = z.object({
     nome: z.string().min(3),
@@ -83,7 +100,17 @@ const importUsersHandler = async (
     const senhaHash = await bcrypt.hash(senha, 10)
 
     const user = await prisma.user.create({
-      data: { nome, email, senha: senhaHash, role: 'COORDENADOR' },
+      data: {
+        nome,
+        email,
+        senha: senhaHash,
+        role: 'COORDENADOR',
+        especializacao: Object.values(Especializacao).includes(
+          registro.especializacao as Especializacao
+        )
+          ? (registro.especializacao as Especializacao)
+          : undefined,
+      },
     })
 
     inseridos.push(user)
@@ -103,6 +130,7 @@ const getUsersHandler = async () => {
       nome: true,
       email: true,
       role: true,
+      especializacao: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -118,6 +146,7 @@ const getCoordenadoresHandler = async () => {
       nome: true,
       email: true,
       role: true,
+      especializacao: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -150,6 +179,9 @@ const updateUserHandler = async (
     email: body.email,
     role: body.role,
   }
+
+  if (body.especializacao !== undefined)
+    updateData.especializacao = body.especializacao
 
   if (body.senha) updateData.senha = await bcrypt.hash(body.senha, 10)
 

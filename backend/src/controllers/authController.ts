@@ -27,15 +27,30 @@ const loginHandler = async (
       nome: user.nome,
       email: user.email,
       role: user.role,
+      especializacao: user.especializacao || undefined,
     },
     { expiresIn: '30m' }
   )
 
-  return reply.send({ token })
+  return reply.send({
+    token,
+    user: {
+      id: user.id,
+      nome: user.nome,
+      email: user.email,
+      role: user.role,
+      especializacao: user.especializacao,
+    },
+  })
 }
-
 const meHandler = (request: FastifyRequest, reply: FastifyReply) => {
-  return reply.send(request.user)
+  return reply.send({
+    id: request.user.id,
+    nome: request.user.nome,
+    email: request.user.email,
+    role: request.user.role,
+    especializacao: request.user.especializacao,
+  })
 }
 
 export { loginHandler, meHandler }
