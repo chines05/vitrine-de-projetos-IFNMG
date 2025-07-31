@@ -8,7 +8,7 @@ import { formatErrorMessage } from '@/utils/format'
 import { postProjeto, updateProjeto } from '@/api/apiProjeto'
 import { getCoordenadores } from '@/api/apiUsers'
 import { cn } from '@/lib/utils'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
@@ -23,6 +23,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Calendar } from '../ui/calendar'
 import type { UserType } from '@/utils/types'
+import { getCurrentUser } from '@/api/apiAuth'
 
 interface ProjetoFormProps {
   projeto?: ProjetoSchemaType | null
@@ -31,6 +32,20 @@ interface ProjetoFormProps {
 
 export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
   const [coordenadores, setCoordenadores] = useState<UserType[]>([])
+  const [me, setMe] = useState<UserType>()
+
+  useEffect(() => {
+    const fetchMe = async () => {
+      try {
+        const data = await getCurrentUser()
+        setMe(data)
+      } catch (error) {
+        toast.error(formatErrorMessage(error, 'Erro ao carregar usuário.'))
+      }
+    }
+
+    fetchMe()
+  }, [])
 
   const fetchCoordenadores = async () => {
     try {
@@ -83,11 +98,39 @@ export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
       </span>
     )
 
+  const tiposDisponiveis = useMemo(() => {
+    const especializacaoParaTipo = {
+      PESQUISA: 'PESQUISA',
+      ENSINO: 'ENSINO',
+      EXTENSAO: 'EXTENSAO',
+      TECNOLOGO_EM_PROCESSOS_GERENCIAIS: 'ENSINO',
+      TECNOLOGIA_EM_ANALISE_E_DESENVOLVIMENTO_DE_SISTEMAS: 'ENSINO',
+      BACHARELADO_EM_ENGENHARIA_AGRONOMICA: 'ENSINO',
+    }
+
+    if (me?.role === 'ADMIN') {
+      return ['PESQUISA', 'ENSINO', 'EXTENSAO']
+    }
+
+    if (me?.especializacao) {
+      const tipoPermitido = especializacaoParaTipo[me.especializacao]
+      return tipoPermitido ? [tipoPermitido] : []
+    }
+
+    return ['PESQUISA', 'ENSINO', 'EXTENSAO']
+  }, [me?.especializacao, me?.role])
+
+  useEffect(() => {
+    if (tiposDisponiveis.length === 1 && !projeto?.id) {
+      setValue(
+        'tipo',
+        tiposDisponiveis[0] as 'PESQUISA' | 'ENSINO' | 'EXTENSAO'
+      )
+    }
+  }, [tiposDisponiveis, projeto?.id, setValue])
+
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit, (e) => console.log(e))}
-      className="space-y-6"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="titulo">Título*</Label>
         <Input {...register('titulo')} />
@@ -108,14 +151,21 @@ export const ProjetoForm = ({ projeto, onSuccess }: ProjetoFormProps) => {
             onValueChange={(val: ProjetoSchemaType['tipo']) =>
               setValue('tipo', val as ProjetoSchemaType['tipo'])
             }
+            disabled={tiposDisponiveis.length === 1 && !projeto?.id}
           >
             <SelectTrigger>
               <SelectValue placeholder="Selecione o tipo" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="PESQUISA">Pesquisa</SelectItem>
-              <SelectItem value="ENSINO">Ensino</SelectItem>
-              <SelectItem value="EXTENSAO">Extensão</SelectItem>
+              {tiposDisponiveis.map((tipo) => (
+                <SelectItem key={tipo} value={tipo}>
+                  {tipo === 'PESQUISA'
+                    ? 'Pesquisa'
+                    : tipo === 'ENSINO'
+                    ? 'Ensino'
+                    : 'Extensão'}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           {renderError('tipo')}

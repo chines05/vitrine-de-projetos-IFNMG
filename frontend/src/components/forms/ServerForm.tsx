@@ -12,16 +12,20 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import toast from 'react-hot-toast'
-import { UserSchema, type UserSchemaType } from '@/schemas/userSchema'
-import { formatErrorMessage } from '@/utils/format'
+import {
+  UserSchema,
+  type EspecializacaoType,
+  type UserSchemaType,
+} from '@/schemas/userSchema'
+import { especializacoes, formatErrorMessage } from '@/utils/format'
 import type { UserType } from '@/utils/types'
 
-interface UserFormProps {
+type Props = {
   user?: UserType | null
   onSuccess: () => void
 }
 
-export const UserForm = ({ user, onSuccess }: UserFormProps) => {
+export const ServerForm = ({ user, onSuccess }: Props) => {
   const form = useForm<UserSchemaType>({
     resolver: zodResolver(UserSchema),
     defaultValues: {
@@ -30,6 +34,7 @@ export const UserForm = ({ user, onSuccess }: UserFormProps) => {
       email: user?.email || '',
       role: user?.role || 'COORDENADOR',
       senha: '',
+      especializacao: user?.especializacao ?? undefined,
     },
   })
 
@@ -40,6 +45,21 @@ export const UserForm = ({ user, onSuccess }: UserFormProps) => {
     setValue,
     formState: { isSubmitting, errors },
   } = form
+
+  const cargoSelecionado = watch('role')
+  const especializacaoSelecionada = watch('especializacao')
+
+  const especializacoesProjeto = ['PESQUISA', 'ENSINO', 'EXTENSAO']
+  const especializacoesCurso = especializacoes.filter(
+    (esp) => !especializacoesProjeto.includes(esp)
+  )
+
+  const especializacoesPermitidas =
+    cargoSelecionado === 'COORDENADOR'
+      ? especializacoesProjeto
+      : cargoSelecionado === 'COORDENADOR_CURSO'
+      ? especializacoesCurso
+      : []
 
   const onSubmit = async (data: UserSchemaType) => {
     try {
@@ -93,9 +113,9 @@ export const UserForm = ({ user, onSuccess }: UserFormProps) => {
       <div className="w-full">
         <Label className="mb-2">Cargo</Label>
         <Select
-          onValueChange={(value: 'ADMIN' | 'COORDENADOR') =>
-            setValue('role', value)
-          }
+          onValueChange={(
+            value: 'ADMIN' | 'COORDENADOR' | 'COORDENADOR_CURSO' | 'PROFESSOR'
+          ) => setValue('role', value)}
           defaultValue={watch('role')}
         >
           <SelectTrigger>
@@ -103,10 +123,11 @@ export const UserForm = ({ user, onSuccess }: UserFormProps) => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="ADMIN">Administrador</SelectItem>
-            <SelectItem value="COORDENADOR">Coordenador</SelectItem>
+            <SelectItem value="COORDENADOR">Coordenador de projeto</SelectItem>
             <SelectItem value="COORDENADOR_CURSO">
               Coordenador de curso
             </SelectItem>
+            <SelectItem value="PROFESSOR">Professor</SelectItem>
           </SelectContent>
         </Select>
         {errors.role && (
@@ -115,6 +136,37 @@ export const UserForm = ({ user, onSuccess }: UserFormProps) => {
           </span>
         )}
       </div>
+
+      {especializacoesPermitidas.length > 0 && (
+        <div className="w-full">
+          <Label className="mb-2">Especialização</Label>
+          <Select
+            onValueChange={(value: EspecializacaoType) =>
+              setValue('especializacao', value)
+            }
+            defaultValue={especializacaoSelecionada}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Selecione uma especialização" />
+            </SelectTrigger>
+            <SelectContent>
+              {especializacoesPermitidas.map((esp) => (
+                <SelectItem key={esp} value={esp}>
+                  {esp
+                    .replaceAll('_', ' ')
+                    .toLowerCase()
+                    .replace(/\b\w/g, (c) => c.toUpperCase())}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {errors.especializacao && (
+            <span className="text-red-500 text-xs mt-1 block">
+              {errors.especializacao.message}
+            </span>
+          )}
+        </div>
+      )}
 
       <div className="w-full">
         <Label className="mb-2">Senha</Label>

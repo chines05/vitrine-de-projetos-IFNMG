@@ -6,7 +6,8 @@ const postUser = async (userData: {
   nome: string
   email: string
   senha: string
-  role: 'ADMIN' | 'COORDENADOR' | 'COORDENADOR_CURSO'
+  role: 'ADMIN' | 'COORDENADOR' | 'COORDENADOR_CURSO' | 'PROFESSOR'
+  especializacao?: string
 }) => {
   const response = await api.post('/users', userData)
 
@@ -44,7 +45,8 @@ const updateUser = async (
     nome?: string
     email?: string
     senha?: string
-    role?: 'ADMIN' | 'COORDENADOR' | 'COORDENADOR_CURSO'
+    role?: 'ADMIN' | 'COORDENADOR' | 'COORDENADOR_CURSO' | 'PROFESSOR'
+    especializacao?: string
   }
 ) => {
   const response = await api.put(`/users/${id}`, userData)

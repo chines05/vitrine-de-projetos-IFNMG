@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from './ui/button'
 import { logout } from '@/api/apiAuth'
 import toast from 'react-hot-toast'
-import type { User } from '@/utils/types'
 import { updateSenhaUser } from '@/api/apiUsers'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -21,9 +20,10 @@ import {
 import { Input } from './ui/input'
 import { Label } from './ui/label'
 import { formatErrorMessage } from '@/utils/format'
+import type { UserType } from '@/utils/types'
 
 type Props = {
-  user: User
+  user: UserType
 }
 
 export function DashboardNavbar({ user }: Props) {

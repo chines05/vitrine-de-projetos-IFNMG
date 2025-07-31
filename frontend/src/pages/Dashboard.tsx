@@ -27,6 +27,13 @@ export default function Dashboard() {
 
   if (!user) return navigate('/login') as unknown as JSX.Element
 
+  if (user.role === 'PROFESSOR') {
+    toast.error('Você não tem permissão para acessar esta página.')
+    navigate('/')
+
+    return
+  }
+
   return (
     <div className="flex mr-7">
       <DashboardNavbar user={user} />

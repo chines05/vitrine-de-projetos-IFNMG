@@ -88,6 +88,14 @@ export const cursosPermitidos = [
 export const cursosPermitidosTcc = [
   'Tecnólogo em Processos Gerenciais',
   'Tecnologia em Análise e Desenvolvimento de Sistemas',
-  'Técnico em Enfermagem',
   'Bacharelado em Engenharia Agronômica',
+]
+
+export const especializacoes = [
+  'PESQUISA',
+  'ENSINO',
+  'EXTENSAO',
+  'TECNOLOGO_EM_PROCESSOS_GERENCIAIS',
+  'TECNOLOGIA_EM_ANALISE_E_DESENVOLVIMENTO_DE_SISTEMAS',
+  'BACHARELADO_EM_ENGENHARIA_AGRONOMICA',
 ]

@@ -1,5 +1,14 @@
 import { z } from 'zod'
 
+export const EspecializacaoEnum = z.enum([
+  'PESQUISA',
+  'ENSINO',
+  'EXTENSAO',
+  'TECNOLOGO_EM_PROCESSOS_GERENCIAIS',
+  'TECNOLOGIA_EM_ANALISE_E_DESENVOLVIMENTO_DE_SISTEMAS',
+  'BACHARELADO_EM_ENGENHARIA_AGRONOMICA',
+])
+
 export const UserSchema = z
   .object({
     id: z.string().optional(),
@@ -16,8 +25,8 @@ export const UserSchema = z
         },
         { message: 'Use seu e-mail institucional (@ifnmg.edu.br)' }
       ),
-
-    role: z.enum(['ADMIN', 'COORDENADOR', 'COORDENADOR_CURSO']),
+    role: z.enum(['ADMIN', 'COORDENADOR', 'COORDENADOR_CURSO', 'PROFESSOR']),
+    especializacao: EspecializacaoEnum.optional(),
     senha: z
       .union([
         z
@@ -41,4 +50,5 @@ export const UserSchema = z
     }
   )
 
+export type EspecializacaoType = z.infer<typeof EspecializacaoEnum>
 export type UserSchemaType = z.infer<typeof UserSchema>

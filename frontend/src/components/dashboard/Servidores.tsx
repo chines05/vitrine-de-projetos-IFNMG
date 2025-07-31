@@ -26,7 +26,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import toast from 'react-hot-toast'
-import { UserForm } from '../forms/UserForm'
 import { formatErrorMessage } from '@/utils/format'
 import ExcluirUsuarioDialog from '../dialogs/ExcluirUsuarioDialog'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
@@ -39,8 +38,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select'
+import { ServerForm } from '../forms/ServerForm'
 
-const Usuarios = () => {
+const Servidores = () => {
   const [users, setUsers] = useState<UserType[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -97,22 +97,22 @@ const Usuarios = () => {
   return (
     <main>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-4xl font-bold">Usuários</h1>
+        <h1 className="text-4xl font-bold">Servidores</h1>
         <div className="flex flex-col sm:flex-row gap-2">
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button onClick={() => setSelectedUser(null)}>
                 <Plus className="mr-2 h-4 w-4" />
-                Cadastrar Usuário
+                Cadastrar servidor
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>
-                  {selectedUser ? 'Editar Usuário' : 'Cadastrar Usuário'}
+                  {selectedUser ? 'Editar servidor' : 'Cadastrar servidor'}
                 </DialogTitle>
               </DialogHeader>
-              <UserForm user={selectedUser} onSuccess={fetchUsers} />
+              <ServerForm user={selectedUser} onSuccess={fetchUsers} />
             </DialogContent>
           </Dialog>
 
@@ -152,6 +152,7 @@ const Usuarios = () => {
             <SelectItem value="COORDENADOR_CURSO">
               Coordenador de curso
             </SelectItem>
+            <SelectItem value="PROFESSOR">Professor</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -163,6 +164,7 @@ const Usuarios = () => {
               <TableHead>Nome</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Cargo</TableHead>
+              <TableHead>Especialização</TableHead>
               <TableHead className="text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
@@ -191,16 +193,29 @@ const Usuarios = () => {
                           ? 'bg-purple-100 text-purple-800'
                           : user.role === 'COORDENADOR'
                           ? 'bg-green-100 text-green-800'
-                          : 'bg-blue-100 text-blue-800'
+                          : user.role === 'COORDENADOR_CURSO'
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-red-100 text-red-800'
                       }`}
                     >
                       {user.role === 'ADMIN'
                         ? 'Administrador'
                         : user.role === 'COORDENADOR'
                         ? 'Coordenador'
-                        : 'Coordenador de curso'}
+                        : user.role === 'COORDENADOR_CURSO'
+                        ? 'Coordenador de curso'
+                        : 'Professor'}
                     </span>
                   </TableCell>
+                  <TableCell>
+                    {user.especializacao
+                      ? user.especializacao
+                          .replaceAll('_', ' ')
+                          .toLowerCase()
+                          .replace(/\b\w/g, (c) => c.toUpperCase())
+                      : '-'}
+                  </TableCell>
+
                   <TableCell className="text-right">
                     <div className="flex justify-end items-center gap-10">
                       <Tooltip>
@@ -234,7 +249,7 @@ const Usuarios = () => {
               ))
             )}
             <TableRow>
-              <TableCell colSpan={4}>
+              <TableCell colSpan={5}>
                 <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 px-2">
                   <div className="text-sm text-muted-foreground">
                     Total: <strong>{filteredUsers.length}</strong> usuários
@@ -288,4 +303,4 @@ const Usuarios = () => {
   )
 }
 
-export default Usuarios
+export default Servidores

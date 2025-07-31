@@ -1,8 +1,11 @@
+import type { EspecializacaoType } from '@/schemas/userSchema'
+
 export type UserType = {
   id: string
   nome: string
   email: string
-  role: 'ADMIN' | 'COORDENADOR' | 'COORDENADOR_CURSO'
+  role: 'ADMIN' | 'COORDENADOR' | 'COORDENADOR_CURSO' | 'PROFESSOR'
+  especializacao?: EspecializacaoType
   createdAt?: string
   updatedAt?: string
   iat?: number

@@ -1,23 +1,17 @@
-import {
-  BookText,
-  Users,
-  Settings,
-  FolderKanban,
-  GraduationCap,
-} from 'lucide-react'
+import { BookText, Users, FolderKanban, GraduationCap } from 'lucide-react'
 import { School } from 'lucide-react'
 import { useState, type JSX } from 'react'
 import { Menu, X } from 'lucide-react'
 import { Button } from './ui/button'
 
 import Projetos from './dashboard/Projetos'
-import Usuarios from './dashboard/Usuarios'
+import Servidores from './dashboard/Servidores'
 import Alunos from './dashboard/Alunos'
 import type { UserType } from '@/utils/types'
 import { useNavigate } from 'react-router-dom'
 import TccDashboard from './dashboard/TccDashboard'
 
-type ComponentKeys = 'projetos' | 'alunos' | 'usuarios' | 'tcc'
+type ComponentKeys = 'projetos' | 'alunos' | 'servidores' | 'tcc'
 
 type Props = {
   user: UserType
@@ -26,15 +20,32 @@ type Props = {
 export function DashboardSidebar({ user }: Props) {
   const navigate = useNavigate()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [activeComponent, setActiveComponent] =
-    useState<ComponentKeys>('projetos')
 
   const components: Record<ComponentKeys, JSX.Element> = {
     projetos: <Projetos user={user} />,
     alunos: <Alunos />,
-    usuarios: <Usuarios />,
+    servidores: <Servidores />,
     tcc: <TccDashboard user={user} />,
   }
+
+  const getDefaultComponent = (role: UserType['role']): ComponentKeys => {
+    const availableComponents: Partial<Record<ComponentKeys, boolean>> = {
+      projetos: role === 'ADMIN' || role === 'COORDENADOR',
+      alunos: role === 'ADMIN',
+      servidores: role === 'ADMIN',
+      tcc: role === 'ADMIN' || role === 'COORDENADOR_CURSO',
+    }
+
+    for (const [key, isAvailable] of Object.entries(availableComponents)) {
+      if (isAvailable) return key as ComponentKeys
+    }
+
+    return 'alunos'
+  }
+
+  const [activeComponent, setActiveComponent] = useState<ComponentKeys>(
+    getDefaultComponent(user.role)
+  )
 
   return (
     <>
@@ -50,44 +61,48 @@ export function DashboardSidebar({ user }: Props) {
         </div>
 
         <nav className="flex-1 p-4 space-y-1">
-          <Button
-            variant="unstyled"
-            onClick={() => setActiveComponent('projetos')}
-            className={`w-full justify-start gap-3 ${
-              activeComponent === 'projetos'
-                ? 'bg-white/20 hover:bg-white/20'
-                : 'hover:bg-white/10'
-            }`}
-          >
-            <FolderKanban className="h-5 w-5" />
-            <span>Projetos</span>
-          </Button>
-
-          <Button
-            variant="unstyled"
-            onClick={() => setActiveComponent('alunos')}
-            className={`w-full justify-start gap-3 ${
-              activeComponent === 'alunos'
-                ? 'bg-white/20 hover:bg-white/20'
-                : 'hover:bg-white/10'
-            }`}
-          >
-            <GraduationCap className="h-5 w-5" />
-            <span>Alunos</span>
-          </Button>
+          {(user.role === 'ADMIN' || user.role === 'COORDENADOR') && (
+            <Button
+              variant="unstyled"
+              onClick={() => setActiveComponent('projetos')}
+              className={`w-full justify-start gap-3 ${
+                activeComponent === 'projetos'
+                  ? 'bg-white/20 hover:bg-white/20'
+                  : 'hover:bg-white/10'
+              }`}
+            >
+              <FolderKanban className="h-5 w-5" />
+              <span>Projetos</span>
+            </Button>
+          )}
 
           {user.role === 'ADMIN' && (
             <Button
               variant="unstyled"
-              onClick={() => setActiveComponent('usuarios')}
+              onClick={() => setActiveComponent('alunos')}
               className={`w-full justify-start gap-3 ${
-                activeComponent === 'usuarios'
+                activeComponent === 'alunos'
+                  ? 'bg-white/20 hover:bg-white/20'
+                  : 'hover:bg-white/10'
+              }`}
+            >
+              <GraduationCap className="h-5 w-5" />
+              <span>Alunos</span>
+            </Button>
+          )}
+
+          {user.role === 'ADMIN' && (
+            <Button
+              variant="unstyled"
+              onClick={() => setActiveComponent('servidores')}
+              className={`w-full justify-start gap-3 ${
+                activeComponent === 'servidores'
                   ? 'bg-white/20 hover:bg-white/20'
                   : 'hover:bg-white/10'
               }`}
             >
               <Users className="h-5 w-5" />
-              <span>Usuários</span>
+              <span>Servidores</span>
             </Button>
           )}
 
@@ -121,14 +136,14 @@ export function DashboardSidebar({ user }: Props) {
           mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex flex-col h-full p-4">
+        <div className="flex flex-col h-full ">
           <div className="flex justify-between items-center p-4 border-b border-white/20">
             <div
               onClick={() => navigate('/')}
               className="flex items-center gap-2"
             >
               <School className="h-6 w-6" />
-              <h1 className="cursor-pointer text-lg font-bold tracking-tight leading-tight">
+              <h1 className="cursor-pointer text-md font-bold tracking-tight leading-tight">
                 {`Painel ${user.role}`}
               </h1>
             </div>
@@ -143,10 +158,14 @@ export function DashboardSidebar({ user }: Props) {
 
           <nav className="flex-1 p-4 space-y-2">
             {[
-              { id: 'projetos', icon: BookText, label: 'Projetos' },
-              { id: 'alunos', icon: Users, label: 'Alunos' },
+              ...(user.role === 'ADMIN' || user.role === 'COORDENADOR'
+                ? [{ id: 'projetos', icon: FolderKanban, label: 'Projetos' }]
+                : []),
               ...(user.role === 'ADMIN'
-                ? [{ id: 'usuarios', icon: Settings, label: 'Usuários' }]
+                ? [{ id: 'alunos', icon: GraduationCap, label: 'Alunos' }]
+                : []),
+              ...(user.role === 'ADMIN'
+                ? [{ id: 'servidores', icon: Users, label: 'Servidores' }]
                 : []),
               ...(user.role === 'ADMIN' || user.role === 'COORDENADOR_CURSO'
                 ? [{ id: 'tcc', icon: BookText, label: 'TCCs' }]
