@@ -1,6 +1,6 @@
 import type { ProjetoSchemaType } from '@/schemas/projetoSchema'
 import api from '@/utils/api'
-import type { ProjetoType } from '@/utils/types'
+import type { ProjetoType, ProjetoParticipanteType } from '@/utils/types'
 
 const postProjeto = async (data: ProjetoSchemaType) => {
   const response = await api.post('/projetos', data)
@@ -27,23 +27,30 @@ const deleteProjeto = async (id: string) => {
   return id
 }
 
-const postProjetoAluno = async (
+// Substitua as funções de aluno por participantes
+const postProjetoParticipante = async (
   projetoId: string,
-  alunoId: string,
-  funcao: { funcao: string }
+  participanteId: string,
+  tipo: 'ALUNO' | 'SERVIDOR',
+  funcao: string
 ) => {
-  const response = await api.post(
-    `/projetos/${projetoId}/alunos/${alunoId}`,
-    funcao
-  )
-  return response.data
+  const response = await api.post(`/projetos/${projetoId}/participantes`, {
+    tipo,
+    participanteId,
+    funcao,
+  })
+  return response.data as ProjetoParticipanteType
 }
 
-const deleteProjetoAluno = async (projetoId: string, alunoId: string) => {
-  const response = await api.delete(`/projetos/${projetoId}/alunos/${alunoId}`)
-  return response.data
+const deleteProjetoParticipante = async (
+  projetoId: string,
+  participanteId: string
+) => {
+  await api.delete(`/projetos/${projetoId}/participantes/${participanteId}`)
+  return participanteId
 }
 
+// Mantenha as funções de imagens (não precisam ser alteradas)
 const postProjetoImagem = async (
   projetoId: string,
   file: File,
@@ -80,8 +87,8 @@ export {
   getProjetoById,
   updateProjeto,
   deleteProjeto,
-  postProjetoAluno,
-  deleteProjetoAluno,
+  postProjetoParticipante,
+  deleteProjetoParticipante,
   postProjetoImagem,
   patchImagemPrincipal,
   deleteProjetoImagem,

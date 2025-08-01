@@ -15,7 +15,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Trash2, Plus, ChevronLeft, ChevronRight } from 'lucide-react'
-import { getAlunos } from '@/api/apiAlunos'
+import { getUsers } from '@/api/apiUsers'
 import { useCallback, useEffect, useState } from 'react'
 import {
   Select,
@@ -27,13 +27,13 @@ import {
 import { Input } from '@/components/ui/input'
 import toast from 'react-hot-toast'
 import { formatErrorMessage } from '@/utils/format'
-import type { ProjetoType } from '@/utils/types'
-import type { AlunoSchemaType } from '@/schemas/alunoSchema'
+import type { AlunoType, ProjetoType, UserType } from '@/utils/types'
 import {
-  deleteProjetoAluno,
+  deleteProjetoParticipante,
   getProjetoById,
-  postProjetoAluno,
+  postProjetoParticipante,
 } from '@/api/apiProjeto'
+import { getAlunos } from '@/api/apiAlunos'
 
 interface VincularAlunoDialogProps {
   isOpen: boolean
@@ -48,9 +48,13 @@ export const VincularAlunoDialog = ({
   projeto,
   onUpdateProjeto,
 }: VincularAlunoDialogProps) => {
-  const [alunos, setAlunos] = useState<AlunoSchemaType[]>([])
+  const [alunos, setAlunos] = useState<AlunoType[]>([])
+  const [users, setUsers] = useState<UserType[]>([])
   const [projetoData, setProjetoData] = useState<ProjetoType>()
-  const [selectedAluno, setSelectedAluno] = useState('')
+  const [selectedParticipante, setSelectedParticipante] = useState('')
+  const [selectedTipo, setSelectedTipo] = useState<'ALUNO' | 'SERVIDOR'>(
+    'ALUNO'
+  )
   const [funcao, setFuncao] = useState('')
   const [currentPage, setCurrentPage] = useState(0)
   const participantesPorPagina = 5
@@ -64,56 +68,72 @@ export const VincularAlunoDialog = ({
     }
   }
 
+  const fetchUsers = async () => {
+    try {
+      const data = await getUsers()
+      setUsers(data)
+    } catch (error) {
+      toast.error(formatErrorMessage(error, 'Erro ao carregar servidores.'))
+    }
+  }
+
   const fetchProjetoById = useCallback(async () => {
     if (!projeto) return
     try {
       const data = await getProjetoById(projeto.id)
       setProjetoData(data)
     } catch (error) {
-      toast.error(formatErrorMessage(error, 'Erro ao carregar alunos.'))
+      toast.error(formatErrorMessage(error, 'Erro ao carregar projeto.'))
     }
   }, [projeto])
 
   useEffect(() => {
-    fetchAlunos()
-  }, [])
-
-  useEffect(() => {
-    if (isOpen && projeto) {
+    if (isOpen) {
       fetchAlunos()
-      fetchProjetoById()
+      fetchUsers()
+      if (projeto) {
+        fetchProjetoById()
+      }
     }
   }, [isOpen, projeto, fetchProjetoById])
 
-  const handleAddAluno = async () => {
-    if (!projeto || !selectedAluno || !funcao) return
-
-    const payload = {
-      funcao: funcao,
+  const handleAddParticipante = async () => {
+    if (!projeto || !selectedParticipante || !funcao) {
+      return toast.error('Preencha todos os campos obrigatórios')
     }
 
     try {
-      await postProjetoAluno(projeto.id, selectedAluno, payload)
-      toast.success('Aluno vinculado com sucesso!')
+      await postProjetoParticipante(
+        projeto.id,
+        selectedParticipante,
+        selectedTipo,
+        funcao
+      )
+      toast.success('Participante vinculado com sucesso!')
       onUpdateProjeto()
       await fetchProjetoById()
-      setSelectedAluno('')
+      setSelectedParticipante('')
       setFuncao('')
     } catch (error) {
-      toast.error(formatErrorMessage(error, 'Erro ao vincular aluno'))
+      toast.error(formatErrorMessage(error, 'Erro ao vincular participante'))
     }
   }
 
-  const handleRemoveAluno = async (vinculoId: string) => {
+  const handleRemoveParticipante = async (participanteId: string) => {
     if (!projeto) return
 
+    const confirm = window.confirm(
+      'Tem certeza que deseja remover este participante?'
+    )
+    if (!confirm) return
+
     try {
-      await deleteProjetoAluno(projeto.id, vinculoId)
-      toast.success('Aluno removido do projeto!')
+      await deleteProjetoParticipante(projeto.id, participanteId)
+      toast.success('Participante removido do projeto!')
       onUpdateProjeto()
       await fetchProjetoById()
     } catch (error) {
-      toast.error(formatErrorMessage(error, 'Erro ao remover aluno'))
+      toast.error(formatErrorMessage(error, 'Erro ao remover participante'))
     }
   }
 
@@ -123,9 +143,13 @@ export const VincularAlunoDialog = ({
   const participantesPaginados = participantes.slice(startIndex, endIndex)
   const totalPaginas = Math.ceil(participantes.length / participantesPorPagina)
 
-  useEffect(() => {
-    if (!isOpen) setCurrentPage(0)
-  }, [isOpen])
+  const alunosDisponiveis = alunos.filter(
+    (aluno) => !participantes.some((p) => p.alunoId === aluno.id)
+  )
+
+  const usersDisponiveis = users.filter(
+    (user) => !participantes.some((p) => p.userId === user.id)
+  )
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -140,29 +164,73 @@ export const VincularAlunoDialog = ({
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="space-y-1">
-            <label className="text-sm font-medium">Aluno*</label>
-            <Select value={selectedAluno} onValueChange={setSelectedAluno}>
-              <SelectTrigger className="h-9 w-full">
-                <SelectValue placeholder="Selecione um aluno" />
-              </SelectTrigger>
-              <SelectContent>
-                {alunos?.map((aluno) =>
-                  aluno.id ? (
-                    <SelectItem key={aluno.id} value={aluno.id}>
-                      {aluno.nome} - {aluno.turma}
-                    </SelectItem>
-                  ) : null
-                )}
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-sm font-medium">Tipo*</label>
+              <Select
+                value={selectedTipo}
+                onValueChange={(value: 'ALUNO' | 'SERVIDOR') => {
+                  setSelectedTipo(value)
+                  setSelectedParticipante('')
+                }}
+              >
+                <SelectTrigger className="h-9 w-full">
+                  <SelectValue placeholder="Selecione o tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALUNO">Aluno</SelectItem>
+                  <SelectItem value="SERVIDOR">Servidor</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-sm font-medium">
+                {selectedTipo === 'ALUNO' ? 'Aluno*' : 'Servidor*'}
+              </label>
+              <Select
+                value={selectedParticipante}
+                onValueChange={setSelectedParticipante}
+              >
+                <SelectTrigger className="h-9 w-full">
+                  <SelectValue
+                    placeholder={`Selecione um ${selectedTipo.toLowerCase()}`}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {selectedTipo === 'ALUNO' ? (
+                    alunosDisponiveis.length > 0 ? (
+                      alunosDisponiveis.map((aluno) => (
+                        <SelectItem key={aluno.id} value={aluno.id}>
+                          {aluno.nome} - {aluno.turma}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <div className="p-2 text-sm text-muted-foreground">
+                        Nenhum aluno disponível
+                      </div>
+                    )
+                  ) : usersDisponiveis.length > 0 ? (
+                    usersDisponiveis.map((user) => (
+                      <SelectItem key={user.id} value={user.id}>
+                        {user.nome} - {user.email}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <div className="p-2 text-sm text-muted-foreground">
+                      Nenhum servidor disponível
+                    </div>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
             <div className="space-y-1">
               <label className="text-sm font-medium">Função*</label>
               <Input
-                placeholder="Ex: Engenheiro de Software"
+                placeholder="Ex: Pesquisador, Orientador, etc."
                 value={funcao}
                 onChange={(e) => setFuncao(e.target.value)}
                 className="h-9"
@@ -170,7 +238,8 @@ export const VincularAlunoDialog = ({
             </div>
 
             <Button
-              onClick={handleAddAluno}
+              onClick={handleAddParticipante}
+              disabled={!selectedParticipante || !funcao}
               className="h-9 w-full sm:w-auto mt-1 sm:mt-0"
             >
               <Plus className="h-4 w-4 mr-2" />
@@ -183,8 +252,9 @@ export const VincularAlunoDialog = ({
           <Table>
             <TableHeader className="sticky top-0 bg-background z-10">
               <TableRow>
-                <TableHead>Aluno</TableHead>
-                <TableHead>Turma</TableHead>
+                <TableHead>Nome</TableHead>
+                <TableHead>Tipo</TableHead>
+                <TableHead>Detalhes</TableHead>
                 <TableHead>Função</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
@@ -193,8 +263,21 @@ export const VincularAlunoDialog = ({
               {participantesPaginados.length ? (
                 participantesPaginados.map((participante) => (
                   <TableRow key={participante.id} className="hover:bg-muted/50">
-                    <TableCell>{participante.aluno.nome}</TableCell>
-                    <TableCell>{participante.aluno.turma}</TableCell>
+                    <TableCell>
+                      {participante.tipo === 'ALUNO'
+                        ? participante.aluno?.nome
+                        : participante.user?.nome}
+                    </TableCell>
+                    <TableCell>
+                      <span className="inline-block px-2 py-1 rounded bg-muted text-xs capitalize">
+                        {participante.tipo.toLowerCase()}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      {participante.tipo === 'ALUNO'
+                        ? `${participante.aluno?.turma} - ${participante.aluno?.curso}`
+                        : participante.user?.email}
+                    </TableCell>
                     <TableCell>
                       <span className="inline-block px-2 py-1 rounded bg-muted text-xs">
                         {participante.funcao}
@@ -204,7 +287,9 @@ export const VincularAlunoDialog = ({
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleRemoveAluno(participante.aluno.id)}
+                        onClick={() =>
+                          handleRemoveParticipante(participante.id)
+                        }
                       >
                         <Trash2 className="h-4 w-4 text-red-600" />
                       </Button>
@@ -213,16 +298,17 @@ export const VincularAlunoDialog = ({
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center">
-                    Nenhum aluno vinculado
+                  <TableCell colSpan={5} className="text-center">
+                    Nenhum participante vinculado
                   </TableCell>
                 </TableRow>
               )}
               <TableRow>
-                <TableCell colSpan={6}>
+                <TableCell colSpan={5}>
                   <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 px-2">
                     <div className="text-sm text-muted-foreground">
-                      Total: <strong>{participantes.length}</strong> alunos
+                      Total: <strong>{participantes.length}</strong>{' '}
+                      participantes
                     </div>
                     <div className="flex items-center gap-4">
                       <span className="text-sm text-muted-foreground">

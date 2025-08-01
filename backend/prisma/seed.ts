@@ -24,7 +24,7 @@ async function main() {
   }
 
   await prisma.imagemProjeto.deleteMany()
-  await prisma.projetoAluno.deleteMany()
+  await prisma.projetoParticipante.deleteMany()
   await prisma.tCC.deleteMany()
   await prisma.projeto.deleteMany()
   await prisma.aluno.deleteMany()
@@ -172,8 +172,21 @@ async function main() {
         coordenador: { connect: { id: coordenadores[0].id } },
         participantes: {
           create: [
-            { alunoId: alunos[0].id, funcao: 'Pesquisador Principal' },
-            { alunoId: alunos[1].id, funcao: 'Assistente de Campo' },
+            {
+              alunoId: alunos[0].id,
+              funcao: 'Pesquisador Principal',
+              tipo: 'ALUNO',
+            },
+            {
+              alunoId: alunos[1].id,
+              funcao: 'Assistente de Campo',
+              tipo: 'ALUNO',
+            },
+            {
+              userId: professores[0].id,
+              funcao: 'Orientador Científico',
+              tipo: 'SERVIDOR',
+            },
           ],
         },
         imagens: {
@@ -200,7 +213,18 @@ async function main() {
         tipo: 'PESQUISA',
         coordenador: { connect: { id: coordenadores[1].id } },
         participantes: {
-          create: [{ alunoId: alunos[2].id, funcao: 'Coordenador de Campo' }],
+          create: [
+            {
+              alunoId: alunos[2].id,
+              funcao: 'Coordenador de Campo',
+              tipo: 'ALUNO',
+            },
+            {
+              userId: professores[1].id,
+              funcao: 'Consultor Técnico',
+              tipo: 'SERVIDOR',
+            },
+          ],
         },
         imagens: {
           create: [
@@ -224,7 +248,18 @@ async function main() {
         tipo: 'ENSINO',
         coordenador: { connect: { id: coordenadores[2].id } },
         participantes: {
-          create: [{ alunoId: alunos[3].id, funcao: 'Monitor' }],
+          create: [
+            {
+              alunoId: alunos[3].id,
+              funcao: 'Monitor',
+              tipo: 'ALUNO',
+            },
+            {
+              userId: coordenadoresCurso[0].id,
+              funcao: 'Coordenador Pedagógico',
+              tipo: 'SERVIDOR',
+            },
+          ],
         },
         imagens: {
           create: [
@@ -258,8 +293,21 @@ async function main() {
         coordenador: { connect: { id: coordenadores[0].id } },
         participantes: {
           create: [
-            { alunoId: alunos[0].id, funcao: 'Instrutor' },
-            { alunoId: alunos[2].id, funcao: 'Apoio Técnico' },
+            {
+              alunoId: alunos[0].id,
+              funcao: 'Instrutor',
+              tipo: 'ALUNO',
+            },
+            {
+              alunoId: alunos[2].id,
+              funcao: 'Apoio Técnico',
+              tipo: 'ALUNO',
+            },
+            {
+              userId: professores[1].id,
+              funcao: 'Supervisor',
+              tipo: 'SERVIDOR',
+            },
           ],
         },
         imagens: {
@@ -281,8 +329,21 @@ async function main() {
         coordenador: { connect: { id: coordenadores[1].id } },
         participantes: {
           create: [
-            { alunoId: alunos[1].id, funcao: 'Coordenador' },
-            { alunoId: alunos[3].id, funcao: 'Voluntário' },
+            {
+              alunoId: alunos[1].id,
+              funcao: 'Coordenador',
+              tipo: 'ALUNO',
+            },
+            {
+              alunoId: alunos[3].id,
+              funcao: 'Voluntário',
+              tipo: 'ALUNO',
+            },
+            {
+              userId: coordenadoresCurso[2].id,
+              funcao: 'Consultor Agronômico',
+              tipo: 'SERVIDOR',
+            },
           ],
         },
         imagens: {

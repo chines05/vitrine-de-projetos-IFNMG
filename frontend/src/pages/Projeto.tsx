@@ -1,12 +1,22 @@
 import Footer from '@/components/Footer'
 import NavBar from '@/components/NavBar'
-import type { ProjetoType, UserType } from '@/utils/types'
+import type {
+  ProjetoType,
+  UserType,
+  ProjetoParticipanteType,
+} from '@/utils/types'
 import { useLocation, useParams } from 'react-router-dom'
 import { useEffect, useState, type JSX } from 'react'
 import toast from 'react-hot-toast'
 import { formatErrorMessage } from '@/utils/format'
 import { formatDate } from 'date-fns'
-import { FlaskConical, GraduationCap, Users } from 'lucide-react'
+import {
+  FlaskConical,
+  GraduationCap,
+  Users,
+  User,
+  BookUser,
+} from 'lucide-react'
 import {
   Carousel,
   CarouselContent,
@@ -16,6 +26,7 @@ import {
 } from '@/components/ui/carousel'
 import { Card, CardContent } from '@/components/ui/card'
 import { getProjetoById } from '@/api/apiProjeto'
+import { Badge } from '@/components/ui/badge'
 
 const Projeto = () => {
   const { id } = useParams()
@@ -58,6 +69,49 @@ const Projeto = () => {
       badge: 'bg-green-100 text-green-800',
       icon: <Users className="h-4 w-4" />,
     },
+  }
+
+  const renderParticipante = (p: ProjetoParticipanteType) => {
+    if (p.tipo === 'ALUNO' && p.aluno) {
+      return (
+        <li key={p.id} className="border-b pb-2">
+          <div className="flex items-start gap-3">
+            <BookUser className="h-5 w-5 text-gray-500 mt-0.5" />
+            <div>
+              <div className="flex items-center gap-2">
+                <strong>{p.aluno.nome}</strong>
+                <Badge variant="outline" className="text-xs">
+                  Aluno
+                </Badge>
+              </div>
+              <div className="text-gray-700">{p.funcao}</div>
+              <div className="text-xs text-gray-500">
+                {p.aluno.curso} • Turma {p.aluno.turma}
+              </div>
+            </div>
+          </div>
+        </li>
+      )
+    } else if (p.tipo === 'SERVIDOR' && p.user) {
+      return (
+        <li key={p.id} className="border-b pb-2">
+          <div className="flex items-start gap-3">
+            <User className="h-5 w-5 text-gray-500 mt-0.5" />
+            <div>
+              <div className="flex items-center gap-2">
+                <strong>{p.user.nome}</strong>
+                <Badge variant="outline" className="text-xs">
+                  {p.user.role === 'PROFESSOR' ? 'Professor' : 'Servidor'}
+                </Badge>
+              </div>
+              <div className="text-gray-700">{p.funcao}</div>
+              <div className="text-xs text-gray-500">{p.user.email}</div>
+            </div>
+          </div>
+        </li>
+      )
+    }
+    return null
   }
 
   if (!projeto) {
@@ -149,17 +203,10 @@ const Projeto = () => {
           {projeto.participantes.length > 0 && (
             <div className="p-6 rounded-lg shadow-sm mb-8 border">
               <h3 className="text-lg font-semibold text-green-700 mb-4">
-                Participantes
+                Participantes ({projeto.participantes.length})
               </h3>
-              <ul className="space-y-3 text-sm text-gray-700">
-                {projeto.participantes.map((p) => (
-                  <li key={p.aluno.id} className="border-b pb-2">
-                    <strong>{p.aluno.nome}</strong> – {p.funcao}
-                    <div className="text-xs text-gray-500">
-                      {p.aluno.curso} • Turma {p.aluno.turma}
-                    </div>
-                  </li>
-                ))}
+              <ul className="space-y-4">
+                {projeto.participantes.map(renderParticipante)}
               </ul>
             </div>
           )}
@@ -172,24 +219,27 @@ const Projeto = () => {
 
               <Carousel className="w-full mx-auto">
                 <CarouselContent>
-                  {projeto.imagens
-                    .filter((img) => !img.principal)
-                    .map((img) => (
-                      <CarouselItem
-                        key={img.id}
-                        className="md:basis-1/2 lg:basis-1/3"
-                      >
-                        <Card className="p-0">
-                          <CardContent className="p-0">
-                            <img
-                              src={`http://localhost:8080${img.url}`}
-                              alt="Imagem do projeto"
-                              className="rounded-md object-cover h-48 w-full"
-                            />
-                          </CardContent>
-                        </Card>
-                      </CarouselItem>
-                    ))}
+                  {projeto.imagens.map((img) => (
+                    <CarouselItem
+                      key={img.id}
+                      className="md:basis-1/2 lg:basis-1/3"
+                    >
+                      <Card className="p-0">
+                        <CardContent className="p-0">
+                          <img
+                            src={`http://localhost:8080${img.url}`}
+                            alt="Imagem do projeto"
+                            className="rounded-md object-cover h-48 w-full"
+                          />
+                          {img.principal && (
+                            <div className="absolute top-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded">
+                              Principal
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                  ))}
                 </CarouselContent>
                 <CarouselPrevious />
                 <CarouselNext />

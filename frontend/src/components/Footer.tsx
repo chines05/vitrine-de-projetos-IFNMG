@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Mail, Instagram, Linkedin, MapPin, Phone } from 'lucide-react'
+import { Mail, Instagram, MapPin, Phone } from 'lucide-react'
 
 const Footer = () => {
   return (
@@ -21,13 +21,6 @@ const Footer = () => {
                 target="_blank"
               >
                 <Instagram className="h-4 w-4" />
-              </a>
-              <a
-                href="https://www.linkedin.com/company/instituto-federal-do-norte-de-minas-gerais-ifnmg/"
-                className="text-white hover:text-white/80"
-                target="_blank"
-              >
-                <Linkedin className="h-4 w-4" />
               </a>
             </div>
           </div>

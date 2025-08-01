@@ -33,19 +33,7 @@ export type ProjetoType = {
   updatedAt: string
   coordenador: UserType
   coordenadorId: string
-  participantes: {
-    id: string
-    aluno: {
-      id: string
-      nome: string
-      turma: string
-      curso: string
-    }
-    alunoId: string
-    funcao: string
-    projetoId: string
-    createdAt: string
-  }[]
+  participantes: ProjetoParticipanteType[]
   imagens: [
     {
       id: string
@@ -55,6 +43,28 @@ export type ProjetoType = {
       createdAt: string
     }
   ]
+}
+
+export type ProjetoParticipanteType = {
+  id: string
+  projetoId: string
+  alunoId?: string
+  userId?: string
+  funcao: string
+  tipo: 'ALUNO' | 'SERVIDOR'
+  createdAt: string
+  aluno?: {
+    id: string
+    nome: string
+    turma: string
+    curso?: string
+  }
+  user?: {
+    id: string
+    nome: string
+    email: string
+    role?: string
+  }
 }
 
 export type TccType = {
