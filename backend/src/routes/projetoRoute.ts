@@ -3,13 +3,13 @@ import {
   createProjetoHandler,
   definirImagemPrincipalHandler,
   deleteProjetoHandler,
-  desvincularAlunoHandler,
+  desvincularParticipanteHandler,
   getProjetoHandler,
   getProjetosHandler,
   removerImagemHandler,
   updateProjetoHandler,
   uploadImagemHandler,
-  vincularAlunoHandler,
+  vincularParticipanteHandler,
 } from '../controllers/projetoController'
 import { authenticate } from '../middleware/auth'
 
@@ -37,15 +37,15 @@ export const projetosRoutes = (app: FastifyInstance) => {
   )
 
   app.post(
-    '/api/projetos/:projetoId/alunos/:alunoId',
+    '/api/projetos/:projetoId/participantes',
     { preHandler: [authenticate] },
-    vincularAlunoHandler
+    vincularParticipanteHandler
   )
 
   app.delete(
-    '/api/projetos/:projetoId/alunos/:alunoId',
+    '/api/projetos/:projetoId/participantes/:participanteId',
     { preHandler: [authenticate] },
-    desvincularAlunoHandler
+    desvincularParticipanteHandler
   )
 
   app.post(

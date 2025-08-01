@@ -8,30 +8,31 @@ datasource db {
 }
 
 model User {
-  id             String          @id @default(uuid())
+  id             String               @id @default(uuid())
   nome           String
-  email          String          @unique
+  email          String               @unique
   senha          String
-  role           Role            @default(COORDENADOR)
+  role           Role                 @default(COORDENADOR)
   especializacao Especializacao?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  projetos       Projeto[]       @relation("ProjetosDoCoordenador")
-  tccs           TCC[]           @relation("TCCsDoCoordenador")
-
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  projetos       Projeto[]            @relation("ProjetosDoCoordenador")
+  tccs           TCC[]                @relation("TCCsDoCoordenador")
+  participacoes  ProjetoParticipante[] @relation("ParticipacoesDoUsuario")
+  
   @@map("users")
 }
 
 model Aluno {
-  id        String         @id @default(uuid())
+  id        String                @id @default(uuid())
   nome      String
   turma     String
   curso     String
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
-  projetos  ProjetoAluno[]
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+  projetos  ProjetoParticipante[] @relation("ParticipacoesDoAluno")
   tccs      TCC?
-
+  
   @@map("alunos")
 }
 
@@ -47,23 +48,31 @@ model Projeto {
   updatedAt     DateTime        @updatedAt
   coordenador   User            @relation("ProjetosDoCoordenador", fields: [coordenadorId], references: [id])
   coordenadorId String
-  participantes ProjetoAluno[]
+  participantes ProjetoParticipante[]
   imagens       ImagemProjeto[]
 
   @@map("projetos")
 }
 
-model ProjetoAluno {
+model ProjetoParticipante {
   id        String   @id @default(uuid())
   projeto   Projeto  @relation(fields: [projetoId], references: [id])
-  aluno     Aluno    @relation(fields: [alunoId], references: [id])
   projetoId String
-  alunoId   String
+  aluno     Aluno?   @relation("ParticipacoesDoAluno", fields: [alunoId], references: [id])
+  alunoId   String?
+  user      User?    @relation("ParticipacoesDoUsuario", fields: [userId], references: [id])
+  userId    String?
   funcao    String
+  tipo      TipoParticipante
   createdAt DateTime @default(now())
 
-  @@unique([projetoId, alunoId])
-  @@map("projeto_aluno")
+  @@unique([projetoId, alunoId, userId])
+  @@map("projeto_participante")
+}
+
+enum TipoParticipante {
+  ALUNO
+  SERVIDOR
 }
 
 model ImagemProjeto {

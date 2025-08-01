@@ -21,10 +21,14 @@ export const deleteProjetoSchema = z.object({
   id: z.string().uuid(),
 })
 
-export const vincularAlunoSchema = z.object({
+export const vincularParticipanteSchema = z.object({
   funcao: z.string().min(2),
+  tipo: z.enum(['ALUNO', 'SERVIDOR']),
+  participanteId: z.string().uuid(),
 })
 
 export type CreateProjetoSchemaType = z.infer<typeof createProjetoSchema>
 export type UpdateProjetoSchemaType = z.infer<typeof updateProjetoSchema>
-export type VincularAlunoSchemaType = z.infer<typeof vincularAlunoSchema>
+export type VincularParticipanteSchemaType = z.infer<
+  typeof vincularParticipanteSchema
+>

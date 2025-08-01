@@ -6,7 +6,7 @@ import {
   createProjetoSchema,
   updateProjetoSchema,
   deleteProjetoSchema,
-  vincularAlunoSchema,
+  vincularParticipanteSchema,
 } from '../validators/projetoValidator'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -97,14 +97,25 @@ const getProjetosHandler = async (
       },
       participantes: {
         select: {
+          id: true,
           aluno: {
             select: {
               id: true,
               nome: true,
               turma: true,
+              curso: true,
             },
           },
+          user: {
+            select: {
+              id: true,
+              nome: true,
+              email: true,
+            },
+          },
+          tipo: true,
           funcao: true,
+          createdAt: true,
         },
       },
       imagens: {
@@ -153,6 +164,14 @@ const getProjetoHandler = async (
               curso: true,
             },
           },
+          user: {
+            select: {
+              id: true,
+              nome: true,
+              email: true,
+            },
+          },
+          tipo: true,
           funcao: true,
           createdAt: true,
         },
@@ -276,17 +295,15 @@ const deleteProjetoHandler = async (
   }
 }
 
-const vincularAlunoHandler = async (
+const vincularParticipanteHandler = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
-    const { funcao } = vincularAlunoSchema.parse(request.body)
-
-    const { projetoId, alunoId } = request.params as {
-      projetoId: string
-      alunoId: string
-    }
+    const { tipo, funcao, participanteId } = vincularParticipanteSchema.parse(
+      request.body
+    )
+    const { projetoId } = request.params as { projetoId: string }
 
     const projetoExists = await prisma.projeto.findUnique({
       where: { id: projetoId },
@@ -296,39 +313,66 @@ const vincularAlunoHandler = async (
       return reply.status(404).send({ error: 'Projeto não encontrado' })
     }
 
-    const alunoExists = await prisma.aluno.findUnique({
-      where: { id: alunoId },
-    })
-    if (!alunoExists) {
-      return reply.status(404).send({ error: 'Aluno não encontrado' })
+    if (tipo === 'ALUNO') {
+      const alunoExists = await prisma.aluno.findUnique({
+        where: { id: participanteId },
+      })
+      if (!alunoExists) {
+        return reply.status(404).send({ error: 'Aluno não encontrado' })
+      }
+    } else {
+      const userExists = await prisma.user.findUnique({
+        where: { id: participanteId },
+      })
+      if (!userExists) {
+        return reply.status(404).send({ error: 'Servidor não encontrado' })
+      }
     }
 
-    const vinculoExists = await prisma.projetoAluno.findFirst({
+    const vinculoExists = await prisma.projetoParticipante.findFirst({
       where: {
         projetoId,
-        alunoId,
+        OR: [
+          { alunoId: tipo === 'ALUNO' ? participanteId : undefined },
+          { userId: tipo === 'SERVIDOR' ? participanteId : undefined },
+        ],
       },
     })
+
     if (vinculoExists) {
       return reply
         .status(400)
-        .send({ error: 'Aluno já vinculado a este projeto' })
+        .send({ error: 'Participante já vinculado a este projeto' })
     }
 
-    const vinculo = await prisma.projetoAluno.create({
+    const vinculo = await prisma.projetoParticipante.create({
       data: {
         projetoId,
-        alunoId,
+        [tipo === 'ALUNO' ? 'alunoId' : 'userId']: participanteId,
         funcao,
+        tipo: tipo as any,
       },
       include: {
-        aluno: {
-          select: {
-            id: true,
-            nome: true,
-            turma: true,
-          },
-        },
+        aluno:
+          tipo === 'ALUNO'
+            ? {
+                select: {
+                  id: true,
+                  nome: true,
+                  turma: true,
+                },
+              }
+            : false,
+        user:
+          tipo === 'SERVIDOR'
+            ? {
+                select: {
+                  id: true,
+                  nome: true,
+                  email: true,
+                },
+              }
+            : false,
       },
     })
 
@@ -344,24 +388,27 @@ const vincularAlunoHandler = async (
   }
 }
 
-const desvincularAlunoHandler = async (
+const desvincularParticipanteHandler = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
-  const { projetoId, alunoId } = request.params as {
+  const { projetoId, participanteId } = request.params as {
     projetoId: string
-    alunoId: string
+    participanteId: string
   }
 
-  const vinculo = await prisma.projetoAluno.findFirst({
-    where: { projetoId, alunoId },
+  const vinculo = await prisma.projetoParticipante.findFirst({
+    where: {
+      projetoId,
+      OR: [{ alunoId: participanteId }, { userId: participanteId }],
+    },
   })
 
   if (!vinculo) {
     return reply.status(404).send({ error: 'Vínculo não encontrado' })
   }
 
-  await prisma.projetoAluno.delete({
+  await prisma.projetoParticipante.delete({
     where: { id: vinculo.id },
   })
 
@@ -518,8 +565,8 @@ export {
   getProjetoHandler,
   updateProjetoHandler,
   deleteProjetoHandler,
-  vincularAlunoHandler,
-  desvincularAlunoHandler,
+  vincularParticipanteHandler,
+  desvincularParticipanteHandler,
   uploadImagemHandler,
   removerImagemHandler,
   definirImagemPrincipalHandler,
